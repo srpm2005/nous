@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { deleteResume } from '../services/api';
+import ScanStatusBadge from './ScanStatusBadge';
 
 export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast }) {
+
   const [searchTerm, setSearchTerm] = useState('');
   const [showFullText, setShowFullText] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -104,7 +106,11 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
                 Fresh Ingestion (201 Created)
               </span>
             )}
+
+            {/* Phase 2 Pipeline Status */}
+            <ScanStatusBadge status={resume.scanStatus || 'COMPLETE'} />
           </div>
+
 
           <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', margin: 0 }}>
             Uploaded: {formattedDate} • User: <code style={{ color: 'var(--color-accent)', fontWeight: 600 }}>{resume.userId || 'anonymous'}</code>

@@ -45,7 +45,7 @@ export default function UploadZone({ onUploadSuccess, onError }) {
 
     setUploadState({
       status: 'uploading',
-      step: '1/3 Validating MIME & SHA-256 Hash...',
+      step: 'Validating file integrity...',
       progress: 30,
       errorMessage: null
     });
@@ -54,7 +54,7 @@ export default function UploadZone({ onUploadSuccess, onError }) {
       setTimeout(() => {
         setUploadState(prev => prev.status === 'uploading' ? {
           ...prev,
-          step: '2/3 Executing Virus Scan & Disk Encryption...',
+          step: 'Scanning for security & malware...',
           progress: 65
         } : prev);
       }, 400);
@@ -62,7 +62,7 @@ export default function UploadZone({ onUploadSuccess, onError }) {
       setTimeout(() => {
         setUploadState(prev => prev.status === 'uploading' ? {
           ...prev,
-          step: '3/3 Extracting Text Content (Apache PDFBox/POI)...',
+          step: 'Extracting text content...',
           progress: 88
         } : prev);
       }, 800);
@@ -75,6 +75,7 @@ export default function UploadZone({ onUploadSuccess, onError }) {
         progress: 100,
         errorMessage: null
       });
+
 
       if (onUploadSuccess) {
         onUploadSuccess(data);
@@ -141,33 +142,14 @@ export default function UploadZone({ onUploadSuccess, onError }) {
               <polyline points="17 8 12 3 7 8"/>
               <line x1="12" y1="3" x2="12" y2="15"/>
             </svg>
-            Upload Resume Task
+            Upload Resume
           </h3>
           <p className="asana-body-muted" style={{ fontSize: '13px', margin: '2px 0 0 0' }}>
-            Ingest, scan, and extract text from candidate resumes
+            Select or drag a candidate resume file below
           </p>
         </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <label style={{ fontSize: '13px', color: 'var(--color-text-muted)', fontWeight: 500 }}>User:</label>
-          <input
-            type="text"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-            placeholder="anonymous"
-            style={{
-              background: 'var(--color-background-subtle)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-sm)',
-              color: 'var(--color-text)',
-              padding: '4px 10px',
-              fontSize: '13px',
-              width: '120px',
-              fontFamily: 'var(--font-mono)'
-            }}
-          />
-        </div>
       </div>
+
 
       {/* Drag & Drop Zone */}
       <div

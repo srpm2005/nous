@@ -80,3 +80,20 @@ export async function deleteResume(id) {
 
   return handleResponse(response);
 }
+
+/**
+ * Fetch scan status details by scan ID (Phase 2 Async Pipeline)
+ * @param {string} scanId - Scan UUID
+ * @returns {Promise<Object>} ScanResponseDto
+ */
+export async function getScanStatus(scanId) {
+  const response = await fetch(`/api/scans/${scanId}`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+
+  return handleResponse(response);
+}
+

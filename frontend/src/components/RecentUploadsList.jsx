@@ -32,7 +32,7 @@ export default function RecentUploadsList({ resumes = [], activeResumeId, onSele
           <circle cx="12" cy="12" r="10"/>
           <polyline points="12 6 12 12 16 14"/>
         </svg>
-        Ingestion History
+        Recent Resumes
       </h3>
 
 
@@ -47,8 +47,9 @@ export default function RecentUploadsList({ resumes = [], activeResumeId, onSele
           borderRadius: 'var(--radius-sm)',
           border: '1px dashed var(--color-border)'
         }}>
-          No resumes uploaded in this session yet.
+          No resumes uploaded yet.
         </div>
+
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '380px', overflowY: 'auto' }}>
           {resumes.map((r) => {

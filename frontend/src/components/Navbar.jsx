@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Navbar({ activePhase = 'Phase 1' }) {
+export default function Navbar() {
   return (
     <header className="asana-card" style={{
       display: 'flex',
@@ -8,12 +8,11 @@ export default function Navbar({ activePhase = 'Phase 1' }) {
       justifyContent: 'space-between',
       padding: '16px 24px',
       borderRadius: 'var(--radius-md)',
-      marginBottom: '24px',
+      marginBottom: '20px',
       background: 'var(--color-surface)',
       borderColor: 'var(--color-border)'
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-        {/* Asana-inspired logo icon */}
         <div style={{
           width: '36px',
           height: '36px',
@@ -38,14 +37,11 @@ export default function Navbar({ activePhase = 'Phase 1' }) {
               letterSpacing: '-0.02em',
               color: 'var(--color-text)'
             }}>
-              Nous
-            </span>
-            <span className="badge badge-neutral" style={{ fontSize: '11px', fontWeight: 600 }}>
-              WORKFLOW ENGINE
+              Nous AI Resume Engine
             </span>
           </div>
           <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', margin: 0 }}>
-            Resume Intelligence & Work Management for AI Teams
+            AI-Powered Resume Analysis & Extraction Engine
           </p>
         </div>
       </div>
@@ -53,13 +49,10 @@ export default function Navbar({ activePhase = 'Phase 1' }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span className="badge badge-emerald">
           <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#059669' }}></span>
-          Backend API Online
-        </span>
-
-        <span className="badge badge-neutral">
-          {activePhase}: Ingestion & Extraction
+          System Ready
         </span>
       </div>
     </header>
   );
 }
+
