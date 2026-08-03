@@ -3,6 +3,7 @@ package com.project.nous.controller;
 import com.project.nous.domain.Resume;
 import com.project.nous.exception.InvalidFileException;
 import com.project.nous.service.ResumeService;
+import com.project.nous.service.ScanService;
 import com.project.nous.service.UploadResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,27 +36,41 @@ class ResumeControllerTest {
     @MockBean
     private ResumeService resumeService;
 
+    @MockBean
+    private ScanService scanService;
+
     // ─── Upload happy path ────────────────────────────────────────────────────
 
     @Test
-    void uploadValidPdf_returns201WithJson() throws Exception {
+    void uploadValidPdf_returns202WithJson() throws Exception {
         Resume fakeResume = buildFakeResume("resume.pdf", "application/pdf",
                 "John Doe Software Engineer");
+        UUID scanId = UUID.randomUUID();
+        com.project.nous.domain.Scan fakeScan = com.project.nous.domain.Scan.builder()
+                .id(scanId)
+                .resumeId(fakeResume.getId())
+                .status(com.project.nous.domain.ScanStatus.PENDING)
+                .createdAt(Instant.now())
+                .build();
 
         given(resumeService.upload(any(), anyString()))
                 .willReturn(new UploadResult(fakeResume, false));
+        given(scanService.createInitialScan(any()))
+                .willReturn(fakeScan);
 
         MockMultipartFile file = new MockMultipartFile(
                 "file", "resume.pdf", "application/pdf",
                 "fake-pdf-bytes".getBytes());
 
         mockMvc.perform(multipart("/api/resumes").file(file))
-                .andExpect(status().isCreated())
+                .andExpect(status().isAccepted())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.originalFilename").value("resume.pdf"))
                 .andExpect(jsonPath("$.mimeType").value("application/pdf"))
-                .andExpect(jsonPath("$.extractedCharCount").isNumber());
+                .andExpect(jsonPath("$.extractedCharCount").isNumber())
+                .andExpect(jsonPath("$.scanId").value(scanId.toString()))
+                .andExpect(jsonPath("$.scanStatus").value("PENDING"));
     }
 
     // ─── Upload error cases ───────────────────────────────────────────────────

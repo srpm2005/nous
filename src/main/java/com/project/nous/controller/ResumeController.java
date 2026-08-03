@@ -1,8 +1,10 @@
 package com.project.nous.controller;
 
 import com.project.nous.domain.Resume;
+import com.project.nous.domain.Scan;
 import com.project.nous.dto.ResumeResponseDto;
 import com.project.nous.service.ResumeService;
+import com.project.nous.service.ScanService;
 import com.project.nous.service.UploadResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +20,9 @@ import java.util.UUID;
 /**
  * REST controller for resume upload and management.
  *
- * <h3>Phase 1 endpoints:</h3>
+ * <h3>Phase 1 & Phase 2 endpoints:</h3>
  * <ul>
- *   <li>{@code POST   /api/resumes}        — upload file, returns 201</li>
+ *   <li>{@code POST   /api/resumes}        — upload file, returns 202 Accepted + scanId</li>
  *   <li>{@code GET    /api/resumes/{id}}   — fetch resume metadata + text preview</li>
  *   <li>{@code DELETE /api/resumes/{id}}   — delete resume (privacy / right to erasure)</li>
  * </ul>
@@ -36,6 +38,7 @@ import java.util.UUID;
 public class ResumeController {
 
     private final ResumeService resumeService;
+    private final ScanService scanService;
 
     @Value("${app.upload.text-preview-length:500}")
     private int textPreviewLength;
@@ -45,9 +48,8 @@ public class ResumeController {
     /**
      * Upload a resume file (PDF or DOCX).
      *
-     * <p>Returns {@code 201 Created} on a fresh upload, or {@code 200 OK} if the
-     * same file (by SHA-256) was already uploaded — the {@code isDuplicate} flag
-     * in the response body distinguishes the two cases.
+     * <p>Returns {@code 202 Accepted} on a fresh upload and triggers an async scan job,
+     * or {@code 200 OK} if the same file (by SHA-256) was already uploaded.
      */
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<ResumeResponseDto> upload(
@@ -59,10 +61,20 @@ public class ResumeController {
                 file.getOriginalFilename(), file.getSize(), userId);
 
         UploadResult result = resumeService.upload(file, userId);
-        ResumeResponseDto body = ResumeResponseDto.from(result.resume(), textPreviewLength, result.isDuplicate());
 
-        // 200 for deduplicated (already existed), 201 for fresh upload
-        HttpStatus status = result.isDuplicate() ? HttpStatus.OK : HttpStatus.CREATED;
+        Scan scan = scanService.createInitialScan(result.resume());
+        scanService.processScanAsync(scan.getId());
+
+        ResumeResponseDto body = ResumeResponseDto.from(
+                result.resume(),
+                textPreviewLength,
+                result.isDuplicate(),
+                scan.getId(),
+                scan.getStatus()
+        );
+
+        // 200 for deduplicated (already existed), 202 Accepted for fresh async processing upload
+        HttpStatus status = result.isDuplicate() ? HttpStatus.OK : HttpStatus.ACCEPTED;
         return ResponseEntity.status(status).body(body);
     }
 

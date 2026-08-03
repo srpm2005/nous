@@ -1,6 +1,7 @@
 package com.project.nous.dto;
 
 import com.project.nous.domain.Resume;
+import com.project.nous.domain.ScanStatus;
 import lombok.Builder;
 
 import java.time.Instant;
@@ -15,24 +16,30 @@ import java.util.UUID;
  */
 @Builder
 public record ResumeResponseDto(
-        UUID    id,
-        String  userId,
-        String  originalFilename,
-        String  mimeType,
-        Instant uploadedAt,
-        int     extractedCharCount,
-        String  extractedTextPreview,
-        String  extractedText,
-        boolean isDuplicate
+        UUID       id,
+        String     userId,
+        String     originalFilename,
+        String     mimeType,
+        Instant    uploadedAt,
+        int        extractedCharCount,
+        String     extractedTextPreview,
+        String     extractedText,
+        boolean    isDuplicate,
+        UUID       scanId,
+        ScanStatus scanStatus
 ) {
     /**
-     * Map a {@link Resume} entity to this DTO.
-     *
-     * @param resume      the entity
-     * @param previewLen  number of characters to include in the preview
-     * @param isDuplicate whether this was a deduplicated upload
+     * Map a {@link Resume} entity to this DTO without scan info.
      */
     public static ResumeResponseDto from(Resume resume, int previewLen, boolean isDuplicate) {
+        return from(resume, previewLen, isDuplicate, null, null);
+    }
+
+    /**
+     * Map a {@link Resume} entity to this DTO with scan details.
+     */
+    public static ResumeResponseDto from(Resume resume, int previewLen, boolean isDuplicate,
+                                         UUID scanId, ScanStatus scanStatus) {
         String text    = resume.getExtractedText() != null ? resume.getExtractedText() : "";
         String preview = text.length() > previewLen ? text.substring(0, previewLen) + "…" : text;
 
@@ -46,6 +53,9 @@ public record ResumeResponseDto(
                 .extractedTextPreview(preview)
                 .extractedText(text)
                 .isDuplicate(isDuplicate)
+                .scanId(scanId)
+                .scanStatus(scanStatus)
                 .build();
     }
 }
+

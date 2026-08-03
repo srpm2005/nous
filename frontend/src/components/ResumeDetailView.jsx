@@ -103,7 +103,7 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
               </span>
             ) : (
               <span className="badge badge-neutral">
-                Fresh Ingestion (201 Created)
+                Fresh Async Ingestion (202 Accepted)
               </span>
             )}
 
