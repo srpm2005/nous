@@ -130,74 +130,14 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
         </button>
       </div>
 
-      {/* Deduplication Notice Banner */}
-      {resume.isDuplicate && (
-        <div style={{
-          padding: '12px 16px',
-          borderRadius: 'var(--radius-md)',
-          background: 'var(--status-emerald-bg)',
-          border: '1px solid var(--status-emerald-border)',
-          color: 'var(--status-emerald-text)',
-          fontSize: '13px',
-          marginBottom: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px'
-        }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-          </svg>
-          <span>
-            <strong>Content Deduplication Triggered:</strong> This exact resume file content (SHA-256 hash) was already parsed previously. Returned existing record instantly without redundant extraction.
-          </span>
-        </div>
-      )}
-
-      {/* Metadata Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-        gap: '12px',
-        marginBottom: '24px'
-      }}>
-        <div style={{ background: 'var(--color-background-subtle)', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-          <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Resume ID (UUID)</div>
-          <div style={{
-            fontSize: '13px',
-            fontFamily: 'var(--font-mono)',
-            color: 'var(--color-text)',
-            marginTop: '4px',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
-          }} title={resume.id}>
-            {resume.id}
-          </div>
-        </div>
-
-        <div style={{ background: 'var(--color-background-subtle)', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-          <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Detected Format</div>
-          <div style={{ fontSize: '14px', fontWeight: 600, marginTop: '4px', color: 'var(--color-text)' }}>
-            {resume.mimeType || 'application/pdf'}
-          </div>
-        </div>
-
-        <div style={{ background: 'var(--color-background-subtle)', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-          <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Extracted Chars</div>
-          <div style={{ fontSize: '14px', fontWeight: 600, marginTop: '4px', color: 'var(--color-accent)' }}>
-            {resume.extractedCharCount ? resume.extractedCharCount.toLocaleString() : textToDisplay.length.toLocaleString()} chars
-          </div>
-        </div>
-      </div>
-
       {/* Extracted Text Inspector */}
       <div style={{
         background: '#0f172a',
         border: '1px solid #334155',
         borderRadius: 'var(--radius-md)',
         padding: '18px',
-        color: '#f8fafc'
+        color: '#f8fafc',
+        marginBottom: '20px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '14px', flexWrap: 'wrap' }}>
           <h4 style={{ fontSize: '14px', fontWeight: 600, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: '#f8fafc' }}>
@@ -270,6 +210,66 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
             </button>
           </div>
         )}
+      </div>
+
+      {/* Deduplication Notice Banner */}
+      {resume.isDuplicate && (
+        <div style={{
+          padding: '12px 16px',
+          borderRadius: 'var(--radius-md)',
+          background: 'var(--status-emerald-bg)',
+          border: '1px solid var(--status-emerald-border)',
+          color: 'var(--status-emerald-text)',
+          fontSize: '13px',
+          marginBottom: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px'
+        }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <span>
+            <strong>Content Deduplication Triggered:</strong> This exact resume file content (SHA-256 hash) was already parsed previously. Returned existing record instantly without redundant extraction.
+          </span>
+        </div>
+      )}
+
+      {/* Metadata Grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+        gap: '12px'
+      }}>
+        <div style={{ background: 'var(--color-background-subtle)', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+          <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Resume ID (UUID)</div>
+          <div style={{
+            fontSize: '13px',
+            fontFamily: 'var(--font-mono)',
+            color: 'var(--color-text)',
+            marginTop: '4px',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }} title={resume.id}>
+            {resume.id}
+          </div>
+        </div>
+
+        <div style={{ background: 'var(--color-background-subtle)', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+          <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Detected Format</div>
+          <div style={{ fontSize: '14px', fontWeight: 600, marginTop: '4px', color: 'var(--color-text)' }}>
+            {resume.mimeType || 'application/pdf'}
+          </div>
+        </div>
+
+        <div style={{ background: 'var(--color-background-subtle)', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+          <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Extracted Chars</div>
+          <div style={{ fontSize: '14px', fontWeight: 600, marginTop: '4px', color: 'var(--color-accent)' }}>
+            {resume.extractedCharCount ? resume.extractedCharCount.toLocaleString() : textToDisplay.length.toLocaleString()} chars
+          </div>
+        </div>
       </div>
 
       {/* Delete Confirmation Modal */}

@@ -6,15 +6,15 @@ export default function PipelineRoadmap() {
       number: '1',
       title: 'Upload & Text Extraction',
       description: 'MIME validation, Virus Scanning, SHA-256 Dedup, Apache PDFBox/POI text parsing',
-      status: 'active',
-      badge: 'ACTIVE & LIVE'
+      status: 'complete',
+      badge: 'COMPLETED'
     },
     {
       number: '2',
-      title: 'Async Pipeline & SSE',
-      description: '202 Accepted, scanId state machine (PENDING -> PROCESSING -> COMPLETE), SSE status stream',
-      status: 'next',
-      badge: 'PHASE 2'
+      title: 'Async Pipeline & Polling Engine',
+      description: '202 Accepted, scanId state machine (PENDING -> PROCESSING -> COMPLETE), React status polling engine',
+      status: 'active',
+      badge: 'ACTIVE & LIVE'
     },
     {
       number: '3',
@@ -56,8 +56,8 @@ export default function PipelineRoadmap() {
           </p>
         </div>
 
-        <span className="badge badge-emerald">
-          Phase 1 Ingestion Live
+        <span className="badge badge-purple">
+          Phase 2 Async Pipeline Live
         </span>
       </div>
 
