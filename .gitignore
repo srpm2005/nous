@@ -40,7 +40,10 @@ uploads/
 uploads-dev/
 frontend/node_modules/
 frontend/dist/
-hs_err_pid*.log
-replay_pid*.log
 *STUDY_GUIDE*.md
+# Temporary & scratch files
+*.txt
+*.log
+
+
 

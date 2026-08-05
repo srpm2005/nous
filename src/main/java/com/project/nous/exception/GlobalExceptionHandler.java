@@ -37,6 +37,11 @@ public class GlobalExceptionHandler {
         return problem(HttpStatus.NOT_FOUND, "resume-not-found", ex.getMessage());
     }
 
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    ProblemDetail handleNoResourceFound(org.springframework.web.servlet.resource.NoResourceFoundException ex) {
+        return problem(HttpStatus.NOT_FOUND, "resource-not-found", ex.getMessage());
+    }
+
     /**
      * Spring's own multipart size guard fires before our service layer — catch it here
      * so the client gets a readable 400 instead of a raw 500.
