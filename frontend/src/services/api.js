@@ -97,3 +97,36 @@ export async function getScanStatus(scanId) {
   return handleResponse(response);
 }
 
+/**
+ * Fetch AI suggested roles for a scan execution ID (Phase 3 AI Intelligence)
+ * @param {string} scanId - Scan UUID
+ * @returns {Promise<Array>} List of RoleSuggestionDto
+ */
+export async function getSuggestedRoles(scanId) {
+  const response = await fetch(`/api/scans/${scanId}/roles`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+
+  return handleResponse(response);
+}
+
+/**
+ * Fetch AI suggested roles for the latest scan of a resume ID (Phase 3 AI Intelligence)
+ * @param {string} resumeId - Resume UUID
+ * @returns {Promise<Array>} List of RoleSuggestionDto
+ */
+export async function getSuggestedRolesByResumeId(resumeId) {
+  const response = await fetch(`/api/scans/resume/${resumeId}/roles`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+
+  return handleResponse(response);
+}
+
+

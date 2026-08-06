@@ -3,8 +3,12 @@ package com.project.nous.service;
 import com.project.nous.domain.Resume;
 import com.project.nous.domain.Scan;
 import com.project.nous.domain.ScanStatus;
-import com.project.nous.exception.ResumeNotFoundException;
+import com.project.nous.domain.SuggestedRole;
+import com.project.nous.dto.LlmResponseDto;
+import com.project.nous.dto.RoleSuggestionDto;
+import com.project.nous.repository.ResumeRepository;
 import com.project.nous.repository.ScanRepository;
+import com.project.nous.repository.SuggestedRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -12,15 +16,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 /**
- * Service managing asynchronous resume scan jobs and state machine transitions.
+ * Service managing asynchronous resume scan jobs, LLM role extraction, and state machine transitions.
  *
- * <p>Phase 2 State Machine Lifecycle:
+ * <p>Phase 2 & Phase 3 Lifecycle:
  * <pre>
- *   PENDING ➔ PROCESSING ➔ COMPLETE (or FAILED / PARTIAL)
+ *   PENDING ➔ PROCESSING ➔ Role Extraction ➔ COMPLETE (or FAILED / PARTIAL)
  * </pre>
  */
 @Slf4j
@@ -29,6 +34,9 @@ import java.util.UUID;
 public class ScanService {
 
     private final ScanRepository scanRepository;
+    private final ResumeRepository resumeRepository;
+    private final LlmRoleExtractionService llmRoleExtractionService;
+    private final SuggestedRoleRepository suggestedRoleRepository;
 
     /**
      * Synchronously initialize a Scan record with status PENDING.
@@ -63,6 +71,27 @@ public class ScanService {
     }
 
     /**
+     * Retrieve suggested roles for a scan ID.
+     */
+    @Transactional(readOnly = true)
+    public List<SuggestedRole> getSuggestedRolesByScanId(UUID scanId) {
+        return suggestedRoleRepository.findByScanIdOrderByRankOrderAsc(scanId);
+    }
+
+    /**
+     * Retrieve suggested roles for the latest scan of a given resume ID.
+     */
+    @Transactional(readOnly = true)
+    public List<SuggestedRole> getSuggestedRolesByResumeId(UUID resumeId) {
+        List<Scan> scans = scanRepository.findByResumeId(resumeId);
+        if (scans.isEmpty()) {
+            return List.of();
+        }
+        Scan latestScan = scans.get(scans.size() - 1);
+        return suggestedRoleRepository.findByScanIdOrderByRankOrderAsc(latestScan.getId());
+    }
+
+    /**
      * Asynchronously process the scan pipeline in a background worker thread.
      */
     @Async("scanTaskExecutor")
@@ -80,8 +109,33 @@ public class ScanService {
             scanRepository.save(scan);
             log.info("Scan {} state updated to PROCESSING", scanId);
 
-            // Step 2: Simulate / Execute Async Work (Text validation, chunking, etc.)
-            Thread.sleep(1000);
+            // Step 2: Load Resume text and perform AI Role Extraction
+            Resume resume = resumeRepository.findById(scan.getResumeId()).orElse(null);
+            if (resume != null && resume.getExtractedText() != null && !resume.getExtractedText().isBlank()) {
+                LlmResponseDto llmResponse = llmRoleExtractionService.extractRoles(resume.getExtractedText());
+
+                if (llmResponse != null && llmResponse.getRoles() != null && !llmResponse.getRoles().isEmpty()) {
+                    suggestedRoleRepository.deleteByScanId(scanId);
+
+                    List<SuggestedRole> rolesToSave = new ArrayList<>();
+                    for (RoleSuggestionDto dto : llmResponse.getRoles()) {
+                        String skillsCsv = dto.getKeySkills() != null ? String.join(",", dto.getKeySkills()) : "";
+                        SuggestedRole role = SuggestedRole.builder()
+                                .scanId(scanId)
+                                .roleTitle(dto.getRoleTitle())
+                                .rankOrder(dto.getRank() != null ? dto.getRank() : 1)
+                                .confidenceScore(dto.getConfidenceScore() != null ? dto.getConfidenceScore() : 0.85)
+                                .matchReason(dto.getMatchReason())
+                                .keySkillsCsv(skillsCsv)
+                                .build();
+                        rolesToSave.add(role);
+                    }
+                    suggestedRoleRepository.saveAll(rolesToSave);
+                    log.info("Successfully extracted and saved {} AI suggested roles for scan {}", rolesToSave.size(), scanId);
+                }
+            } else {
+                log.warn("Resume text is empty or missing for scan {}. Skipping AI role extraction.", scanId);
+            }
 
             // Step 3: Transition status to COMPLETE
             scan.setStatus(ScanStatus.COMPLETE);
@@ -98,3 +152,4 @@ public class ScanService {
         }
     }
 }
+

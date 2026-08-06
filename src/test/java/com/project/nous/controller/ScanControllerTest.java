@@ -74,4 +74,30 @@ class ScanControllerTest {
                 .andExpect(jsonPath("$[0].resumeId").value(resumeId.toString()))
                 .andExpect(jsonPath("$[0].status").value("COMPLETE"));
     }
+
+    @Test
+    void testGetSuggestedRolesByScanId_Success() throws Exception {
+        UUID scanId = UUID.randomUUID();
+
+        com.project.nous.domain.SuggestedRole role = com.project.nous.domain.SuggestedRole.builder()
+                .id(UUID.randomUUID())
+                .scanId(scanId)
+                .roleTitle("Senior Java Developer")
+                .rankOrder(1)
+                .confidenceScore(0.95)
+                .matchReason("Extensive Spring Boot background")
+                .keySkillsCsv("Java,Spring Boot,PostgreSQL")
+                .build();
+
+        given(scanService.getSuggestedRolesByScanId(scanId)).willReturn(List.of(role));
+
+        mockMvc.perform(get("/api/scans/{scanId}/roles", scanId)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].roleTitle").value("Senior Java Developer"))
+                .andExpect(jsonPath("$[0].rank").value(1))
+                .andExpect(jsonPath("$[0].confidenceScore").value(0.95))
+                .andExpect(jsonPath("$[0].keySkills[0]").value("Java"));
+    }
 }
+

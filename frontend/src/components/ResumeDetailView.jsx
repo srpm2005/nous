@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { deleteResume } from '../services/api';
 import ScanStatusBadge from './ScanStatusBadge';
+import SuggestedRolesView from './SuggestedRolesView';
 
 export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast }) {
 
@@ -271,6 +272,10 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
           </div>
         </div>
       </div>
+
+      {/* Phase 3 AI Role Intelligence Section */}
+      <SuggestedRolesView scanId={resume.scanId} resumeId={resume.id} />
+
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (

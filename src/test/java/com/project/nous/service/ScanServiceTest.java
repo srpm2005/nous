@@ -3,10 +3,14 @@ package com.project.nous.service;
 import com.project.nous.domain.Resume;
 import com.project.nous.domain.Scan;
 import com.project.nous.domain.ScanStatus;
+import com.project.nous.domain.SuggestedRole;
+import com.project.nous.repository.ResumeRepository;
 import com.project.nous.repository.ScanRepository;
+import com.project.nous.repository.SuggestedRoleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +22,16 @@ import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ScanServiceTest {
 
     private InMemoryScanRepository scanRepository;
+    private ResumeRepository resumeRepository;
+    private LlmRoleExtractionService llmRoleExtractionService;
+    private SuggestedRoleRepository suggestedRoleRepository;
     private ScanService scanService;
 
     private UUID resumeId;
@@ -31,7 +41,11 @@ class ScanServiceTest {
     @BeforeEach
     void setUp() {
         scanRepository = new InMemoryScanRepository();
-        scanService = new ScanService(scanRepository);
+        resumeRepository = mock(ResumeRepository.class);
+        llmRoleExtractionService = mock(LlmRoleExtractionService.class);
+        suggestedRoleRepository = mock(SuggestedRoleRepository.class);
+
+        scanService = new ScanService(scanRepository, resumeRepository, llmRoleExtractionService, suggestedRoleRepository);
 
         resumeId = UUID.randomUUID();
         scanId = UUID.randomUUID();
