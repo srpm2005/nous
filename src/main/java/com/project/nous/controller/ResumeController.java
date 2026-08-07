@@ -84,7 +84,12 @@ public class ResumeController {
     public ResponseEntity<ResumeResponseDto> getById(@PathVariable UUID id) {
         log.info("GET /api/resumes/{}", id);
         Resume resume = resumeService.findById(id);
-        return ResponseEntity.ok(ResumeResponseDto.from(resume, textPreviewLength, false));
+        Scan latestScan = scanService.getScansByResumeId(id).stream()
+                .reduce((first, second) -> second)
+                .orElse(null);
+        UUID scanId = latestScan != null ? latestScan.getId() : null;
+        ScanStatus scanStatus = latestScan != null ? latestScan.getStatus() : null;
+        return ResponseEntity.ok(ResumeResponseDto.from(resume, textPreviewLength, false, scanId, scanStatus));
     }
 
     @GetMapping(value = "/{id}/text", produces = org.springframework.http.MediaType.TEXT_PLAIN_VALUE)

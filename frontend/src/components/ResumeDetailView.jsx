@@ -274,7 +274,7 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
       </div>
 
       {/* Phase 3 AI Role Intelligence Section */}
-      <SuggestedRolesView scanId={resume.scanId} resumeId={resume.id} />
+      <SuggestedRolesView scanId={resume.scanId} resumeId={resume.id} scanStatus={resume.scanStatus} />
 
 
       {/* Delete Confirmation Modal */}
