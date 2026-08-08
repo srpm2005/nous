@@ -2,6 +2,7 @@ package com.project.nous.controller;
 
 import com.project.nous.domain.Resume;
 import com.project.nous.domain.Scan;
+import com.project.nous.domain.ScanStatus;
 import com.project.nous.dto.ResumeResponseDto;
 import com.project.nous.service.ResumeService;
 import com.project.nous.service.ScanService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -84,9 +86,10 @@ public class ResumeController {
     public ResponseEntity<ResumeResponseDto> getById(@PathVariable UUID id) {
         log.info("GET /api/resumes/{}", id);
         Resume resume = resumeService.findById(id);
-        Scan latestScan = scanService.getScansByResumeId(id).stream()
-                .reduce((first, second) -> second)
-                .orElse(null);
+        List<Scan> scans = scanService.getScansByResumeId(id);
+        Scan latestScan = (scans != null && !scans.isEmpty())
+                ? scans.get(scans.size() - 1)
+                : null;
         UUID scanId = latestScan != null ? latestScan.getId() : null;
         ScanStatus scanStatus = latestScan != null ? latestScan.getStatus() : null;
         return ResponseEntity.ok(ResumeResponseDto.from(resume, textPreviewLength, false, scanId, scanStatus));

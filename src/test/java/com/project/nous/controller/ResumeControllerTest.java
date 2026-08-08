@@ -116,6 +116,7 @@ class ResumeControllerTest {
     void getById_existingId_returns200() throws Exception {
         Resume fakeResume = buildFakeResume("resume.pdf", "application/pdf", "Some content");
         given(resumeService.findById(fakeResume.getId())).willReturn(fakeResume);
+        given(scanService.getScansByResumeId(fakeResume.getId())).willReturn(java.util.Collections.emptyList());
 
         mockMvc.perform(get("/api/resumes/{id}", fakeResume.getId()))
                 .andExpect(status().isOk())

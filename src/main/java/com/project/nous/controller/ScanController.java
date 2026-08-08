@@ -1,7 +1,9 @@
 package com.project.nous.controller;
 
+import com.project.nous.domain.JobListing;
 import com.project.nous.domain.Scan;
 import com.project.nous.domain.SuggestedRole;
+import com.project.nous.dto.JobListingDto;
 import com.project.nous.dto.RoleSuggestionDto;
 import com.project.nous.dto.ScanResponseDto;
 import com.project.nous.service.ScanService;
@@ -16,7 +18,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * REST controller for checking scan status and fetching AI role intelligence in Phase 2 & 3.
+ * REST controller for checking scan status, AI role intelligence, and Phase 4 job listings.
  */
 @Slf4j
 @RestController
@@ -80,6 +82,34 @@ public class ScanController {
         return ResponseEntity.ok(dtos);
     }
 
+    /**
+     * Phase 4: Fetch live job search listings for a specific scan UUID.
+     * GET /api/scans/{scanId}/jobs
+     */
+    @GetMapping("/{scanId}/jobs")
+    public ResponseEntity<List<JobListingDto>> getJobListingsByScanId(@PathVariable UUID scanId) {
+        log.info("GET /api/scans/{}/jobs", scanId);
+        List<JobListing> jobs = scanService.getJobListingsByScanId(scanId);
+        List<JobListingDto> dtos = jobs.stream()
+                .map(this::mapToJobListingDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
+    /**
+     * Phase 4: Fetch live job search listings for the latest scan of a resume UUID.
+     * GET /api/scans/resume/{resumeId}/jobs
+     */
+    @GetMapping("/resume/{resumeId}/jobs")
+    public ResponseEntity<List<JobListingDto>> getJobListingsByResumeId(@PathVariable UUID resumeId) {
+        log.info("GET /api/scans/resume/{}/jobs", resumeId);
+        List<JobListing> jobs = scanService.getJobListingsByResumeId(resumeId);
+        List<JobListingDto> dtos = jobs.stream()
+                .map(this::mapToJobListingDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
     private RoleSuggestionDto mapToRoleDto(SuggestedRole role) {
         List<String> skills = (role.getKeySkillsCsv() != null && !role.getKeySkillsCsv().isBlank())
                 ? Arrays.stream(role.getKeySkillsCsv().split(","))
@@ -94,6 +124,20 @@ public class ScanController {
                 .confidenceScore(role.getConfidenceScore())
                 .matchReason(role.getMatchReason())
                 .keySkills(skills)
+                .build();
+    }
+
+    private JobListingDto mapToJobListingDto(JobListing job) {
+        return JobListingDto.builder()
+                .id(job.getId())
+                .scanId(job.getScanId())
+                .roleId(job.getRoleId())
+                .title(job.getTitle())
+                .company(job.getCompany())
+                .location(job.getLocation())
+                .salaryRange(job.getSalaryRange())
+                .applyUrl(job.getApplyUrl())
+                .sourceApi(job.getSourceApi())
                 .build();
     }
 }

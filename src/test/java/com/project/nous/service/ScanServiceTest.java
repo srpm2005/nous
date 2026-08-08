@@ -26,12 +26,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.project.nous.repository.JobListingRepository;
+
 class ScanServiceTest {
 
     private InMemoryScanRepository scanRepository;
     private ResumeRepository resumeRepository;
     private LlmRoleExtractionService llmRoleExtractionService;
     private SuggestedRoleRepository suggestedRoleRepository;
+    private JobSearchClient jobSearchClient;
+    private JobListingRepository jobListingRepository;
     private ScanService scanService;
 
     private UUID resumeId;
@@ -44,8 +48,17 @@ class ScanServiceTest {
         resumeRepository = mock(ResumeRepository.class);
         llmRoleExtractionService = mock(LlmRoleExtractionService.class);
         suggestedRoleRepository = mock(SuggestedRoleRepository.class);
+        jobSearchClient = mock(JobSearchClient.class);
+        jobListingRepository = mock(JobListingRepository.class);
 
-        scanService = new ScanService(scanRepository, resumeRepository, llmRoleExtractionService, suggestedRoleRepository);
+        scanService = new ScanService(
+                scanRepository,
+                resumeRepository,
+                llmRoleExtractionService,
+                suggestedRoleRepository,
+                jobSearchClient,
+                jobListingRepository
+        );
 
         resumeId = UUID.randomUUID();
         scanId = UUID.randomUUID();

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { deleteResume } from '../services/api';
 import ScanStatusBadge from './ScanStatusBadge';
 import SuggestedRolesView from './SuggestedRolesView';
+import JobListingsView from './JobListingsView';
 
 export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast }) {
 
@@ -275,6 +276,9 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
 
       {/* Phase 3 AI Role Intelligence Section */}
       <SuggestedRolesView scanId={resume.scanId} resumeId={resume.id} scanStatus={resume.scanStatus} />
+
+      {/* Phase 4 Live Job Search Dashboard Section */}
+      <JobListingsView scanId={resume.scanId} resumeId={resume.id} scanStatus={resume.scanStatus} />
 
 
       {/* Delete Confirmation Modal */}

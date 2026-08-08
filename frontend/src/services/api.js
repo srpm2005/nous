@@ -129,4 +129,37 @@ export async function getSuggestedRolesByResumeId(resumeId) {
   return handleResponse(response);
 }
 
+/**
+ * Fetch live job search listings for a scan execution ID (Phase 4 Job Integration)
+ * @param {string} scanId - Scan UUID
+ * @returns {Promise<Array>} List of JobListingDto
+ */
+export async function getJobListings(scanId) {
+  const response = await fetch(`/api/scans/${scanId}/jobs`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+
+  return handleResponse(response);
+}
+
+/**
+ * Fetch live job search listings for the latest scan of a resume ID (Phase 4 Job Integration)
+ * @param {string} resumeId - Resume UUID
+ * @returns {Promise<Array>} List of JobListingDto
+ */
+export async function getJobListingsByResumeId(resumeId) {
+  const response = await fetch(`/api/scans/resume/${resumeId}/jobs`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+
+  return handleResponse(response);
+}
+
+
 

@@ -77,7 +77,7 @@ export default function PipelineProgressView({ scanId, onComplete }) {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span style={{ fontSize: '13px', fontWeight: 600, color: currentStatus === 'PROCESSING' ? 'var(--color-primary)' : 'var(--color-text)' }}>
-              Step 2: Background Task Worker Execution
+              Step 2: Text Extraction & Background Worker
             </span>
             <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
               {currentStatus === 'PENDING' && 'Queued in ThreadPoolTaskExecutor (scanTaskExecutor)...'}
@@ -88,7 +88,41 @@ export default function PipelineProgressView({ scanId, onComplete }) {
           </div>
         </div>
 
-        {/* Step 3: Terminal State & Persistence */}
+        {/* Step 3: AI Target Role Intelligence */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            width: '24px', height: '24px', borderRadius: '50%',
+            background: (currentStatus === 'COMPLETE' || currentStatus === 'PARTIAL') 
+              ? 'var(--status-emerald-bg)' 
+              : currentStatus === 'PROCESSING' 
+                ? 'var(--status-purple-bg)' 
+                : 'var(--color-background-subtle)',
+            color: (currentStatus === 'COMPLETE' || currentStatus === 'PARTIAL') 
+              ? 'var(--status-emerald-text)' 
+              : currentStatus === 'PROCESSING' 
+                ? 'var(--status-purple-text)' 
+                : 'var(--color-text-muted)',
+            border: `1px solid ${(currentStatus === 'COMPLETE' || currentStatus === 'PARTIAL') 
+              ? 'var(--status-emerald-border)' 
+              : currentStatus === 'PROCESSING' 
+                ? 'var(--status-purple-border)' 
+                : 'var(--color-border)'}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '12px', fontWeight: 700
+          }}>
+            {(currentStatus === 'COMPLETE' || currentStatus === 'PARTIAL') ? '✓' : '3'}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text)' }}>
+              Step 3: AI Target Role Intelligence (LLM)
+            </span>
+            <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
+              Inferring candidate target roles & key skills via LLM schema model
+            </span>
+          </div>
+        </div>
+
+        {/* Step 4: Phase 4 Live Job Search Engine */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{
             width: '24px', height: '24px', borderRadius: '50%',
@@ -110,16 +144,16 @@ export default function PipelineProgressView({ scanId, onComplete }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '12px', fontWeight: 700
           }}>
-            {currentStatus === 'COMPLETE' ? '✓' : currentStatus === 'FAILED' ? '✕' : '3'}
+            {currentStatus === 'COMPLETE' ? '✓' : currentStatus === 'FAILED' ? '✕' : '4'}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span style={{ fontSize: '13px', fontWeight: 600, color: currentStatus === 'COMPLETE' ? 'var(--color-text)' : 'var(--color-text-muted)' }}>
-              Step 3: Database State Terminal & Polling Stop
+              Step 4: External Job Search Engine (Phase 4)
             </span>
             <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
-              {currentStatus === 'COMPLETE' && 'Scan marked COMPLETE in PostgreSQL scans table.'}
-              {currentStatus === 'FAILED' && 'Scan marked FAILED in PostgreSQL scans table.'}
-              {(currentStatus === 'PENDING' || currentStatus === 'PROCESSING') && 'Awaiting completion...'}
+              {currentStatus === 'COMPLETE' && 'Live job listings fetched and persisted to PostgreSQL.'}
+              {currentStatus === 'FAILED' && 'Pipeline failed during job search execution.'}
+              {(currentStatus === 'PENDING' || currentStatus === 'PROCESSING') && 'Querying job APIs (Adzuna/Job Engine)...'}
             </span>
           </div>
         </div>

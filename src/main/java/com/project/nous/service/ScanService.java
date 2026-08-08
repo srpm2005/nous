@@ -1,11 +1,14 @@
 package com.project.nous.service;
 
+import com.project.nous.domain.JobListing;
 import com.project.nous.domain.Resume;
 import com.project.nous.domain.Scan;
 import com.project.nous.domain.ScanStatus;
 import com.project.nous.domain.SuggestedRole;
+import com.project.nous.dto.JobListingDto;
 import com.project.nous.dto.LlmResponseDto;
 import com.project.nous.dto.RoleSuggestionDto;
+import com.project.nous.repository.JobListingRepository;
 import com.project.nous.repository.ResumeRepository;
 import com.project.nous.repository.ScanRepository;
 import com.project.nous.repository.SuggestedRoleRepository;
@@ -21,11 +24,11 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Service managing asynchronous resume scan jobs, LLM role extraction, and state machine transitions.
+ * Service managing asynchronous resume scan jobs, LLM role extraction, job search client integration, and state machine transitions.
  *
- * <p>Phase 2 & Phase 3 Lifecycle:
+ * <p>Phase 2, Phase 3 & Phase 4 Lifecycle:
  * <pre>
- *   PENDING ➔ PROCESSING ➔ Role Extraction ➔ COMPLETE (or FAILED / PARTIAL)
+ *   PENDING ➔ PROCESSING ➔ Role Extraction ➔ Job Search Engine ➔ COMPLETE (or FAILED / PARTIAL)
  * </pre>
  */
 @Slf4j
@@ -37,6 +40,8 @@ public class ScanService {
     private final ResumeRepository resumeRepository;
     private final LlmRoleExtractionService llmRoleExtractionService;
     private final SuggestedRoleRepository suggestedRoleRepository;
+    private final JobSearchClient jobSearchClient;
+    private final JobListingRepository jobListingRepository;
 
     /**
      * Synchronously initialize a Scan record with status PENDING.
@@ -92,6 +97,27 @@ public class ScanService {
     }
 
     /**
+     * Phase 4: Retrieve fetched job listings for a scan ID.
+     */
+    @Transactional(readOnly = true)
+    public List<JobListing> getJobListingsByScanId(UUID scanId) {
+        return jobListingRepository.findByScanId(scanId);
+    }
+
+    /**
+     * Phase 4: Retrieve fetched job listings for the latest scan of a given resume ID.
+     */
+    @Transactional(readOnly = true)
+    public List<JobListing> getJobListingsByResumeId(UUID resumeId) {
+        List<Scan> scans = scanRepository.findByResumeId(resumeId);
+        if (scans.isEmpty()) {
+            return List.of();
+        }
+        Scan latestScan = scans.get(scans.size() - 1);
+        return jobListingRepository.findByScanId(latestScan.getId());
+    }
+
+    /**
      * Asynchronously process the scan pipeline in a background worker thread.
      */
     @Async("scanTaskExecutor")
@@ -108,6 +134,8 @@ public class ScanService {
             scan.setStatus(ScanStatus.PROCESSING);
             scanRepository.save(scan);
             log.info("Scan {} state updated to PROCESSING", scanId);
+
+            List<SuggestedRole> savedRoles = new ArrayList<>();
 
             // Step 2: Load Resume text and perform AI Role Extraction
             Resume resume = resumeRepository.findById(scan.getResumeId()).orElse(null);
@@ -130,14 +158,48 @@ public class ScanService {
                                 .build();
                         rolesToSave.add(role);
                     }
-                    suggestedRoleRepository.saveAll(rolesToSave);
-                    log.info("Successfully extracted and saved {} AI suggested roles for scan {}", rolesToSave.size(), scanId);
+                    savedRoles = suggestedRoleRepository.saveAll(rolesToSave);
+                    log.info("Successfully extracted and saved {} AI suggested roles for scan {}", savedRoles.size(), scanId);
                 }
             } else {
                 log.warn("Resume text is empty or missing for scan {}. Skipping AI role extraction.", scanId);
             }
 
-            // Step 3: Transition status to COMPLETE
+            // Step 3: Phase 4 — External Job Search Integration per target role
+            if (!savedRoles.isEmpty()) {
+                jobListingRepository.deleteByScanId(scanId);
+                List<JobListing> allJobListingEntities = new ArrayList<>();
+
+                for (SuggestedRole role : savedRoles) {
+                    List<JobListingDto> fetchedListings = jobSearchClient.searchJobs(role.getRoleTitle(), "Remote");
+                    if (fetchedListings != null && !fetchedListings.isEmpty()) {
+                        for (JobListingDto dto : fetchedListings) {
+                            JobListing entity = JobListing.builder()
+                                    .scanId(scanId)
+                                    .roleId(role.getId())
+                                    .title(dto.getTitle())
+                                    .company(dto.getCompany())
+                                    .location(dto.getLocation())
+                                    .salaryRange(dto.getSalaryRange())
+                                    .applyUrl(dto.getApplyUrl())
+                                    .sourceApi(dto.getSourceApi() != null ? dto.getSourceApi() : jobSearchClient.getProviderName())
+                                    .build();
+                            allJobListingEntities.add(entity);
+                        }
+                    }
+                }
+
+                if (!allJobListingEntities.isEmpty()) {
+                    jobListingRepository.saveAll(allJobListingEntities);
+                    log.info("Phase 4: Successfully saved {} live job listings across {} roles for scan {}",
+                            allJobListingEntities.size(), savedRoles.size(), scanId);
+                } else {
+                    log.warn("Phase 4: No live job listings returned from provider '{}' for scan {}",
+                            jobSearchClient.getProviderName(), scanId);
+                }
+            }
+
+            // Step 4: Transition status to COMPLETE
             scan.setStatus(ScanStatus.COMPLETE);
             scan.setCompletedAt(Instant.now());
             scanRepository.save(scan);
