@@ -1,7 +1,8 @@
 import React from 'react';
 
 /**
- * Interactive filter controls header for searching live job listings by keyword, location, and role.
+ * Filter controls component for searching live job listings by keyword, location, and role.
+ * Formatted with Asana clean light theme design system tokens.
  */
 export function JobFilterControls({
   searchQuery,
@@ -17,8 +18,8 @@ export function JobFilterControls({
   return (
     <div
       style={{
-        background: 'rgba(15, 23, 42, 0.6)',
-        border: '1px solid rgba(51, 65, 85, 0.6)',
+        background: 'var(--color-background-subtle)',
+        border: '1px solid var(--color-border)',
         borderRadius: 'var(--radius-md)',
         padding: '16px',
         marginBottom: '20px',
@@ -37,10 +38,10 @@ export function JobFilterControls({
             onChange={(e) => onSearchChange(e.target.value)}
             style={{
               width: '100%',
-              background: '#0f172a',
-              border: '1px solid #334155',
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
               borderRadius: 'var(--radius-sm)',
-              color: '#f8fafc',
+              color: 'var(--color-text)',
               padding: '8px 12px',
               fontSize: '13px',
               outline: 'none'
@@ -57,10 +58,10 @@ export function JobFilterControls({
             onChange={(e) => onLocationChange(e.target.value)}
             style={{
               width: '100%',
-              background: '#0f172a',
-              border: '1px solid #334155',
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
               borderRadius: 'var(--radius-sm)',
-              color: '#f8fafc',
+              color: 'var(--color-text)',
               padding: '8px 12px',
               fontSize: '13px',
               outline: 'none'
@@ -76,10 +77,10 @@ export function JobFilterControls({
               onChange={(e) => onRoleSelect(e.target.value)}
               style={{
                 width: '100%',
-                background: '#0f172a',
-                border: '1px solid #334155',
+                background: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
                 borderRadius: 'var(--radius-sm)',
-                color: '#f8fafc',
+                color: 'var(--color-text)',
                 padding: '8px 12px',
                 fontSize: '13px',
                 outline: 'none',
@@ -98,9 +99,9 @@ export function JobFilterControls({
       </div>
 
       {/* Matching Count Summary */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: '#94a3b8' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: 'var(--color-text-muted)' }}>
         <span>
-          Showing <strong>{filteredCount}</strong> of <strong>{totalCount}</strong> verified job matches
+          Showing <strong style={{ color: 'var(--color-text)' }}>{filteredCount}</strong> of <strong>{totalCount}</strong> verified job matches
         </span>
         {(searchQuery || locationQuery || selectedRoleId !== 'ALL') && (
           <button
@@ -112,7 +113,8 @@ export function JobFilterControls({
             style={{
               background: 'none',
               border: 'none',
-              color: '#6366f1',
+              color: 'var(--color-text)',
+              fontWeight: 600,
               fontSize: '12px',
               cursor: 'pointer',
               textDecoration: 'underline'

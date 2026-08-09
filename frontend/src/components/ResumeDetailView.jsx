@@ -5,7 +5,7 @@ import SuggestedRolesView from './SuggestedRolesView';
 import JobListingsView from './JobListingsView';
 
 export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast }) {
-
+  const [activeTab, setActiveTab] = useState('matches'); // 'matches' | 'text' | 'tech'
   const [searchTerm, setSearchTerm] = useState('');
   const [showFullText, setShowFullText] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -14,33 +14,37 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
   if (!resume) {
     return (
       <div className="asana-card" style={{
-        padding: '48px 24px',
+        padding: '56px 24px',
         textAlign: 'center',
-        color: 'var(--color-text-muted)'
+        color: 'var(--color-text-muted)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '380px'
       }}>
         <div style={{
-          width: '52px',
-          height: '52px',
+          width: '64px',
+          height: '64px',
           borderRadius: '50%',
-          background: 'var(--color-background-subtle)',
+          background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           margin: '0 auto 16px auto',
-          border: '1px solid var(--color-border)',
-          color: 'var(--color-primary)'
+          border: '1px solid #bfdbfe',
+          color: '#2563eb'
         }}>
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
             <polyline points="14 2 14 8 20 8"/>
             <line x1="16" y1="13" x2="8" y2="13"/>
             <line x1="16" y1="17" x2="8" y2="17"/>
-            <polyline points="10 9 9 9 8 9"/>
           </svg>
         </div>
-        <h4 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--color-text)', margin: '0 0 6px 0' }}>No Active Resume Selected</h4>
-        <p style={{ fontSize: '14px', margin: 0 }}>
-          Upload a new resume or select an existing scan from history to inspect extracted text and metadata.
+        <h4 style={{ fontSize: '19px', fontWeight: 600, color: 'var(--color-text)', margin: '0 0 8px 0' }}>No Active Resume Selected</h4>
+        <p style={{ fontSize: '14px', maxWidth: '420px', margin: 0, lineHeight: 1.5 }}>
+          Upload a PDF or Word resume on the left, or select an existing resume from your recent list to view AI target job matches and live openings.
         </p>
       </div>
     );
@@ -87,42 +91,33 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
     : 'Just now';
 
   return (
-    <div className="asana-card animate-fade-in" style={{ padding: '28px', position: 'relative' }}>
-      {/* Header & Controls */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', marginBottom: '20px' }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-            <h3 className="asana-heading" style={{ fontSize: '20px', fontWeight: 600, margin: 0 }}>
-              {resume.originalFilename || 'Uploaded Resume'}
+    <div className="asana-card animate-fade-in" style={{ padding: '24px', position: 'relative' }}>
+      {/* Header Bar */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <h3 className="asana-heading" style={{ fontSize: '20px', fontWeight: 700, margin: 0, color: 'var(--color-text)' }}>
+              📄 {resume.originalFilename || 'Uploaded Resume'}
             </h3>
 
-            {resume.isDuplicate ? (
-              <span className="badge badge-emerald" title="Deduplicated by SHA-256 hash matching">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M20 6L9 17l-5-5"/>
-                </svg>
-                Duplicate Matched (200 OK)
-              </span>
-            ) : (
-              <span className="badge badge-neutral">
-                Fresh Async Ingestion (202 Accepted)
+            {resume.isDuplicate && (
+              <span className="badge badge-emerald" title="SHA-256 hash deduplication match">
+                ⚡ Instant Dedup Match
               </span>
             )}
 
-            {/* Phase 2 Pipeline Status */}
             <ScanStatusBadge status={resume.scanStatus || 'COMPLETE'} />
           </div>
 
-
-          <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', margin: 0 }}>
-            Uploaded: {formattedDate} • User: <code style={{ color: 'var(--color-accent)', fontWeight: 600 }}>{resume.userId || 'anonymous'}</code>
+          <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', margin: '4px 0 0 0' }}>
+            Uploaded: {formattedDate} • Owner: <strong style={{ color: 'var(--color-text)' }}>{resume.userId || 'anonymous'}</strong>
           </p>
         </div>
 
         <button
           className="btn btn-danger"
           onClick={() => setShowDeleteConfirm(true)}
-          style={{ fontSize: '13px', padding: '6px 14px' }}
+          style={{ fontSize: '13px', padding: '6px 14px', borderRadius: 'var(--radius-md)' }}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="3 6 5 6 21 6"/>
@@ -132,154 +127,236 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
         </button>
       </div>
 
-      {/* Extracted Text Inspector */}
+      {/* Modern Navigation Tabs */}
       <div style={{
-        background: '#0f172a',
-        border: '1px solid #334155',
+        display: 'flex',
+        gap: '4px',
+        background: 'var(--color-background-subtle)',
+        padding: '4px',
         borderRadius: 'var(--radius-md)',
-        padding: '18px',
-        color: '#f8fafc',
+        border: '1px solid var(--color-border)',
         marginBottom: '20px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '14px', flexWrap: 'wrap' }}>
-          <h4 style={{ fontSize: '14px', fontWeight: 600, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: '#f8fafc' }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2">
-              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-              <polyline points="14 2 14 8 20 8"/>
-            </svg>
-            Extracted Text Content
-          </h4>
+        <button
+          onClick={() => setActiveTab('matches')}
+          style={{
+            flex: 1,
+            padding: '8px 16px',
+            borderRadius: 'var(--radius-sm)',
+            border: 'none',
+            background: activeTab === 'matches' ? 'var(--color-surface)' : 'transparent',
+            color: activeTab === 'matches' ? 'var(--color-text)' : 'var(--color-text-muted)',
+            fontWeight: activeTab === 'matches' ? 600 : 400,
+            fontSize: '13px',
+            cursor: 'pointer',
+            boxShadow: activeTab === 'matches' ? 'var(--shadow-card)' : 'none',
+            transition: 'all var(--motion-fast)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
+          }}
+        >
+          🎯 Target Jobs & AI Matches
+        </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <input
-              type="text"
-              placeholder="Search extracted text..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                background: '#1e293b',
-                border: '1px solid #475569',
-                borderRadius: 'var(--radius-sm)',
-                color: '#f8fafc',
-                padding: '4px 10px',
-                fontSize: '12px',
-                width: '180px'
-              }}
-            />
+        <button
+          onClick={() => setActiveTab('text')}
+          style={{
+            flex: 1,
+            padding: '8px 16px',
+            borderRadius: 'var(--radius-sm)',
+            border: 'none',
+            background: activeTab === 'text' ? 'var(--color-surface)' : 'transparent',
+            color: activeTab === 'text' ? 'var(--color-text)' : 'var(--color-text-muted)',
+            fontWeight: activeTab === 'text' ? 600 : 400,
+            fontSize: '13px',
+            cursor: 'pointer',
+            boxShadow: activeTab === 'text' ? 'var(--shadow-card)' : 'none',
+            transition: 'all var(--motion-fast)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
+          }}
+        >
+          📝 Extracted Text Preview
+        </button>
 
-            <button className="btn btn-secondary" onClick={handleCopyText} style={{ fontSize: '12px', padding: '4px 10px', background: '#334155', borderColor: '#475569', color: '#ffffff' }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-              </svg>
-              Copy Text
-            </button>
-          </div>
-        </div>
-
-        <div style={{
-          maxHeight: showFullText ? '500px' : '220px',
-          overflowY: 'auto',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '13px',
-          lineHeight: '1.6',
-          color: '#cbd5e1',
-          background: '#020617',
-          padding: '14px',
-          borderRadius: 'var(--radius-sm)',
-          border: '1px solid #1e293b',
-          whiteSpace: 'pre-wrap',
-          wordBreak: 'break-word',
-          transition: 'max-height var(--motion-base)'
-        }}>
-          {renderHighlightedText()}
-        </div>
-
-        {textToDisplay.length > 300 && (
-          <div style={{ textAlign: 'center', marginTop: '10px' }}>
-            <button
-              onClick={() => setShowFullText(!showFullText)}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#94a3b8',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
-            >
-              {showFullText ? 'Collapse Text View ▲' : 'Expand Full Text View ▼'}
-            </button>
-          </div>
-        )}
+        <button
+          onClick={() => setActiveTab('tech')}
+          style={{
+            padding: '8px 16px',
+            borderRadius: 'var(--radius-sm)',
+            border: 'none',
+            background: activeTab === 'tech' ? 'var(--color-surface)' : 'transparent',
+            color: activeTab === 'tech' ? 'var(--color-text)' : 'var(--color-text-muted)',
+            fontWeight: activeTab === 'tech' ? 600 : 400,
+            fontSize: '13px',
+            cursor: 'pointer',
+            boxShadow: activeTab === 'tech' ? 'var(--shadow-card)' : 'none',
+            transition: 'all var(--motion-fast)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
+          }}
+        >
+          ⚙️ Technical Specs
+        </button>
       </div>
 
-      {/* Deduplication Notice Banner */}
-      {resume.isDuplicate && (
-        <div style={{
-          padding: '12px 16px',
-          borderRadius: 'var(--radius-md)',
-          background: 'var(--status-emerald-bg)',
-          border: '1px solid var(--status-emerald-border)',
-          color: 'var(--status-emerald-text)',
-          fontSize: '13px',
-          marginBottom: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px'
-        }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-          </svg>
-          <span>
-            <strong>Content Deduplication Triggered:</strong> This exact resume file content (SHA-256 hash) was already parsed previously. Returned existing record instantly without redundant extraction.
-          </span>
+      {/* TAB 1: TARGET JOBS & AI MATCHES */}
+      {activeTab === 'matches' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <SuggestedRolesView scanId={resume.scanId} resumeId={resume.id} scanStatus={resume.scanStatus} />
+          <JobListingsView scanId={resume.scanId} resumeId={resume.id} scanStatus={resume.scanStatus} />
         </div>
       )}
 
-      {/* Metadata Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-        gap: '12px'
-      }}>
-        <div style={{ background: 'var(--color-background-subtle)', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-          <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Resume ID (UUID)</div>
+      {/* TAB 2: EXTRACTED TEXT PREVIEW */}
+      {activeTab === 'text' && (
+        <div style={{
+          background: '#0f172a',
+          border: '1px solid #334155',
+          borderRadius: 'var(--radius-md)',
+          padding: '20px',
+          color: '#f8fafc'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '14px', flexWrap: 'wrap' }}>
+            <h4 style={{ fontSize: '15px', fontWeight: 600, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: '#f8fafc' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2">
+                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              Parsed Resume Plaintext ({textToDisplay.length.toLocaleString()} chars)
+            </h4>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <input
+                type="text"
+                placeholder="Search text..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  background: '#1e293b',
+                  border: '1px solid #475569',
+                  borderRadius: 'var(--radius-sm)',
+                  color: '#f8fafc',
+                  padding: '5px 12px',
+                  fontSize: '13px',
+                  width: '200px'
+                }}
+              />
+
+              <button className="btn btn-secondary" onClick={handleCopyText} style={{ fontSize: '12px', padding: '5px 12px', background: '#334155', borderColor: '#475569', color: '#ffffff' }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+                Copy
+              </button>
+            </div>
+          </div>
+
           <div style={{
-            fontSize: '13px',
+            maxHeight: showFullText ? '600px' : '320px',
+            overflowY: 'auto',
             fontFamily: 'var(--font-mono)',
-            color: 'var(--color-text)',
-            marginTop: '4px',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
-          }} title={resume.id}>
-            {resume.id}
+            fontSize: '13px',
+            lineHeight: '1.6',
+            color: '#cbd5e1',
+            background: '#020617',
+            padding: '16px',
+            borderRadius: 'var(--radius-sm)',
+            border: '1px solid #1e293b',
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-word',
+            transition: 'max-height var(--motion-base)'
+          }}>
+            {renderHighlightedText()}
+          </div>
+
+          {textToDisplay.length > 300 && (
+            <div style={{ textAlign: 'center', marginTop: '12px' }}>
+              <button
+                onClick={() => setShowFullText(!showFullText)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#38bdf8',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+              >
+                {showFullText ? 'Collapse Text View ▲' : 'Expand Full Text View ▼'}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 3: TECHNICAL SPECS */}
+      {activeTab === 'tech' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {resume.isDuplicate && (
+            <div style={{
+              padding: '12px 16px',
+              borderRadius: 'var(--radius-md)',
+              background: 'var(--status-emerald-bg)',
+              border: '1px solid var(--status-emerald-border)',
+              color: 'var(--status-emerald-text)',
+              fontSize: '13px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px'
+            }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              <span>
+                <strong>Content Deduplication Triggered:</strong> SHA-256 content hash matched a prior upload. Returned existing record without redundant LLM pipeline execution.
+              </span>
+            </div>
+          )}
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '12px'
+          }}>
+            <div style={{ background: 'var(--color-background-subtle)', padding: '14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+              <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Resume Entity UUID</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', color: 'var(--color-text)', marginTop: '4px', wordBreak: 'break-all' }}>
+                {resume.id}
+              </div>
+            </div>
+
+            <div style={{ background: 'var(--color-background-subtle)', padding: '14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+              <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Scan Execution UUID</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', color: 'var(--color-text)', marginTop: '4px', wordBreak: 'break-all' }}>
+                {resume.scanId || 'N/A'}
+              </div>
+            </div>
+
+            <div style={{ background: 'var(--color-background-subtle)', padding: '14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+              <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Detected MIME Type</div>
+              <div style={{ fontSize: '14px', fontWeight: 600, marginTop: '4px', color: 'var(--color-text)' }}>
+                {resume.mimeType || 'application/pdf'}
+              </div>
+            </div>
+
+            <div style={{ background: 'var(--color-background-subtle)', padding: '14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+              <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Extracted Characters</div>
+              <div style={{ fontSize: '14px', fontWeight: 600, marginTop: '4px', color: 'var(--color-accent)' }}>
+                {resume.extractedCharCount ? resume.extractedCharCount.toLocaleString() : textToDisplay.length.toLocaleString()} chars
+              </div>
+            </div>
           </div>
         </div>
-
-        <div style={{ background: 'var(--color-background-subtle)', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-          <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Detected Format</div>
-          <div style={{ fontSize: '14px', fontWeight: 600, marginTop: '4px', color: 'var(--color-text)' }}>
-            {resume.mimeType || 'application/pdf'}
-          </div>
-        </div>
-
-        <div style={{ background: 'var(--color-background-subtle)', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-          <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Extracted Chars</div>
-          <div style={{ fontSize: '14px', fontWeight: 600, marginTop: '4px', color: 'var(--color-accent)' }}>
-            {resume.extractedCharCount ? resume.extractedCharCount.toLocaleString() : textToDisplay.length.toLocaleString()} chars
-          </div>
-        </div>
-      </div>
-
-      {/* Phase 3 AI Role Intelligence Section */}
-      <SuggestedRolesView scanId={resume.scanId} resumeId={resume.id} scanStatus={resume.scanStatus} />
-
-      {/* Phase 4 Live Job Search Dashboard Section */}
-      <JobListingsView scanId={resume.scanId} resumeId={resume.id} scanStatus={resume.scanStatus} />
-
+      )}
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
@@ -298,7 +375,7 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
               Delete Resume Permanently?
             </h4>
             <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', marginBottom: '20px' }}>
-              This will remove the file from physical disk and erase the DB record for resume ID <code>{resume.id}</code> (GDPR right to erasure compliance).
+              This will remove the file from physical disk and erase the DB record and scan history for resume ID <code>{resume.id}</code> (GDPR right to erasure compliance).
             </p>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
               <button className="btn btn-secondary" onClick={() => setShowDeleteConfirm(false)} disabled={isDeleting}>

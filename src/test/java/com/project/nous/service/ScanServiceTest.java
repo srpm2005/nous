@@ -121,6 +121,22 @@ class ScanServiceTest {
         assertThat(processed.getCompletedAt()).isNotNull();
     }
 
+    @Test
+    @DisplayName("Phase 5: Should fetch scans by userId")
+    void testGetScansByUserId() {
+        List<Scan> scans = scanService.getScansByUserId("test-user");
+        assertThat(scans).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Phase 5: Should cascade delete scans and associated data by resumeId")
+    void testDeleteScansAndDataByResumeId() {
+        scanService.deleteScansAndDataByResumeId(resumeId);
+
+        List<Scan> remaining = scanRepository.findByResumeId(resumeId);
+        assertThat(remaining).isEmpty();
+    }
+
     // ─── In-Memory Stub for ScanRepository ────────────────────────────────────
 
     private static class InMemoryScanRepository implements ScanRepository {
@@ -154,6 +170,16 @@ class ScanServiceTest {
                     .toList();
         }
 
+        @Override
+        public List<Scan> findByUserId(String userId) {
+            return new ArrayList<>(db.values());
+        }
+
+        @Override
+        public void deleteByResumeId(UUID resumeId) {
+            db.values().removeIf(s -> resumeId.equals(s.getResumeId()));
+        }
+
         // Unused Spring Data JPA methods
         @Override public List<Scan> findAll() { return new ArrayList<>(db.values()); }
         @Override public List<Scan> findAllById(Iterable<UUID> ids) { return List.of(); }
@@ -185,3 +211,5 @@ class ScanServiceTest {
         @Override public Page<Scan> findAll(Pageable pageable) { return Page.empty(); }
     }
 }
+
+

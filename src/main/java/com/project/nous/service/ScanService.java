@@ -76,6 +76,32 @@ public class ScanService {
     }
 
     /**
+     * Phase 5: Fetch all scans submitted by a specific user (across all resumes).
+     */
+    @Transactional(readOnly = true)
+    public List<Scan> getScansByUserId(String userId) {
+        if (userId == null || userId.isBlank()) {
+            return List.of();
+        }
+        return scanRepository.findByUserId(userId);
+    }
+
+    /**
+     * Phase 5: Cascade deletion of all scans, roles, and job listings associated with a resume.
+     */
+    @Transactional
+    public void deleteScansAndDataByResumeId(UUID resumeId) {
+        List<Scan> scans = scanRepository.findByResumeId(resumeId);
+        for (Scan scan : scans) {
+            jobListingRepository.deleteByScanId(scan.getId());
+            suggestedRoleRepository.deleteByScanId(scan.getId());
+        }
+        scanRepository.deleteByResumeId(resumeId);
+        log.info("Phase 5: Cleaned up {} scans and associated roles/jobs for deleted resumeId={}", scans.size(), resumeId);
+    }
+
+
+    /**
      * Retrieve suggested roles for a scan ID.
      */
     @Transactional(readOnly = true)

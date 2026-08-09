@@ -41,7 +41,7 @@ export function SuggestedRolesView({ scanId, resumeId, scanStatus }) {
         }
       } catch (err) {
         if (isMounted) {
-          logError('Failed fetching AI suggested roles', err);
+          console.error('Failed fetching AI suggested roles', err);
           setError(err.message || 'Could not load suggested roles.');
         }
       } finally {
@@ -54,10 +54,6 @@ export function SuggestedRolesView({ scanId, resumeId, scanStatus }) {
     fetchRoles();
     return () => { isMounted = false; };
   }, [scanId, resumeId, scanStatus]);
-
-  function logError(msg, err) {
-    console.error(msg, err);
-  }
 
   // Filter roles based on search query and minimum score
   const filteredRoles = roles.filter((r) => {
@@ -73,24 +69,37 @@ export function SuggestedRolesView({ scanId, resumeId, scanStatus }) {
 
   return (
     <div
-      className="card-glow animate-fade-in"
+      className="asana-card animate-fade-in"
       style={{
-        background: 'var(--color-bg-surface)',
-        borderRadius: 'var(--radius-lg)',
-        border: '1px solid var(--color-border)',
         padding: '24px',
-        marginTop: '16px'
+        marginTop: '20px',
+        background: 'var(--color-surface)',
+        borderColor: 'var(--color-border)',
+        borderRadius: 'var(--radius-md)'
       }}
     >
       {/* Header section */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '20px' }}>🤖</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            width: '38px',
+            height: '38px',
+            borderRadius: 'var(--radius-md)',
+            background: 'var(--status-purple-bg)',
+            color: 'var(--status-purple-text)',
+            border: '1px solid var(--status-purple-border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '20px'
+          }}>
+            🤖
+          </div>
           <div>
-            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff', margin: 0 }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--color-text)', margin: 0 }}>
               AI Role Intelligence & Recommendations
             </h2>
-            <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: 0, marginTop: '2px' }}>
+            <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', margin: 0, marginTop: '2px' }}>
               Phase 3 — Automated candidate target job matching powered by LLM text analysis
             </p>
           </div>
@@ -98,12 +107,13 @@ export function SuggestedRolesView({ scanId, resumeId, scanStatus }) {
 
         <span style={{
           fontSize: '11px',
-          padding: '4px 10px',
+          padding: '4px 12px',
           borderRadius: '9999px',
-          background: 'rgba(99, 102, 241, 0.15)',
-          color: 'var(--color-accent-light)',
-          border: '1px solid rgba(99, 102, 241, 0.3)',
-          fontWeight: 600
+          background: 'var(--status-purple-bg)',
+          color: 'var(--status-purple-text)',
+          border: '1px solid var(--status-purple-border)',
+          fontWeight: 600,
+          letterSpacing: '0.03em'
         }}>
           Phase 3 Active
         </span>
@@ -122,9 +132,9 @@ export function SuggestedRolesView({ scanId, resumeId, scanStatus }) {
         <div style={{
           padding: '16px',
           borderRadius: 'var(--radius-md)',
-          background: 'rgba(239, 68, 68, 0.1)',
-          border: '1px solid rgba(239, 68, 68, 0.3)',
-          color: '#f87171',
+          background: 'var(--status-rose-bg)',
+          border: '1px solid var(--status-rose-border)',
+          color: 'var(--status-rose-text)',
           fontSize: '13px'
         }}>
           ⚠️ {error}
@@ -138,9 +148,9 @@ export function SuggestedRolesView({ scanId, resumeId, scanStatus }) {
             <div style={{
               padding: '32px 16px',
               textAlign: 'center',
-              background: 'rgba(30, 41, 59, 0.3)',
+              background: 'var(--color-background-subtle)',
               borderRadius: 'var(--radius-md)',
-              border: '1px border-dashed var(--color-border)',
+              border: '1px dashed var(--color-border)',
               color: 'var(--color-text-muted)'
             }}>
               <p style={{ fontSize: '14px', margin: 0 }}>
@@ -164,7 +174,7 @@ export function SuggestedRolesView({ scanId, resumeId, scanStatus }) {
               {/* Roles grid */}
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
                 gap: '16px'
               }}>
                 {filteredRoles.map((role, idx) => (

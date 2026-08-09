@@ -26,15 +26,48 @@ export default function RecentUploadsList({ resumes = [], activeResumeId, onSele
   };
 
   return (
-    <div className="asana-card" style={{ padding: '24px' }}>
-      <h3 className="asana-heading" style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.2">
-          <circle cx="12" cy="12" r="10"/>
-          <polyline points="12 6 12 12 16 14"/>
-        </svg>
-        Recent Resumes
-      </h3>
+    <div className="asana-card" style={{ padding: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+        <h3 className="asana-heading" style={{ fontSize: '16px', fontWeight: 600, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Recent Resumes ({resumes.length})
+        </h3>
+      </div>
 
+      {/* ID Lookup Form */}
+      <form onSubmit={handleLookup} style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+        <input
+          type="text"
+          placeholder="Lookup UUID..."
+          value={lookupId}
+          onChange={(e) => setLookupId(e.target.value)}
+          style={{
+            flex: 1,
+            padding: '6px 10px',
+            fontSize: '12px',
+            borderRadius: 'var(--radius-sm)',
+            border: '1px solid var(--color-border)',
+            fontFamily: 'var(--font-mono)'
+          }}
+        />
+        <button
+          type="submit"
+          className="btn btn-secondary"
+          disabled={isSearching || !lookupId.trim()}
+          style={{ padding: '6px 12px', fontSize: '12px' }}
+        >
+          {isSearching ? 'Searching...' : 'Find'}
+        </button>
+      </form>
+
+      {searchError && (
+        <div style={{ fontSize: '12px', color: 'var(--status-rose-text)', marginBottom: '10px' }}>
+          ⚠️ {searchError}
+        </div>
+      )}
 
       {/* Resumes List */}
       {resumes.length === 0 ? (
@@ -42,16 +75,15 @@ export default function RecentUploadsList({ resumes = [], activeResumeId, onSele
           textAlign: 'center',
           padding: '24px 12px',
           color: 'var(--color-text-muted)',
-          fontSize: '14px',
+          fontSize: '13px',
           background: 'var(--color-background-subtle)',
           borderRadius: 'var(--radius-sm)',
           border: '1px dashed var(--color-border)'
         }}>
-          No resumes uploaded yet.
+          No recent uploads yet.
         </div>
-
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '380px', overflowY: 'auto' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '320px', overflowY: 'auto' }}>
           {resumes.map((r) => {
             const isActive = r.id === activeResumeId;
             return (
@@ -59,23 +91,23 @@ export default function RecentUploadsList({ resumes = [], activeResumeId, onSele
                 key={r.id}
                 onClick={() => onSelectResume && onSelectResume(r)}
                 style={{
-                  padding: '12px 14px',
+                  padding: '10px 12px',
                   borderRadius: 'var(--radius-md)',
-                  background: isActive ? '#f1f5f9' : 'var(--color-surface)',
-                  border: `1px solid ${isActive ? 'var(--color-primary)' : 'var(--color-border)'}`,
+                  background: isActive ? '#eff6ff' : 'var(--color-surface)',
+                  border: `1px solid ${isActive ? '#3b82f6' : 'var(--color-border)'}`,
                   cursor: 'pointer',
                   transition: 'all var(--motion-fast)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  gap: '12px'
+                  gap: '10px'
                 }}
               >
                 <div style={{ minWidth: 0, flex: 1 }}>
                   <div style={{
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    color: 'var(--color-text)',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    color: isActive ? '#1d4ed8' : 'var(--color-text)',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis'
@@ -83,19 +115,19 @@ export default function RecentUploadsList({ resumes = [], activeResumeId, onSele
                     {r.originalFilename || 'Resume'}
                   </div>
 
-                  <div style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginTop: '2px', fontFamily: 'var(--font-mono)' }}>
-                    {r.id.substring(0, 18)}...
+                  <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '2px', fontFamily: 'var(--font-mono)' }}>
+                    ID: {r.id.substring(0, 14)}...
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   {r.isDuplicate && (
-                    <span className="badge badge-emerald" style={{ fontSize: '11px', padding: '2px 6px' }}>
+                    <span className="badge badge-emerald" style={{ fontSize: '10px', padding: '2px 6px' }}>
                       Dedup
                     </span>
                   )}
-                  <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
-                    {r.extractedCharCount || 0}c
+                  <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}>
+                    {r.extractedCharCount ? r.extractedCharCount : 0}c
                   </span>
                 </div>
               </div>

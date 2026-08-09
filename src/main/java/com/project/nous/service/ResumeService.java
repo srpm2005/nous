@@ -43,6 +43,7 @@ public class ResumeService {
     private final VirusScanner          virusScanner;
     private final TextExtractionService textExtractionService;
     private final ResumeRepository      resumeRepository;
+    private final ScanService           scanService;
 
     @Value("${app.upload.dir:./uploads}")
     private String uploadDir;
@@ -90,13 +91,16 @@ public class ResumeService {
     }
 
     /**
-     * Delete a resume — removes both the DB record and the file on disk.
+     * Delete a resume — removes the DB record, file on disk, and associated scan history.
      * Required for privacy compliance (right to erasure).
      */
     @Transactional
     public void delete(UUID id) throws IOException {
         Resume resume = findById(id);
         Path filePath = Paths.get(resume.getStoredFilePath());
+
+        // Delete associated scans, roles, and job listings
+        scanService.deleteScansAndDataByResumeId(id);
 
         // Delete from disk first — if this fails we'd still have the DB row (safer than the reverse)
         if (Files.exists(filePath)) {
@@ -109,6 +113,7 @@ public class ResumeService {
         resumeRepository.delete(resume);
         log.info("Deleted resume record from DB: id={}", id);
     }
+
 
     // ─── Private helpers ────────────────────────────────────────────────────
 

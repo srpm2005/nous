@@ -7,56 +7,55 @@ import React from 'react';
 export function RoleCard({ role }) {
   const matchPercentage = Math.round((role.confidenceScore || 0) * 100);
 
-  // Dynamic styling depending on match confidence level
+  // Dynamic badge styling aligned with Asana status tokens
   const getBadgeStyle = (pct) => {
     if (pct >= 90) {
       return {
-        background: 'rgba(16, 185, 129, 0.15)',
-        color: '#10b981',
-        border: '1px solid rgba(16, 185, 129, 0.3)'
+        background: 'var(--status-emerald-bg)',
+        color: 'var(--status-emerald-text)',
+        border: '1px solid var(--status-emerald-border)'
       };
     }
     if (pct >= 75) {
       return {
-        background: 'rgba(59, 130, 246, 0.15)',
-        color: '#60a5fa',
-        border: '1px solid rgba(59, 130, 246, 0.3)'
+        background: 'var(--status-purple-bg)',
+        color: 'var(--status-purple-text)',
+        border: '1px solid var(--status-purple-border)'
       };
     }
     return {
-      background: 'rgba(245, 158, 11, 0.15)',
-      color: '#fbbf24',
-      border: '1px solid rgba(245, 158, 11, 0.3)'
+      background: 'var(--status-amber-bg)',
+      color: 'var(--status-amber-text)',
+      border: '1px solid var(--status-amber-border)'
     };
   };
 
   return (
     <div
-      className="role-card card-glow"
+      className="asana-card animate-fade-in"
       style={{
-        background: 'var(--color-bg-surface)',
-        borderRadius: 'var(--radius-lg)',
-        border: '1px solid var(--color-border)',
         padding: '20px',
         display: 'flex',
         flexDirection: 'column',
         gap: '14px',
-        transition: 'transform 0.2s ease, border-color 0.2s ease'
+        background: 'var(--color-surface)',
+        borderColor: 'var(--color-border)',
+        borderRadius: 'var(--radius-md)'
       }}
     >
-      {/* Header: Rank + Title + Score */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      {/* Header: Rank + Title + Match Score */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
         <div>
           <span style={{
             fontSize: '11px',
             textTransform: 'uppercase',
             fontWeight: 700,
             letterSpacing: '0.05em',
-            color: 'var(--color-accent-light)'
+            color: 'var(--color-text-muted)'
           }}>
-            #{role.rank || 1} Recommendation
+            #{role.rank || 1} RECOMMENDATION
           </span>
-          <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff', marginTop: '4px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--color-text)', margin: '4px 0 0 0' }}>
             {role.roleTitle}
           </h3>
         </div>
@@ -76,7 +75,7 @@ export function RoleCard({ role }) {
       {/* Rationale Text */}
       {role.matchReason && (
         <p style={{
-          fontSize: '13.5px',
+          fontSize: '14px',
           color: 'var(--color-text-muted)',
           lineHeight: '1.55',
           margin: 0
@@ -93,10 +92,10 @@ export function RoleCard({ role }) {
               key={index}
               style={{
                 padding: '4px 10px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                color: 'var(--color-text-secondary)',
-                borderRadius: '6px',
+                background: 'var(--color-background-subtle)',
+                border: '1px solid var(--color-border)',
+                color: 'var(--color-text)',
+                borderRadius: 'var(--radius-sm)',
                 fontSize: '12px',
                 fontWeight: 500
               }}

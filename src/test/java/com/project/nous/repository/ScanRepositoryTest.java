@@ -1,5 +1,6 @@
 package com.project.nous.repository;
 
+import com.project.nous.domain.Resume;
 import com.project.nous.domain.Scan;
 import com.project.nous.domain.ScanStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +22,9 @@ class ScanRepositoryTest {
 
     @Autowired
     private ScanRepository scanRepository;
+
+    @Autowired
+    private ResumeRepository resumeRepository;
 
     @Test
     @DisplayName("Should save and retrieve a Scan record with default PENDING status and createdAt timestamp")
@@ -71,4 +75,46 @@ class ScanRepositoryTest {
         List<Scan> pendingScans = scanRepository.findByStatus(ScanStatus.PENDING);
         assertThat(pendingScans).hasSize(2);
     }
+
+    @Test
+    @DisplayName("Phase 5: Should query scans by userId across multiple resumes")
+    void findByUserId() {
+        String userId = "test-user-123";
+
+        Resume resume1 = resumeRepository.save(Resume.builder()
+                .userId(userId)
+                .originalFilename("resume1.pdf")
+                .storedFilePath("/path/1.pdf")
+                .mimeType("application/pdf")
+                .fileHash("hash1")
+                .build());
+
+        Resume resume2 = resumeRepository.save(Resume.builder()
+                .userId(userId)
+                .originalFilename("resume2.pdf")
+                .storedFilePath("/path/2.pdf")
+                .mimeType("application/pdf")
+                .fileHash("hash2")
+                .build());
+
+        scanRepository.save(Scan.builder().resumeId(resume1.getId()).status(ScanStatus.COMPLETE).build());
+        scanRepository.save(Scan.builder().resumeId(resume2.getId()).status(ScanStatus.COMPLETE).build());
+
+        List<Scan> scans = scanRepository.findByUserId(userId);
+        assertThat(scans).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("Phase 5: Should delete scans by resumeId")
+    void deleteByResumeId() {
+        UUID resumeId = UUID.randomUUID();
+        scanRepository.save(Scan.builder().resumeId(resumeId).status(ScanStatus.COMPLETE).build());
+        scanRepository.save(Scan.builder().resumeId(resumeId).status(ScanStatus.FAILED).build());
+
+        scanRepository.deleteByResumeId(resumeId);
+
+        List<Scan> remaining = scanRepository.findByResumeId(resumeId);
+        assertThat(remaining).isEmpty();
+    }
 }
+

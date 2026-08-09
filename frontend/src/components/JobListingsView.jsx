@@ -81,24 +81,37 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles = [] }) {
 
   return (
     <div
-      className="card-glow animate-fade-in"
+      className="asana-card animate-fade-in"
       style={{
-        background: 'var(--color-bg-surface)',
-        borderRadius: 'var(--radius-lg)',
-        border: '1px solid var(--color-border)',
         padding: '24px',
-        marginTop: '20px'
+        marginTop: '20px',
+        background: 'var(--color-surface)',
+        borderColor: 'var(--color-border)',
+        borderRadius: 'var(--radius-md)'
       }}
     >
       {/* Header section */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '22px' }}>💼</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            width: '38px',
+            height: '38px',
+            borderRadius: 'var(--radius-md)',
+            background: 'var(--status-emerald-bg)',
+            color: 'var(--status-emerald-text)',
+            border: '1px solid var(--status-emerald-border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '20px'
+          }}>
+            💼
+          </div>
           <div>
-            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff', margin: 0 }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--color-text)', margin: 0 }}>
               Live Target Job Match Dashboard
             </h2>
-            <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: 0, marginTop: '2px' }}>
+            <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', margin: 0, marginTop: '2px' }}>
               Phase 4 — Parallel job API search engine aggregating live openings matching AI suggested roles
             </p>
           </div>
@@ -106,12 +119,13 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles = [] }) {
 
         <span style={{
           fontSize: '11px',
-          padding: '4px 10px',
+          padding: '4px 12px',
           borderRadius: '9999px',
-          background: 'rgba(16, 185, 129, 0.15)',
-          color: '#34d399',
-          border: '1px solid rgba(16, 185, 129, 0.3)',
-          fontWeight: 600
+          background: 'var(--status-emerald-bg)',
+          color: 'var(--status-emerald-text)',
+          border: '1px solid var(--status-emerald-border)',
+          fontWeight: 600,
+          letterSpacing: '0.03em'
         }}>
           Phase 4 Active
         </span>
@@ -130,9 +144,9 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles = [] }) {
         <div style={{
           padding: '16px',
           borderRadius: 'var(--radius-md)',
-          background: 'rgba(239, 68, 68, 0.1)',
-          border: '1px solid rgba(239, 68, 68, 0.3)',
-          color: '#f87171',
+          background: 'var(--status-rose-bg)',
+          border: '1px solid var(--status-rose-border)',
+          color: 'var(--status-rose-text)',
           fontSize: '13px'
         }}>
           ⚠️ {error}
@@ -146,9 +160,9 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles = [] }) {
             <div style={{
               padding: '36px 20px',
               textAlign: 'center',
-              background: 'rgba(30, 41, 59, 0.3)',
+              background: 'var(--color-background-subtle)',
               borderRadius: 'var(--radius-md)',
-              border: '1px border-dashed var(--color-border)',
+              border: '1px dashed var(--color-border)',
               color: 'var(--color-text-muted)'
             }}>
               <p style={{ fontSize: '14px', margin: 0 }}>

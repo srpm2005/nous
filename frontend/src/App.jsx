@@ -5,11 +5,14 @@ import UploadZone from './components/UploadZone';
 import PipelineProgressView from './components/PipelineProgressView';
 import ResumeDetailView from './components/ResumeDetailView';
 import RecentUploadsList from './components/RecentUploadsList';
+import UserHistoryView from './components/UserHistoryView';
 
 export default function App() {
+  const [activeTab, setActiveTab] = useState('scanner');
   const [resumes, setResumes] = useState([]);
   const [activeResume, setActiveResume] = useState(null);
   const [activeScanId, setActiveScanId] = useState(null);
+  const [refreshHistorySignal, setRefreshHistorySignal] = useState(0);
   const [toastMessage, setToastMessage] = useState(null);
 
   const showToast = (msg) => {
@@ -33,6 +36,8 @@ export default function App() {
       setActiveScanId(newResume.scanId);
     }
 
+    setRefreshHistorySignal((prev) => prev + 1);
+
     if (newResume.isDuplicate) {
       showToast('⚡ Duplicate resume detected! Content matched via SHA-256 hash.');
     } else {
@@ -41,6 +46,8 @@ export default function App() {
   };
 
   const handleScanComplete = (scanResult) => {
+    setRefreshHistorySignal((prev) => prev + 1);
+
     if (activeResume && activeResume.scanId === scanResult.scanId) {
       const updatedStatus = scanResult.status;
       setActiveResume((prev) => prev ? { ...prev, scanStatus: updatedStatus } : null);
@@ -59,6 +66,7 @@ export default function App() {
     if (r.scanId) {
       setActiveScanId(r.scanId);
     }
+    setActiveTab('scanner');
   };
 
   const handleAddResumeFromLookup = (lookupResume) => {
@@ -75,52 +83,68 @@ export default function App() {
       setActiveResume(null);
       setActiveScanId(null);
     }
-    showToast('🗑️ Resume deleted successfully.');
+    setRefreshHistorySignal((prev) => prev + 1);
+    showToast('🗑️ Resume & associated scan history deleted successfully.');
+  };
+
+  const handleSelectHistoryScan = (scan) => {
+    setActiveScanId(scan.scanId);
+    showToast(`🔍 Selected Scan ID: ${scan.scanId}`);
   };
 
   return (
     <div className="app-container">
       {/* Top Navbar */}
-      <Navbar activePhase="Engine" />
+      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Hero Header Banner */}
       <HeroSection />
 
-      {/* Main Workspace Layout */}
-      <div className="main-grid">
-        {/* Left Column: Upload Zone + Pipeline Progress + Recent Resumes History */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <UploadZone
-            onUploadSuccess={handleUploadSuccess}
-            onError={(err) => showToast(`⚠️ Upload Error: ${err}`)}
-          />
-
-          {activeScanId && (
-            <PipelineProgressView
-              key={activeScanId}
-              scanId={activeScanId}
-              onComplete={handleScanComplete}
+      {/* Main Tab Content */}
+      {activeTab === 'scanner' ? (
+        <div className="main-grid">
+          {/* Left Column: Upload Zone + Pipeline Progress + Recent Resumes History */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <UploadZone
+              onUploadSuccess={handleUploadSuccess}
+              onError={(err) => showToast(`⚠️ Upload Error: ${err}`)}
             />
-          )}
 
-          <RecentUploadsList
-            resumes={resumes}
-            activeResumeId={activeResume?.id}
-            onSelectResume={handleSelectResume}
-            onDeleteResume={handleDeleteSuccess}
-            onAddResume={handleAddResumeFromLookup}
-          />
+            {activeScanId && (
+              <PipelineProgressView
+                key={activeScanId}
+                scanId={activeScanId}
+                onComplete={handleScanComplete}
+              />
+            )}
+
+            <RecentUploadsList
+              resumes={resumes}
+              activeResumeId={activeResume?.id}
+              onSelectResume={handleSelectResume}
+              onDeleteResume={handleDeleteSuccess}
+              onAddResume={handleAddResumeFromLookup}
+            />
+          </div>
+
+          {/* Right Column: Active Resume Details */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <ResumeDetailView
+              resume={activeResume}
+              onDeleteSuccess={handleDeleteSuccess}
+              onCopyToast={showToast}
+            />
+          </div>
         </div>
-
-        {/* Right Column: Active Resume Details */}
+      ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <ResumeDetailView
-            resume={activeResume}
-            onDeleteSuccess={handleDeleteSuccess}
-            onCopyToast={showToast}
+          <UserHistoryView
+            userId="anonymous"
+            onSelectScan={handleSelectHistoryScan}
+            onRefreshSignal={refreshHistorySignal}
           />
         </div>
-      </div>
+      )}
 
       {/* Global Toast Notification */}
       {toastMessage && (
@@ -147,3 +171,4 @@ export default function App() {
     </div>
   );
 }
+

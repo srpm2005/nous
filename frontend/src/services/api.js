@@ -161,5 +161,22 @@ export async function getJobListingsByResumeId(resumeId) {
   return handleResponse(response);
 }
 
+/**
+ * Fetch all historical scans submitted by a user ID (Phase 5 User History & Persistence)
+ * @param {string} userId - User identity string
+ * @returns {Promise<Array>} List of ScanResponseDto
+ */
+export async function getUserScans(userId = 'anonymous') {
+  const response = await fetch(`/api/users/${userId}/scans`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+
+  return handleResponse(response);
+}
+
+
 
 

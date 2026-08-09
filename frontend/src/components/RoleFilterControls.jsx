@@ -20,7 +20,7 @@ export function RoleFilterControls({
       alignItems: 'center',
       justifyContent: 'space-between',
       padding: '14px 18px',
-      background: 'rgba(30, 41, 59, 0.4)',
+      background: 'var(--color-background-subtle)',
       borderRadius: 'var(--radius-md)',
       border: '1px solid var(--color-border)',
       marginBottom: '16px'
@@ -35,11 +35,11 @@ export function RoleFilterControls({
           onChange={(e) => onSearchChange(e.target.value)}
           style={{
             width: '100%',
-            background: 'var(--color-bg-base)',
+            background: 'var(--color-surface)',
             border: '1px solid var(--color-border)',
             borderRadius: 'var(--radius-sm)',
             padding: '8px 12px',
-            color: 'var(--color-text-primary)',
+            color: 'var(--color-text)',
             fontSize: '13px',
             outline: 'none'
           }}
@@ -48,8 +48,8 @@ export function RoleFilterControls({
 
       {/* Minimum Score Filter */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: 600 }}>
-          Min Match: {minScore}%
+        <span style={{ fontSize: '13px', color: 'var(--color-text-muted)', fontWeight: 500 }}>
+          Min Match: <strong>{minScore}%</strong>
         </span>
         <input
           type="range"
@@ -60,14 +60,15 @@ export function RoleFilterControls({
           onChange={(e) => onMinScoreChange(Number(e.target.value))}
           style={{
             width: '110px',
-            accentColor: 'var(--color-accent)'
+            accentColor: 'var(--color-accent)',
+            cursor: 'pointer'
           }}
         />
       </div>
 
       {/* Results Count Badge */}
-      <div style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: 500 }}>
-        Showing <strong style={{ color: '#ffffff' }}>{filteredCount}</strong> of {totalCount} roles
+      <div style={{ fontSize: '13px', color: 'var(--color-text-muted)', fontWeight: 500 }}>
+        Showing <strong style={{ color: 'var(--color-text)' }}>{filteredCount}</strong> of <strong>{totalCount}</strong> roles
       </div>
     </div>
   );
