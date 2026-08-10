@@ -151,20 +151,21 @@ export default function UploadZone({ onUploadSuccess, onError }) {
       </div>
 
 
-      {/* Drag & Drop Zone */}
+      {/* Drag & Drop Card Container matching Nous UI Spec */}
       <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        onClick={() => uploadState.status !== 'uploading' && fileInputRef.current?.click()}
         style={{
-          border: `2px dashed ${isDragging ? 'var(--color-accent)' : '#cbd5e1'}`,
-          borderRadius: 'var(--radius-md)',
-          padding: '36px 20px',
+          border: `2px dashed ${isDragging ? '#2563eb' : '#cbd5e1'}`,
+          borderRadius: '16px',
+          padding: '48px 24px',
           textAlign: 'center',
-          background: isDragging ? '#f1f5f9' : 'var(--color-background-subtle)',
-          cursor: uploadState.status === 'uploading' ? 'wait' : 'pointer',
-          transition: 'all var(--motion-base)'
+          background: isDragging ? '#eff6ff' : '#ffffff',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+          transition: 'all 200ms ease-in-out',
+          maxWidth: '620px',
+          margin: '0 auto'
         }}
       >
         <input
@@ -176,42 +177,63 @@ export default function UploadZone({ onUploadSuccess, onError }) {
         />
 
         <div style={{
-          width: '52px',
-          height: '52px',
+          width: '56px',
+          height: '56px',
           borderRadius: '50%',
-          background: 'var(--color-surface)',
-          color: 'var(--color-accent)',
+          background: '#eff6ff',
+          color: '#2563eb',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: '0 auto 12px auto',
-          border: '1px solid var(--color-border)'
+          margin: '0 auto 16px auto'
         }}>
           {uploadState.status === 'uploading' ? (
-            <svg className="spinner" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg className="spinner" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
             </svg>
           ) : (
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-              <polyline points="14 2 14 8 20 8"/>
-              <line x1="12" y1="18" x2="12" y2="12"/>
-              <line x1="9" y1="15" x2="15" y2="15"/>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
             </svg>
           )}
         </div>
 
-        <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--color-text)', margin: '0 0 4px 0' }}>
-          {isDragging ? 'Drop resume file here' : 'Drag & drop resume file, or click to browse'}
-        </h4>
+        <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: '0 0 6px 0' }}>
+          Drag your resume here
+        </h3>
 
-        <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', margin: 0 }}>
-          Supported Formats: <strong style={{ color: 'var(--color-text)' }}>PDF (.pdf)</strong> or <strong style={{ color: 'var(--color-text)' }}>Word (.docx)</strong> up to 5 MB
+        <p style={{ fontSize: '14px', color: '#64748b', margin: '0 0 20px 0' }}>
+          or click below to choose a file
+        </p>
+
+        <button
+          type="button"
+          onClick={() => uploadState.status !== 'uploading' && fileInputRef.current?.click()}
+          style={{
+            padding: '10px 24px',
+            borderRadius: '9999px',
+            background: '#2563eb',
+            color: '#ffffff',
+            fontWeight: 600,
+            fontSize: '14px',
+            border: 'none',
+            cursor: uploadState.status === 'uploading' ? 'wait' : 'pointer',
+            boxShadow: '0 2px 4px rgba(37, 99, 235, 0.2)',
+            transition: 'all 150ms ease-in-out'
+          }}
+        >
+          {uploadState.status === 'uploading' ? 'Uploading...' : 'Choose file'}
+        </button>
+
+        <p style={{ fontSize: '12px', color: '#94a3b8', margin: '16px 0 0 0' }}>
+          Works with PDF and Word files, up to 5MB
         </p>
 
         {uploadState.status === 'uploading' && (
-          <div style={{ marginTop: '16px', maxWidth: '380px', margin: '16px auto 0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>
+          <div style={{ marginTop: '20px', maxWidth: '380px', margin: '20px auto 0 auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#64748b', marginBottom: '6px' }}>
               <span>{uploadState.step}</span>
               <span>{uploadState.progress}%</span>
             </div>
@@ -219,37 +241,48 @@ export default function UploadZone({ onUploadSuccess, onError }) {
               <div style={{
                 width: `${uploadState.progress}%`,
                 height: '100%',
-                background: 'var(--color-accent)',
-                transition: 'width var(--motion-base)'
+                background: '#2563eb',
+                transition: 'width 200ms ease-in-out'
               }}></div>
             </div>
           </div>
         )}
       </div>
 
+      {/* 3 Bottom Feature Badges matching Nous UI Spec */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '32px',
+        marginTop: '32px',
+        flexWrap: 'wrap'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#475569', fontWeight: 500 }}>
+          <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span> Private & secure
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#475569', fontWeight: 500 }}>
+          <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span> Usually done in under 30 seconds
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#475569', fontWeight: 500 }}>
+          <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span> Delete your data anytime
+        </div>
+      </div>
+
       {/* Error Banner */}
       {uploadState.status === 'error' && uploadState.errorMessage && (
         <div className="animate-fade-in" style={{
-          marginTop: '16px',
+          marginTop: '20px',
           padding: '12px 16px',
-          borderRadius: 'var(--radius-md)',
-          background: 'var(--status-rose-bg)',
-          border: '1px solid var(--status-rose-border)',
-          color: 'var(--status-rose-text)',
+          borderRadius: '12px',
+          background: '#fef2f2',
+          border: '1px solid #fecaca',
+          color: '#b91c1c',
           fontSize: '14px',
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '10px'
+          maxWidth: '620px',
+          margin: '20px auto 0 auto'
         }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ shrink: 0, marginTop: '2px' }}>
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="8" x2="12" y2="12"/>
-            <line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-          <div>
-            <strong style={{ display: 'block', marginBottom: '2px' }}>Upload Failed</strong>
-            {uploadState.errorMessage}
-          </div>
+          ⚠️ {uploadState.errorMessage}
         </div>
       )}
     </div>

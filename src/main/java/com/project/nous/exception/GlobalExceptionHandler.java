@@ -65,6 +65,11 @@ public class GlobalExceptionHandler {
      * Fired when POST is made without multipart/form-data Content-Type
      * (e.g. curl POST with no -F flags).
      */
+    @ExceptionHandler(org.springframework.web.context.request.async.AsyncRequestTimeoutException.class)
+    public void handleAsyncTimeout(org.springframework.web.context.request.async.AsyncRequestTimeoutException ex) {
+        log.debug("SSE async request timed out silently: {}", ex.getMessage());
+    }
+
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     ProblemDetail handleWrongContentType(HttpMediaTypeNotSupportedException ex) {
         return problem(HttpStatus.BAD_REQUEST, "missing-file-part",

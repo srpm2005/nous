@@ -114,6 +114,9 @@ class ScanServiceTest {
     @Test
     @DisplayName("Should process scan asynchronously and transition state to COMPLETE")
     void testProcessScanAsync_Success() {
+        when(resumeRepository.findById(resumeId))
+                .thenReturn(Optional.of(Resume.builder().id(resumeId).extractedText("Software Engineer").build()));
+
         scanService.processScanAsync(scanId);
 
         Scan processed = scanRepository.findById(scanId).orElseThrow();

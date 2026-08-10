@@ -7,106 +7,109 @@ import React from 'react';
 export function RoleCard({ role }) {
   const matchPercentage = Math.round((role.confidenceScore || 0) * 100);
 
-  // Dynamic badge styling aligned with Asana status tokens
-  const getBadgeStyle = (pct) => {
-    if (pct >= 90) {
-      return {
-        background: 'var(--status-emerald-bg)',
-        color: 'var(--status-emerald-text)',
-        border: '1px solid var(--status-emerald-border)'
-      };
-    }
-    if (pct >= 75) {
-      return {
-        background: 'var(--status-purple-bg)',
-        color: 'var(--status-purple-text)',
-        border: '1px solid var(--status-purple-border)'
-      };
-    }
-    return {
-      background: 'var(--status-amber-bg)',
-      color: 'var(--status-amber-text)',
-      border: '1px solid var(--status-amber-border)'
-    };
-  };
+  const rank = role.rank || 1;
+
+  // Match badge labels matching Nous UI spec
+  let badgeLabel = 'Best match';
+  let badgeBg = '#d1fae5';
+  let badgeColor = '#047857';
+
+  if (rank === 2) {
+    badgeLabel = 'Good match';
+    badgeBg = '#dbeafe';
+    badgeColor = '#1d4ed8';
+  } else if (rank >= 3) {
+    badgeLabel = 'Possible match';
+    badgeBg = '#fef3c7';
+    badgeColor = '#b45309';
+  }
 
   return (
     <div
-      className="asana-card animate-fade-in"
       style={{
-        padding: '20px',
+        padding: '24px',
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: '16px',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
         display: 'flex',
         flexDirection: 'column',
-        gap: '14px',
-        background: 'var(--color-surface)',
-        borderColor: 'var(--color-border)',
-        borderRadius: 'var(--radius-md)'
+        justifyContent: 'space-between',
+        height: '100%',
+        gap: '16px'
       }}
     >
-      {/* Header: Rank + Title + Match Score */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
-        <div>
-          <span style={{
-            fontSize: '11px',
-            textTransform: 'uppercase',
-            fontWeight: 700,
-            letterSpacing: '0.05em',
-            color: 'var(--color-text-muted)'
-          }}>
-            #{role.rank || 1} RECOMMENDATION
+      <div>
+        {/* Match Pill */}
+        <div style={{ marginBottom: '14px' }}>
+          <span
+            style={{
+              fontSize: '12px',
+              fontWeight: 600,
+              padding: '4px 12px',
+              borderRadius: '9999px',
+              background: badgeBg,
+              color: badgeColor,
+              display: 'inline-block'
+            }}
+          >
+            {badgeLabel}
           </span>
-          <h3 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--color-text)', margin: '4px 0 0 0' }}>
-            {role.roleTitle}
-          </h3>
         </div>
 
-        <span style={{
-          padding: '6px 14px',
-          borderRadius: '9999px',
-          fontSize: '13px',
-          fontWeight: 700,
-          whiteSpace: 'nowrap',
-          ...getBadgeStyle(matchPercentage)
-        }}>
-          {matchPercentage}% Match
-        </span>
+        {/* Role Title */}
+        <h3
+          style={{
+            fontSize: '18px',
+            fontWeight: 700,
+            color: '#0f172a',
+            margin: '0 0 10px 0',
+            lineHeight: 1.3
+          }}
+        >
+          {role.roleTitle}
+        </h3>
+
+        {/* Match Rationale */}
+        {role.matchReason && (
+          <p
+            style={{
+              fontSize: '13.5px',
+              color: '#475569',
+              lineHeight: 1.5,
+              margin: '0 0 16px 0'
+            }}
+          >
+            {role.matchReason}
+          </p>
+        )}
+
+        {/* Key Skill Chips */}
+        {role.keySkills && role.keySkills.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
+            {role.keySkills.map((skill, index) => (
+              <span
+                key={index}
+                style={{
+                  padding: '4px 12px',
+                  background: '#f1f5f9',
+                  border: '1px solid #e2e8f0',
+                  color: '#334155',
+                  borderRadius: '9999px',
+                  fontSize: '12px',
+                  fontWeight: 500
+                }}
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Rationale Text */}
-      {role.matchReason && (
-        <p style={{
-          fontSize: '14px',
-          color: 'var(--color-text-muted)',
-          lineHeight: '1.55',
-          margin: 0
-        }}>
-          {role.matchReason}
-        </p>
-      )}
-
-      {/* Skills Badges */}
-      {role.keySkills && role.keySkills.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px' }}>
-          {role.keySkills.map((skill, index) => (
-            <span
-              key={index}
-              style={{
-                padding: '4px 10px',
-                background: 'var(--color-background-subtle)',
-                border: '1px solid var(--color-border)',
-                color: 'var(--color-text)',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: '12px',
-                fontWeight: 500
-              }}
-            >
-              {skill}
-            </span>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
 
 export default RoleCard;
+

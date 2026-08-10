@@ -64,8 +64,7 @@ public class ResumeController {
 
         UploadResult result = resumeService.upload(file, userId);
 
-        Scan scan = scanService.createInitialScan(result.resume());
-        scanService.processScanAsync(scan.getId());
+        Scan scan = scanService.createAndProcessScan(result.resume());
 
         ResumeResponseDto body = ResumeResponseDto.from(
                 result.resume(),
@@ -75,10 +74,9 @@ public class ResumeController {
                 scan.getStatus()
         );
 
-        // 200 for deduplicated (already existed), 202 Accepted for fresh async processing upload
-        HttpStatus status = result.isDuplicate() ? HttpStatus.OK : HttpStatus.ACCEPTED;
-        return ResponseEntity.status(status).body(body);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
     }
+
 
     // ─── Fetch ──────────────────────────────────────────────────────────────
 

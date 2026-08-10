@@ -2,100 +2,137 @@ import React from 'react';
 
 export default function Navbar({ activeTab = 'scanner', setActiveTab }) {
   return (
-    <header className="asana-card" style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '16px 24px',
-      borderRadius: 'var(--radius-md)',
-      marginBottom: '20px',
-      background: 'var(--color-surface)',
-      borderColor: 'var(--color-border)',
-      flexWrap: 'wrap',
-      gap: '16px'
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-        <div style={{
-          width: '36px',
-          height: '36px',
-          borderRadius: 'var(--radius-md)',
-          background: 'var(--color-accent)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#ffffff'
-        }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <circle cx="12" cy="7" r="3.5" />
-            <circle cx="6" cy="16" r="3.5" />
-            <circle cx="18" cy="16" r="3.5" />
-          </svg>
+    <header
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '14px 32px',
+        background: '#ffffff',
+        borderBottom: '1px solid #e2e8f0',
+        marginBottom: '32px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100
+      }}
+    >
+      {/* Left Logo */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div
+          style={{
+            width: '28px',
+            height: '28px',
+            borderRadius: '6px',
+            background: '#2563eb',
+            color: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 700,
+            fontSize: '14px'
+          }}
+        >
+          ✓
         </div>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{
-              fontSize: '18px',
-              fontWeight: 600,
-              letterSpacing: '-0.02em',
-              color: 'var(--color-text)'
-            }}>
-              Nous AI Resume Engine
-            </span>
-          </div>
-          <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', margin: 0 }}>
-            AI-Powered Resume Intelligence & Job Matching Platform
-          </p>
-        </div>
+        <span style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', letterSpacing: '-0.02em' }}>
+          Nous
+        </span>
       </div>
 
+      {/* Center Nav Tabs */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <button
+          onClick={() => setActiveTab && setActiveTab('scanner')}
+          style={{
+            padding: '7px 18px',
+            borderRadius: '9999px',
+            border: 'none',
+            background: activeTab === 'scanner' ? '#eff6ff' : 'transparent',
+            color: activeTab === 'scanner' ? '#2563eb' : '#64748b',
+            fontWeight: activeTab === 'scanner' ? 600 : 500,
+            fontSize: '14px',
+            cursor: 'pointer',
+            transition: 'all 150ms ease-in-out'
+          }}
+        >
+          Upload
+        </button>
+
+        <button
+          onClick={() => setActiveTab && setActiveTab('history')}
+          style={{
+            padding: '7px 18px',
+            borderRadius: '9999px',
+            border: 'none',
+            background: activeTab === 'history' ? '#eff6ff' : 'transparent',
+            color: activeTab === 'history' ? '#2563eb' : '#64748b',
+            fontWeight: activeTab === 'history' ? 600 : 500,
+            fontSize: '14px',
+            cursor: 'pointer',
+            transition: 'all 150ms ease-in-out'
+          }}
+        >
+          My scans
+        </button>
+
+        <button
+          onClick={() => setActiveTab && setActiveTab('crawls')}
+          style={{
+            padding: '7px 18px',
+            borderRadius: '9999px',
+            border: 'none',
+            background: activeTab === 'crawls' ? '#eff6ff' : 'transparent',
+            color: activeTab === 'crawls' ? '#2563eb' : '#64748b',
+            fontWeight: activeTab === 'crawls' ? 600 : 500,
+            fontSize: '14px',
+            cursor: 'pointer',
+            transition: 'all 150ms ease-in-out'
+          }}
+        >
+          🏛️ Top 500 Crawls
+        </button>
+
+        <button
+          onClick={() => setActiveTab && setActiveTab('settings')}
+          style={{
+            padding: '7px 18px',
+            borderRadius: '9999px',
+            border: 'none',
+            background: activeTab === 'settings' ? '#eff6ff' : 'transparent',
+            color: activeTab === 'settings' ? '#2563eb' : '#64748b',
+            fontWeight: activeTab === 'settings' ? 600 : 500,
+            fontSize: '14px',
+            cursor: 'pointer',
+            transition: 'all 150ms ease-in-out'
+          }}
+        >
+          ⚙️ Settings
+        </button>
+
+      </div>
+
+      {/* Right User Avatar */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        {setActiveTab && (
-          <div style={{ display: 'flex', background: 'var(--color-background-subtle)', padding: '4px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-            <button
-              onClick={() => setActiveTab('scanner')}
-              style={{
-                padding: '6px 14px',
-                borderRadius: 'var(--radius-sm)',
-                border: 'none',
-                background: activeTab === 'scanner' ? 'var(--color-surface)' : 'transparent',
-                color: activeTab === 'scanner' ? 'var(--color-text)' : 'var(--color-text-muted)',
-                fontWeight: activeTab === 'scanner' ? 600 : 400,
-                fontSize: '13px',
-                cursor: 'pointer',
-                boxShadow: activeTab === 'scanner' ? 'var(--shadow-card)' : 'none',
-                transition: 'all var(--motion-fast)'
-              }}
-            >
-              ⚡ Scanner Engine
-            </button>
-
-            <button
-              onClick={() => setActiveTab('history')}
-              style={{
-                padding: '6px 14px',
-                borderRadius: 'var(--radius-sm)',
-                border: 'none',
-                background: activeTab === 'history' ? 'var(--color-surface)' : 'transparent',
-                color: activeTab === 'history' ? 'var(--color-text)' : 'var(--color-text-muted)',
-                fontWeight: activeTab === 'history' ? 600 : 400,
-                fontSize: '13px',
-                cursor: 'pointer',
-                boxShadow: activeTab === 'history' ? 'var(--shadow-card)' : 'none',
-                transition: 'all var(--motion-fast)'
-              }}
-            >
-              📜 Phase 5 History
-            </button>
-          </div>
-        )}
-
-        <span className="badge badge-emerald">
-          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#059669' }}></span>
-          System Ready
-        </span>
+        <div
+          style={{
+            width: '34px',
+            height: '34px',
+            borderRadius: '50%',
+            background: '#dbeafe',
+            color: '#2563eb',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 600,
+            fontSize: '14px'
+          }}
+        >
+          A
+        </div>
       </div>
     </header>
   );
 }
+
 
 

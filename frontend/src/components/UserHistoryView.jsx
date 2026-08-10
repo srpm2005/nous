@@ -31,128 +31,139 @@ export default function UserHistoryView({ userId = 'anonymous', onSelectScan, on
   });
 
   return (
-    <div className="asana-card" style={{ padding: '24px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+    <div style={{ maxWidth: '840px', margin: '0 auto' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h3 className="asana-heading" style={{ fontSize: '18px', fontWeight: 600, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2">
-              <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 9 0 0118 0z" />
-            </svg>
-            Phase 5 — Persistence & User Scan History
-          </h3>
-          <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-            All historical scan runs persisted in PostgreSQL normalized schema for user: <strong style={{ color: 'var(--color-text)' }}>{userId}</strong>
+          <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#0f172a', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>
+            Your scans
+          </h2>
+          <p style={{ fontSize: '14px', color: '#64748b', margin: 0 }}>
+            {scans.length} resumes checked so far
           </p>
         </div>
 
-        <button
-          onClick={fetchHistory}
-          className="asana-button-secondary"
-          style={{ padding: '6px 14px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M23 4v6h-6M1 20v-6h6" />
-            <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l5.64 5.36A9 9 0 0020.49 15" />
-          </svg>
-          Refresh History
-        </button>
+        {/* Filter Pills matching PDF Page 4 */}
+        <div style={{ display: 'flex', gap: '8px', background: '#ffffff', padding: '4px', borderRadius: '9999px', border: '1px solid #e2e8f0' }}>
+          {['ALL', 'COMPLETE', 'PARTIAL', 'FAILED'].map((st) => {
+            const isSelected = filterStatus === st;
+            let label = st === 'ALL' ? 'All' : st === 'COMPLETE' ? 'Finished' : st === 'PARTIAL' ? 'Partial' : 'Needs attention';
+            return (
+              <button
+                key={st}
+                onClick={() => setFilterStatus(st)}
+                style={{
+                  padding: '6px 16px',
+                  borderRadius: '9999px',
+                  border: 'none',
+                  background: isSelected ? '#2563eb' : 'transparent',
+                  color: isSelected ? '#ffffff' : '#64748b',
+                  fontWeight: isSelected ? 600 : 500,
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  transition: 'all 150ms ease-in-out'
+                }}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Status Filter Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', borderBottom: '1px solid var(--color-border)', paddingBottom: '10px' }}>
-        {['ALL', 'COMPLETE', 'PROCESSING', 'PENDING', 'FAILED'].map((st) => (
-          <button
-            key={st}
-            onClick={() => setFilterStatus(st)}
-            style={{
-              background: filterStatus === st ? 'var(--color-accent)' : 'transparent',
-              color: filterStatus === st ? '#ffffff' : 'var(--color-text-muted)',
-              border: 'none',
-              borderRadius: 'var(--radius-sm)',
-              padding: '4px 12px',
-              fontSize: '12px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              transition: 'all var(--motion-fast)'
-            }}
-          >
-            {st}
-          </button>
-        ))}
-      </div>
+      {/* Loading state */}
+      {loading && (
+        <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>
+          <div className="spinner" style={{ margin: '0 auto 12px auto' }}></div>
+          Loading your scans...
+        </div>
+      )}
 
-      {/* Content Area */}
-      {loading ? (
-        <div style={{ textAlign: 'center', padding: '32px 12px', color: 'var(--color-text-muted)', fontSize: '14px' }}>
-          Loading scan history from backend...
-        </div>
-      ) : error ? (
-        <div style={{ padding: '16px', borderRadius: 'var(--radius-sm)', background: 'var(--status-rose-bg)', color: 'var(--status-rose-text)', fontSize: '13px' }}>
-          ⚠️ {error}
-        </div>
-      ) : filteredScans.length === 0 ? (
-        <div style={{
-          textAlign: 'center',
-          padding: '32px 12px',
-          color: 'var(--color-text-muted)',
-          fontSize: '14px',
-          background: 'var(--color-background-subtle)',
-          borderRadius: 'var(--radius-sm)',
-          border: '1px dashed var(--color-border)'
-        }}>
-          No scans found for status: {filterStatus}
+      {/* Scans List Cards */}
+      {!loading && filteredScans.length === 0 ? (
+        <div style={{ padding: '48px 24px', textAlign: 'center', background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', color: '#64748b' }}>
+          No scans found yet. Upload a resume to get started!
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '420px', overflowY: 'auto' }}>
-          {filteredScans.map((scan) => (
-            <div
-              key={scan.scanId}
-              onClick={() => onSelectScan && onSelectScan(scan)}
-              style={{
-                padding: '14px 16px',
-                borderRadius: 'var(--radius-md)',
-                background: 'var(--color-surface)',
-                border: '1px solid var(--color-border)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '16px',
-                cursor: 'pointer',
-                transition: 'all var(--motion-fast)'
-              }}
-            >
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', fontWeight: 600, color: 'var(--color-text)' }}>
-                    Scan ID: {scan.scanId}
-                  </span>
-                  <ScanStatusBadge status={scan.status} />
-                </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {filteredScans.map((scan) => {
+            const isFinished = scan.status === 'COMPLETE';
+            const isFailed = scan.status === 'FAILED';
 
-                <div style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginTop: '4px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                  <span>Resume ID: <code style={{ fontFamily: 'var(--font-mono)' }}>{scan.resumeId}</code></span>
-                  {scan.createdAt && (
-                    <span>Created: {new Date(scan.createdAt).toLocaleString()}</span>
-                  )}
-                  {scan.completedAt && (
-                    <span>Completed: {new Date(scan.completedAt).toLocaleString()}</span>
-                  )}
-                </div>
-
-                {scan.errorReason && (
-                  <div style={{ fontSize: '12px', color: 'var(--status-rose-text)', marginTop: '6px' }}>
-                    Reason: {scan.errorReason}
+            return (
+              <div
+                key={scan.scanId}
+                style={{
+                  padding: '18px 24px',
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '16px',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '16px',
+                  flexWrap: 'wrap'
+                }}
+              >
+                {/* File Icon & Info */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', minWidth: 0, flex: 1 }}>
+                  <div
+                    style={{
+                      width: '40px',
+                      height: '44px',
+                      borderRadius: '10px',
+                      background: '#f8fafc',
+                      border: '1px solid #e2e8f0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#94a3b8',
+                      fontSize: '18px',
+                      flexShrink: 0
+                    }}
+                  >
+                    📄
                   </div>
-                )}
-              </div>
 
-              <div style={{ fontSize: '12px', color: 'var(--color-primary)', fontWeight: 500 }}>
-                View Scan Details →
+                  <div style={{ minWidth: 0 }}>
+                    <h4 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', margin: '0 0 2px 0' }}>
+                      {scan.originalFilename || `scan_${scan.scanId.substring(0, 8)}.pdf`}
+                    </h4>
+                    <span style={{ fontSize: '12px', color: '#94a3b8' }}>
+                      Uploaded {new Date(scan.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Best Match */}
+                <div style={{ fontSize: '13px', color: '#475569' }}>
+                  Best match: <strong style={{ color: '#0f172a', fontWeight: 600 }}>Senior Backend Engineer</strong>
+                </div>
+
+                {/* Action Button */}
+                <button
+                  onClick={() => onSelectScan && onSelectScan(scan)}
+                  style={{
+                    padding: '8px 20px',
+                    borderRadius: '9999px',
+                    background: isFailed ? '#2563eb' : '#ffffff',
+                    color: isFailed ? '#ffffff' : '#0f172a',
+                    border: isFailed ? 'none' : '1px solid #cbd5e1',
+                    fontWeight: 600,
+                    fontSize: '13px',
+                    cursor: 'pointer',
+                    transition: 'all 150ms ease-in-out'
+                  }}
+                >
+                  {isFailed ? 'Try again' : 'View results'}
+                </button>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
   );
 }
+

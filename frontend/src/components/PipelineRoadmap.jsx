@@ -57,8 +57,9 @@ export default function PipelineRoadmap() {
         </div>
 
         <span className="badge badge-purple">
-          Phase 2 Async Pipeline Live
+          Pipeline Processing Active
         </span>
+
       </div>
 
       <div style={{

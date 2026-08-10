@@ -12,6 +12,7 @@ export function useScanStatus(scanId, intervalMs = 1500, onComplete = null) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const timerRef = useRef(null);
+  const eventSourceRef = useRef(null);
   const onCompleteRef = useRef(onComplete);
 
   useEffect(() => {
@@ -29,24 +30,30 @@ export function useScanStatus(scanId, intervalMs = 1500, onComplete = null) {
     let isSubscribed = true;
     setLoading(true);
 
+    const handleUpdate = (data) => {
+      if (!isSubscribed) return;
+      setScanState(data);
+      setLoading(false);
+
+      if (data && (data.status === 'COMPLETE' || data.status === 'PARTIAL' || data.status === 'FAILED')) {
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+        if (eventSourceRef.current) {
+          eventSourceRef.current.close();
+          eventSourceRef.current = null;
+        }
+        if (onCompleteRef.current) {
+          onCompleteRef.current(data);
+        }
+      }
+    };
+
     const poll = async () => {
       try {
         const data = await getScanStatus(scanId);
-        if (!isSubscribed) return;
-
-        setScanState(data);
-        setLoading(false);
-
-        // Check if scan has reached terminal state (COMPLETE, PARTIAL, FAILED)
-        if (data && (data.status === 'COMPLETE' || data.status === 'PARTIAL' || data.status === 'FAILED')) {
-          if (timerRef.current) {
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-          }
-          if (onCompleteRef.current) {
-            onCompleteRef.current(data);
-          }
-        }
+        handleUpdate(data);
       } catch (err) {
         if (!isSubscribed) return;
         setError(err.message || 'Failed to fetch scan status');
@@ -58,18 +65,52 @@ export function useScanStatus(scanId, intervalMs = 1500, onComplete = null) {
       }
     };
 
-    // Run first query immediately
-    poll();
+    // Try EventSource (SSE) first for instant streaming updates
+    if (typeof window !== 'undefined' && 'EventSource' in window) {
+      try {
+        const es = new EventSource(`/api/scans/${scanId}/events`);
+        eventSourceRef.current = es;
 
-    // Setup periodic polling interval
-    timerRef.current = setInterval(poll, intervalMs);
+        es.addEventListener('status', (evt) => {
+          try {
+            const data = JSON.parse(evt.data);
+            handleUpdate(data);
+          } catch {
+            // Ignore parse errors
+          }
+        });
 
-    // Cleanup function when component unmounts or scanId changes
+        es.onerror = () => {
+          // SSE failed or timed out — close stream and fallback to polling interval
+          if (eventSourceRef.current) {
+            eventSourceRef.current.close();
+            eventSourceRef.current = null;
+          }
+          if (!timerRef.current && isSubscribed) {
+            poll();
+            timerRef.current = setInterval(poll, intervalMs);
+          }
+        };
+      } catch {
+        // EventSource creation failed, fallback to polling
+        poll();
+        timerRef.current = setInterval(poll, intervalMs);
+      }
+    } else {
+      // EventSource not supported in browser, fallback to polling
+      poll();
+      timerRef.current = setInterval(poll, intervalMs);
+    }
+
     return () => {
       isSubscribed = false;
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
+      }
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
       }
     };
   }, [scanId, intervalMs]);

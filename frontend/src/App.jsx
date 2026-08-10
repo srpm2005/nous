@@ -6,6 +6,9 @@ import PipelineProgressView from './components/PipelineProgressView';
 import ResumeDetailView from './components/ResumeDetailView';
 import RecentUploadsList from './components/RecentUploadsList';
 import UserHistoryView from './components/UserHistoryView';
+import Top500CrawlerView from './components/Top500CrawlerView';
+import SettingsView from './components/SettingsView';
+
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('scanner');
@@ -38,12 +41,9 @@ export default function App() {
 
     setRefreshHistorySignal((prev) => prev + 1);
 
-    if (newResume.isDuplicate) {
-      showToast('⚡ Duplicate resume detected! Content matched via SHA-256 hash.');
-    } else {
-      showToast('🚀 Resume uploaded! Async scanning job started (202 Accepted).');
-    }
+    showToast('🚀 Resume uploaded! Resume processing pipeline started.');
   };
+
 
   const handleScanComplete = (scanResult) => {
     setRefreshHistorySignal((prev) => prev + 1);
@@ -101,6 +101,7 @@ export default function App() {
       <HeroSection />
 
       {/* Main Tab Content */}
+
       {activeTab === 'scanner' ? (
         <div className="main-grid">
           {/* Left Column: Upload Zone + Pipeline Progress + Recent Resumes History */}
@@ -136,6 +137,10 @@ export default function App() {
             />
           </div>
         </div>
+      ) : activeTab === 'crawls' ? (
+        <Top500CrawlerView onShowToast={showToast} />
+      ) : activeTab === 'settings' ? (
+        <SettingsView onShowToast={showToast} />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <UserHistoryView
@@ -145,6 +150,7 @@ export default function App() {
           />
         </div>
       )}
+
 
       {/* Global Toast Notification */}
       {toastMessage && (

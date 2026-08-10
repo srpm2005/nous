@@ -41,6 +41,16 @@ public class ScanController {
     }
 
     /**
+     * Subscribe to real-time status updates stream via Server-Sent Events (SSE).
+     * GET /api/scans/{scanId}/events
+     */
+    @GetMapping(value = "/{scanId}/events", produces = org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE)
+    public org.springframework.web.servlet.mvc.method.annotation.SseEmitter getScanEvents(@PathVariable UUID scanId) {
+        log.info("GET /api/scans/{}/events (SSE connection opened)", scanId);
+        return scanService.subscribeToScanEvents(scanId);
+    }
+
+    /**
      * Fetch all scans submitted for a given resume UUID.
      * GET /api/scans/resume/{resumeId}
      */

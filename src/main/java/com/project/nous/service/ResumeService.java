@@ -70,16 +70,19 @@ public class ResumeService {
         log.info("Received upload from user '{}', file='{}', hash={}",
                 userId, file.getOriginalFilename(), fileHash);
 
-        // 4. Dedup check — return existing if same content was already uploaded
+        // If same file hash exists in DB, reuse existing resume entity to prevent SQL unique constraint error
         return resumeRepository.findByFileHash(fileHash)
                 .map(existing -> {
-                    log.info("Duplicate upload detected (hash={}). Returning existing resume id={}",
-                            fileHash, existing.getId());
-                    return new UploadResult(existing, true);
+                    log.info("Resume file hash already exists in DB. Reusing entity id={} for fresh scan.", existing.getId());
+                    return new UploadResult(existing, false);
                 })
-                .orElseGet(() -> new UploadResult(
-                        processNewUpload(file, userId, fileBytes, fileHash, detectedMime), false));
+                .orElseGet(() -> {
+                    Resume fresh = processNewUpload(file, userId, fileBytes, fileHash, detectedMime);
+                    return new UploadResult(fresh, false);
+                });
     }
+
+
 
     /**
      * Retrieve a resume by its ID.

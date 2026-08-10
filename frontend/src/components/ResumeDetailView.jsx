@@ -91,8 +91,8 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
     : 'Just now';
 
   return (
-    <div className="asana-card animate-fade-in" style={{ padding: '24px', position: 'relative' }}>
-      {/* Header Bar */}
+    <div className="asana-card animate-fade-in" style={{ padding: '24px', position: 'relative', minWidth: 0, overflow: 'hidden' }}>
+      {/* Header Bar & Quick Summary Card */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
         <div style={{ minWidth: 0, flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
@@ -101,8 +101,8 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
             </h3>
 
             {resume.isDuplicate && (
-              <span className="badge badge-emerald" title="SHA-256 hash deduplication match">
-                ⚡ Instant Dedup Match
+              <span className="badge badge-emerald" title="Instant Deduplication Match">
+                ⚡ Verified Resume
               </span>
             )}
 
@@ -110,7 +110,7 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
           </div>
 
           <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', margin: '4px 0 0 0' }}>
-            Uploaded: {formattedDate} • Owner: <strong style={{ color: 'var(--color-text)' }}>{resume.userId || 'anonymous'}</strong>
+            Uploaded: {formattedDate} • User: <strong style={{ color: 'var(--color-text)' }}>{resume.userId || 'anonymous'}</strong>
           </p>
         </div>
 
@@ -127,6 +127,7 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
         </button>
       </div>
 
+
       {/* Modern Navigation Tabs */}
       <div style={{
         display: 'flex',
@@ -140,7 +141,8 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
         <button
           onClick={() => setActiveTab('matches')}
           style={{
-            flex: 1,
+            flex: '1 1 0px',
+            minWidth: 0,
             padding: '8px 16px',
             borderRadius: 'var(--radius-sm)',
             border: 'none',
@@ -154,7 +156,8 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px'
+            gap: '8px',
+            whiteSpace: 'nowrap'
           }}
         >
           🎯 Target Jobs & AI Matches
@@ -163,7 +166,8 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
         <button
           onClick={() => setActiveTab('text')}
           style={{
-            flex: 1,
+            flex: '1 1 0px',
+            minWidth: 0,
             padding: '8px 16px',
             borderRadius: 'var(--radius-sm)',
             border: 'none',
@@ -177,32 +181,11 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px'
+            gap: '8px',
+            whiteSpace: 'nowrap'
           }}
         >
-          📝 Extracted Text Preview
-        </button>
-
-        <button
-          onClick={() => setActiveTab('tech')}
-          style={{
-            padding: '8px 16px',
-            borderRadius: 'var(--radius-sm)',
-            border: 'none',
-            background: activeTab === 'tech' ? 'var(--color-surface)' : 'transparent',
-            color: activeTab === 'tech' ? 'var(--color-text)' : 'var(--color-text-muted)',
-            fontWeight: activeTab === 'tech' ? 600 : 400,
-            fontSize: '13px',
-            cursor: 'pointer',
-            boxShadow: activeTab === 'tech' ? 'var(--shadow-card)' : 'none',
-            transition: 'all var(--motion-fast)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px'
-          }}
-        >
-          ⚙️ Technical Specs
+          📝 Parsed Resume Text
         </button>
       </div>
 
@@ -294,67 +277,6 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
               </button>
             </div>
           )}
-        </div>
-      )}
-
-      {/* TAB 3: TECHNICAL SPECS */}
-      {activeTab === 'tech' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {resume.isDuplicate && (
-            <div style={{
-              padding: '12px 16px',
-              borderRadius: 'var(--radius-md)',
-              background: 'var(--status-emerald-bg)',
-              border: '1px solid var(--status-emerald-border)',
-              color: 'var(--status-emerald-text)',
-              fontSize: '13px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px'
-            }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                <polyline points="22 4 12 14.01 9 11.01"/>
-              </svg>
-              <span>
-                <strong>Content Deduplication Triggered:</strong> SHA-256 content hash matched a prior upload. Returned existing record without redundant LLM pipeline execution.
-              </span>
-            </div>
-          )}
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '12px'
-          }}>
-            <div style={{ background: 'var(--color-background-subtle)', padding: '14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Resume Entity UUID</div>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', color: 'var(--color-text)', marginTop: '4px', wordBreak: 'break-all' }}>
-                {resume.id}
-              </div>
-            </div>
-
-            <div style={{ background: 'var(--color-background-subtle)', padding: '14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Scan Execution UUID</div>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', color: 'var(--color-text)', marginTop: '4px', wordBreak: 'break-all' }}>
-                {resume.scanId || 'N/A'}
-              </div>
-            </div>
-
-            <div style={{ background: 'var(--color-background-subtle)', padding: '14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Detected MIME Type</div>
-              <div style={{ fontSize: '14px', fontWeight: 600, marginTop: '4px', color: 'var(--color-text)' }}>
-                {resume.mimeType || 'application/pdf'}
-              </div>
-            </div>
-
-            <div style={{ background: 'var(--color-background-subtle)', padding: '14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.04em' }}>Extracted Characters</div>
-              <div style={{ fontSize: '14px', fontWeight: 600, marginTop: '4px', color: 'var(--color-accent)' }}>
-                {resume.extractedCharCount ? resume.extractedCharCount.toLocaleString() : textToDisplay.length.toLocaleString()} chars
-              </div>
-            </div>
-          </div>
         </div>
       )}
 

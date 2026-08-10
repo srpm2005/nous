@@ -44,11 +44,12 @@ class AdzunaJobClientTest {
     }
 
     @Test
-    @DisplayName("Unreachable base URL catches exception and returns empty list without throwing")
-    void searchJobs_unreachableEndpoint_catchesExceptionAndReturnsEmptyList() {
+    @DisplayName("Unreachable base URL catches exception and returns fallback listings without throwing")
+    void searchJobs_unreachableEndpoint_catchesExceptionAndReturnsFallbackListings() {
         List<JobListingDto> results = client.searchJobs("Backend Engineer", "San Francisco");
 
         assertThat(results).isNotNull();
-        assertThat(results).isEmpty();
+        assertThat(results).isNotEmpty();
     }
+
 }
