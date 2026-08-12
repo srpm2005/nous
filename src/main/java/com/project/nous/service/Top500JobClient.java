@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "app.jobapi.provider", havingValue = "top500")
+@ConditionalOnProperty(name = "app.jobapi.provider", havingValue = "top500", matchIfMissing = true)
 public class Top500JobClient implements JobSearchClient {
 
     private final JobPostingRepository jobPostingRepository;

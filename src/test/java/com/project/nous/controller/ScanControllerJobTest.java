@@ -38,7 +38,7 @@ class ScanControllerJobTest {
                 .location("Remote")
                 .salaryRange("$130,000 - $160,000")
                 .applyUrl("https://example.com/apply")
-                .sourceApi("Adzuna")
+                .sourceApi("Top 500 Enterprise")
                 .build();
 
         given(scanService.getJobListingsByScanId(scanId)).willReturn(List.of(job));
@@ -47,7 +47,7 @@ class ScanControllerJobTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("Senior Java Developer"))
                 .andExpect(jsonPath("$[0].company").value("Acme Corp"))
-                .andExpect(jsonPath("$[0].sourceApi").value("Adzuna"));
+                .andExpect(jsonPath("$[0].sourceApi").value("Top 500 Enterprise"));
     }
 
     @Test

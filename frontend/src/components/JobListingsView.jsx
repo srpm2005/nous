@@ -5,7 +5,7 @@ import JobFilterControls from './JobFilterControls';
 
 /**
  * Master Phase 4 Live Job Search Dashboard container.
- * Fetches, filters, and renders aggregated job postings retrieved from external job APIs (Adzuna / MockJobEngine).
+ * Fetches, filters, and renders enterprise job postings retrieved from top enterprise portal engines.
  */
 export function JobListingsView({ scanId, resumeId, scanStatus, roles = [] }) {
   const [jobs, setJobs] = useState([]);
@@ -117,7 +117,7 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles = [] }) {
       {loading && (
         <div style={{ padding: '36px', textAlign: 'center', color: 'var(--color-text-muted)' }}>
           <div className="spinner" style={{ margin: '0 auto 12px auto' }}></div>
-          <p style={{ fontSize: '14px' }}>Querying external job search providers (Adzuna / Job Engine)...</p>
+          <p style={{ fontSize: '14px' }}>Querying enterprise portal job engine...</p>
         </div>
       )}
 

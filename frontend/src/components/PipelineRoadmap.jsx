@@ -26,7 +26,7 @@ export default function PipelineRoadmap() {
     {
       number: '4',
       title: 'Job Board Aggregation',
-      description: 'Parallel Adzuna/Jooble API queries, per-role timeouts, Redis response caching',
+      description: 'Top 500 Enterprise Hiring Portal matching, per-role timeouts, Redis response caching',
       status: 'planned',
       badge: 'PHASE 4'
     },

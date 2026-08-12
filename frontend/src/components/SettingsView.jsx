@@ -50,9 +50,7 @@ export default function SettingsView({ onShowToast }) {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
             {[
-              { id: 'top500', name: 'Top 500 Enterprise Portals', desc: 'Verified openings scraped directly from top hiring portals' },
-              { id: 'adzuna', name: 'Adzuna Job Board Aggregator', desc: 'Global job board aggregator' },
-              { id: 'jsearch', name: 'JSearch Live Aggregator', desc: 'Multi-platform live job aggregator' }
+              { id: 'top500', name: 'Top 500 Enterprise Portals', desc: 'Verified openings scraped directly from top enterprise hiring portals' }
             ].map((item) => (
               <label
                 key={item.id}

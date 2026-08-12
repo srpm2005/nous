@@ -12,7 +12,7 @@ import org.springframework.web.client.RestClient;
 @Configuration
 public class JobApiConfig {
 
-    @Value("${app.jobapi.base-url:https://api.adzuna.com/v1/api/jobs}")
+    @Value("${app.jobapi.base-url:https://api.nous.com/v1/jobs}")
     private String baseUrl;
 
     @Value("${app.jobapi.timeout-ms:4000}")
