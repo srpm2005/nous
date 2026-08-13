@@ -35,10 +35,13 @@ public class UserController {
     @GetMapping("/{userId}/scans")
     public ResponseEntity<List<ScanResponseDto>> getUserScans(@PathVariable String userId) {
         log.info("GET /api/users/{}/scans", userId);
-        List<Scan> scans = scanService.getScansByUserId(userId);
-        List<ScanResponseDto> dtos = scans.stream()
-                .map(ScanResponseDto::from)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+        List<ScanResponseDto> dtos = scanService.getEnrichedScanResponsesByUserId(userId);
+        if (dtos == null || dtos.isEmpty()) {
+            List<Scan> rawScans = scanService.getScansByUserId(userId);
+            if (rawScans != null && !rawScans.isEmpty()) {
+                dtos = rawScans.stream().map(ScanResponseDto::from).collect(Collectors.toList());
+            }
+        }
+        return ResponseEntity.ok(dtos != null ? dtos : List.of());
     }
 }

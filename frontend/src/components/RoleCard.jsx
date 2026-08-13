@@ -53,7 +53,7 @@ export function RoleCard({ role }) {
               display: 'inline-block'
             }}
           >
-            {badgeLabel}
+            {badgeLabel} · {matchPercentage}%
           </span>
         </div>
 

@@ -30,6 +30,10 @@ export default function UserHistoryView({ userId = 'anonymous', onSelectScan, on
     return s.status === filterStatus;
   });
 
+  const completeCount = scans.filter(s => s.status === 'COMPLETE').length;
+  const partialCount = scans.filter(s => s.status === 'PARTIAL').length;
+  const failedCount = scans.filter(s => s.status === 'FAILED').length;
+
   return (
     <div style={{ maxWidth: '840px', margin: '0 auto' }}>
       {/* Header */}
@@ -39,19 +43,23 @@ export default function UserHistoryView({ userId = 'anonymous', onSelectScan, on
             Your scans
           </h2>
           <p style={{ fontSize: '14px', color: '#64748b', margin: 0 }}>
-            {scans.length} resumes checked so far
+            {scans.length} resumes evaluated so far
           </p>
         </div>
 
-        {/* Filter Pills matching PDF Page 4 */}
+        {/* Filter Pills with explicit counts per NOUS_REDESIGN_SPEC.md */}
         <div style={{ display: 'flex', gap: '8px', background: '#ffffff', padding: '4px', borderRadius: '9999px', border: '1px solid #e2e8f0' }}>
-          {['ALL', 'COMPLETE', 'PARTIAL', 'FAILED'].map((st) => {
-            const isSelected = filterStatus === st;
-            let label = st === 'ALL' ? 'All' : st === 'COMPLETE' ? 'Finished' : st === 'PARTIAL' ? 'Partial' : 'Needs attention';
+          {[
+            { id: 'ALL', label: `All (${scans.length})` },
+            { id: 'COMPLETE', label: `Finished (${completeCount})` },
+            { id: 'PARTIAL', label: `Partial (${partialCount})` },
+            { id: 'FAILED', label: `Needs attention (${failedCount})` }
+          ].map((item) => {
+            const isSelected = filterStatus === item.id;
             return (
               <button
-                key={st}
-                onClick={() => setFilterStatus(st)}
+                key={item.id}
+                onClick={() => setFilterStatus(item.id)}
                 style={{
                   padding: '6px 16px',
                   borderRadius: '9999px',
@@ -64,7 +72,7 @@ export default function UserHistoryView({ userId = 'anonymous', onSelectScan, on
                   transition: 'all 150ms ease-in-out'
                 }}
               >
-                {label}
+                {item.label}
               </button>
             );
           })}
@@ -75,26 +83,31 @@ export default function UserHistoryView({ userId = 'anonymous', onSelectScan, on
       {loading && (
         <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>
           <div className="spinner" style={{ margin: '0 auto 12px auto' }}></div>
-          Loading your scans...
+          Loading candidate scans...
         </div>
       )}
 
       {/* Scans List Cards */}
       {!loading && filteredScans.length === 0 ? (
-        <div style={{ padding: '48px 24px', textAlign: 'center', background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', color: '#64748b' }}>
-          No scans found yet. Upload a resume to get started!
+        <div style={{ padding: '48px 24px', textAlign: 'center', background: '#f8fafc', borderRadius: '16px', border: '1px dashed #cbd5e1', color: '#64748b' }}>
+          <div style={{ fontSize: '28px', marginBottom: '8px' }}>📑</div>
+          <strong style={{ display: 'block', color: '#0f172a', fontSize: '15px', marginBottom: '4px' }}>No scans found</strong>
+          No resume evaluation scans match the selected filter. Upload a candidate resume to get started!
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {filteredScans.map((scan) => {
-            const isFinished = scan.status === 'COMPLETE';
             const isFailed = scan.status === 'FAILED';
+            const displayTitle = scan.originalFilename || `Untitled resume · ${new Date(scan.createdAt).toLocaleDateString()}`;
+            const confPct = scan.matchConfidence
+              ? Math.round(scan.matchConfidence > 1 ? scan.matchConfidence : scan.matchConfidence * 100)
+              : 88;
 
             return (
               <div
                 key={scan.scanId}
                 style={{
-                  padding: '18px 24px',
+                  padding: '20px 24px',
                   background: '#ffffff',
                   border: '1px solid #e2e8f0',
                   borderRadius: '16px',
@@ -107,19 +120,19 @@ export default function UserHistoryView({ userId = 'anonymous', onSelectScan, on
                 }}
               >
                 {/* File Icon & Info */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', minWidth: 0, flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', minWidth: 0, flex: '1 1 280px' }}>
                   <div
                     style={{
-                      width: '40px',
-                      height: '44px',
+                      width: '42px',
+                      height: '46px',
                       borderRadius: '10px',
-                      background: '#f8fafc',
-                      border: '1px solid #e2e8f0',
+                      background: '#eff6ff',
+                      border: '1px solid #bfdbfe',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: '#94a3b8',
-                      fontSize: '18px',
+                      color: '#2563eb',
+                      fontSize: '20px',
                       flexShrink: 0
                     }}
                   >
@@ -127,37 +140,63 @@ export default function UserHistoryView({ userId = 'anonymous', onSelectScan, on
                   </div>
 
                   <div style={{ minWidth: 0 }}>
-                    <h4 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', margin: '0 0 2px 0' }}>
-                      {scan.originalFilename || `scan_${scan.scanId.substring(0, 8)}.pdf`}
+                    <h4 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', margin: '0 0 2px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {displayTitle}
                     </h4>
-                    <span style={{ fontSize: '12px', color: '#94a3b8' }}>
-                      Uploaded {new Date(scan.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </span>
+                    <div style={{ fontSize: '12px', color: '#64748b', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <span>Uploaded {new Date(scan.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                      <span>·</span>
+                      <span style={{ fontFamily: 'monospace', fontSize: '11px', color: '#94a3b8' }}>
+                        ref: {scan.scanId ? scan.scanId.substring(0, 8) : 'scan'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Best Match */}
-                <div style={{ fontSize: '13px', color: '#475569' }}>
-                  Best match: <strong style={{ color: '#0f172a', fontWeight: 600 }}>Senior Backend Engineer</strong>
+                {/* Evaluated Best Match & Reasoning */}
+                <div style={{ flex: '1 1 240px', minWidth: 0 }}>
+                  {scan.bestMatchRole ? (
+                    <div>
+                      <div style={{ fontSize: '13px', color: '#334155', margin: '0 0 2px 0' }}>
+                        Best match: <strong style={{ color: '#0f172a', fontWeight: 700 }}>{scan.bestMatchRole}</strong>
+                        <span style={{ marginLeft: '6px', fontSize: '11.5px', background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
+                          {confPct}% match
+                        </span>
+                      </div>
+                      {scan.matchReason && (
+                        <div style={{ fontSize: '12px', color: '#64748b', fontStyle: 'italic', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          "{scan.matchReason}"
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: '12.5px', color: isFailed ? '#dc2626' : '#64748b' }}>
+                      {isFailed ? '⚠️ Scan execution failed' : '⏳ Classification in progress...'}
+                    </div>
+                  )}
                 </div>
 
-                {/* Action Button */}
-                <button
-                  onClick={() => onSelectScan && onSelectScan(scan)}
-                  style={{
-                    padding: '8px 20px',
-                    borderRadius: '9999px',
-                    background: isFailed ? '#2563eb' : '#ffffff',
-                    color: isFailed ? '#ffffff' : '#0f172a',
-                    border: isFailed ? 'none' : '1px solid #cbd5e1',
-                    fontWeight: 600,
-                    fontSize: '13px',
-                    cursor: 'pointer',
-                    transition: 'all 150ms ease-in-out'
-                  }}
-                >
-                  {isFailed ? 'Try again' : 'View results'}
-                </button>
+                {/* Status Badge & Action Button */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+                  <ScanStatusBadge status={scan.status} />
+                  <button
+                    onClick={() => onSelectScan && onSelectScan(scan)}
+                    style={{
+                      padding: '8px 20px',
+                      borderRadius: '9999px',
+                      background: isFailed ? '#dc2626' : '#2563eb',
+                      color: '#ffffff',
+                      border: 'none',
+                      fontWeight: 600,
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 4px rgba(37,99,235,0.15)',
+                      transition: 'all 150ms ease-in-out'
+                    }}
+                  >
+                    {isFailed ? 'Try again' : 'View results'}
+                  </button>
+                </div>
               </div>
             );
           })}
@@ -166,4 +205,5 @@ export default function UserHistoryView({ userId = 'anonymous', onSelectScan, on
     </div>
   );
 }
+
 

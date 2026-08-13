@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Data Transfer Object representing an individual role suggestion from the LLM.
@@ -16,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class RoleSuggestionDto {
 
+    private UUID id;
     private String roleTitle;
     private Integer rank;
     private Double confidenceScore;

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * REST Controller for Top 500 Enterprise Crawler Monitoring & Administration.
@@ -38,8 +39,9 @@ public class Top500CrawlController {
     @PostMapping("/trigger")
     public ResponseEntity<CrawlRun> triggerManualCrawl() {
         log.info("POST /api/top500/trigger - Triggering manual Top 500 Enterprise Crawl Batch");
-        CrawlRun run = crawlOrchestratorService.runFullCrawlBatch();
-        return ResponseEntity.ok(run);
+        CompletableFuture.runAsync(crawlOrchestratorService::runFullCrawlBatch);
+        CrawlRun latest = crawlRunRepository.findTopByOrderByStartedAtDesc().orElse(null);
+        return ResponseEntity.ok(latest);
     }
 
     @GetMapping("/runs")

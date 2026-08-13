@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.concurrent.*;
 
 /**
@@ -39,35 +40,34 @@ public class CrawlOrchestratorService {
     private final CrawlResultRepository crawlResultRepository;
     private final List<CareerPageAdapter> adapters;
 
-    private final ExecutorService executor = Executors.newFixedThreadPool(10);
+    private final ExecutorService executor = Executors.newFixedThreadPool(50);
     private boolean isCrawlInProgress = false;
 
     @PostConstruct
+    @Transactional
     public void seedInitialTop500Companies() {
-        if (companyRepository.count() > 0) {
-            log.info("Top 500 enterprise companies directory already seeded. Skipping initial seed.");
+        long currentCount = companyRepository.count();
+        if (currentCount >= 500) {
+            log.info("Top 500 enterprise companies directory already fully seeded ({} active portals).", currentCount);
             return;
         }
 
-        log.info("🌱 Seeding initial Top 500 Enterprise Hiring Companies directory...");
+        log.info("🌱 Seeding complete Top 500 Enterprise Hiring Companies directory...");
+        List<Company> all500 = Top500CompanyDirectorySeed.getTop500Companies();
+        
+        Set<String> existingNames = companyRepository.findAll().stream()
+                .map(Company::getName)
+                .collect(Collectors.toSet());
 
-        List<Company> initialCompanies = List.of(
-                Company.builder().name("Microsoft").domain("microsoft.com").careerPageUrl("https://careers.microsoft.com").adapterType("GENERIC_HTML").isActive(true).build(),
-                Company.builder().name("Amazon").domain("amazon.com").careerPageUrl("https://www.amazon.jobs").adapterType("WORKDAY").isActive(true).build(),
-                Company.builder().name("Google").domain("google.com").careerPageUrl("https://careers.google.com").adapterType("GENERIC_HTML").isActive(true).build(),
-                Company.builder().name("Meta").domain("meta.com").careerPageUrl("https://www.metacareers.com").adapterType("GENERIC_HTML").isActive(true).build(),
-                Company.builder().name("Apple").domain("apple.com").careerPageUrl("https://jobs.apple.com").adapterType("GENERIC_HTML").isActive(true).build(),
-                Company.builder().name("Netflix").domain("netflix.com").careerPageUrl("https://jobs.netflix.com").adapterType("GENERIC_HTML").isActive(true).build(),
-                Company.builder().name("Adobe").domain("adobe.com").careerPageUrl("https://adobe.careers.com").adapterType("GENERIC_HTML").isActive(true).build(),
-                Company.builder().name("Stripe").domain("stripe.com").careerPageUrl("https://stripe.com/jobs").adapterType("GREENHOUSE").adapterConfig("stripe").isActive(true).build(),
-                Company.builder().name("Figma").domain("figma.com").careerPageUrl("https://www.figma.com/careers").adapterType("LEVER").adapterConfig("figma").isActive(true).build(),
-                Company.builder().name("TCS").domain("tcs.com").careerPageUrl("https://www.tcs.com/careers").adapterType("GENERIC_HTML").isActive(true).build(),
-                Company.builder().name("Infosys").domain("infosys.com").careerPageUrl("https://www.infosys.com/careers").adapterType("GENERIC_HTML").isActive(true).build(),
-                Company.builder().name("Accenture").domain("accenture.com").careerPageUrl("https://www.accenture.com/careers").adapterType("GENERIC_HTML").isActive(true).build()
-        );
+        List<Company> newCompanies = all500.stream()
+                .filter(c -> !existingNames.contains(c.getName()))
+                .collect(Collectors.toList());
 
-        companyRepository.saveAll(initialCompanies);
-        log.info("✅ Successfully seeded {} Top 500 Enterprise Companies.", initialCompanies.size());
+        if (!newCompanies.isEmpty()) {
+            companyRepository.saveAll(newCompanies);
+        }
+        
+        log.info("✅ Successfully seeded Top 500 Enterprise Companies directory. Total active portals: {}", companyRepository.count());
     }
 
     /**
@@ -118,7 +118,7 @@ public class CrawlOrchestratorService {
 
         for (Future<CompanyCrawlTaskResult> future : futures) {
             try {
-                CompanyCrawlTaskResult res = future.get(30, TimeUnit.SECONDS);
+                CompanyCrawlTaskResult res = future.get(5, TimeUnit.SECONDS);
                 if ("SUCCESS".equals(res.status)) {
                     succeededCount++;
                     totalFound += res.postingsFound;

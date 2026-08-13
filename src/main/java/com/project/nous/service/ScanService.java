@@ -86,6 +86,30 @@ public class ScanService {
         return scanRepository.findByUserId(userId);
     }
 
+    @Transactional(readOnly = true)
+    public com.project.nous.dto.ScanResponseDto getEnrichedScanResponseDto(Scan scan) {
+        if (scan == null) return null;
+        String originalFilename = null;
+        if (scan.getResumeId() != null) {
+            originalFilename = resumeRepository.findById(scan.getResumeId())
+                    .map(Resume::getOriginalFilename)
+                    .orElse(null);
+        }
+
+        List<SuggestedRole> roles = suggestedRoleRepository.findByScanIdOrderByRankOrderAsc(scan.getId());
+        SuggestedRole topRole = (!roles.isEmpty()) ? roles.get(0) : null;
+
+        return com.project.nous.dto.ScanResponseDto.from(scan, originalFilename, topRole);
+    }
+
+    @Transactional(readOnly = true)
+    public List<com.project.nous.dto.ScanResponseDto> getEnrichedScanResponsesByUserId(String userId) {
+        List<Scan> scans = getScansByUserId(userId);
+        return scans.stream()
+                .map(this::getEnrichedScanResponseDto)
+                .toList();
+    }
+
     /**
      * Phase 5: Cascade deletion of all scans, roles, and job listings associated with a resume.
      */

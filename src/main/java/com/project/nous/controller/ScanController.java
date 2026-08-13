@@ -37,7 +37,11 @@ public class ScanController {
     public ResponseEntity<ScanResponseDto> getScanStatus(@PathVariable UUID scanId) {
         log.info("GET /api/scans/{}", scanId);
         Scan scan = scanService.getScanById(scanId);
-        return ResponseEntity.ok(ScanResponseDto.from(scan));
+        if (scan == null) {
+            return ResponseEntity.notFound().build();
+        }
+        ScanResponseDto enriched = scanService.getEnrichedScanResponseDto(scan);
+        return ResponseEntity.ok(enriched != null ? enriched : ScanResponseDto.from(scan));
     }
 
     /**
@@ -129,6 +133,7 @@ public class ScanController {
                 : List.of();
 
         return RoleSuggestionDto.builder()
+                .id(role.getId())
                 .roleTitle(role.getRoleTitle())
                 .rank(role.getRankOrder())
                 .confidenceScore(role.getConfidenceScore())

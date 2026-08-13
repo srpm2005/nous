@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, UUID> {
+    boolean existsByName(String name);
     List<Company> findByIsActiveTrue();
     Optional<Company> findByDomain(String domain);
     Optional<Company> findByNameIgnoreCase(String name);
