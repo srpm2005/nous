@@ -219,7 +219,6 @@ public class ScanService {
     /**
      * Process a scan pipeline for an existing scan record end-to-end.
      */
-    @Transactional
     public Scan processScan(Scan scan, Resume resume) {
         if (scan == null) return null;
         scan.setStatus(ScanStatus.PROCESSING);
@@ -263,45 +262,53 @@ public class ScanService {
                 }
             }
 
-            // Step 2: Top 500 Enterprise Job Search per target role
+            // Step 2: Top 500 Enterprise Job Search per target role (Parallelized for sub-second execution)
             if (!savedRoles.isEmpty()) {
                 jobListingRepository.deleteByScanId(scanId);
-                List<JobListing> allJobListingEntities = new ArrayList<>();
 
-                for (SuggestedRole role : savedRoles) {
-                    try {
-                        List<JobListingDto> fetchedListings = jobSearchClient.searchJobs(role.getRoleTitle(), "Remote");
-                        if (fetchedListings != null && !fetchedListings.isEmpty()) {
-                            for (JobListingDto dto : fetchedListings) {
-                                String sourceStr = dto.getSourceApi() != null ? dto.getSourceApi() : jobSearchClient.getProviderName();
-                                if (sourceStr != null && sourceStr.length() > 45) {
-                                    sourceStr = sourceStr.substring(0, 45);
+                List<java.util.concurrent.CompletableFuture<List<JobListing>>> futures = savedRoles.stream()
+                        .map(role -> java.util.concurrent.CompletableFuture.supplyAsync(() -> {
+                            List<JobListing> roleEntities = new ArrayList<>();
+                            try {
+                                List<JobListingDto> fetchedListings = jobSearchClient.searchJobs(role.getRoleTitle(), "Remote");
+                                if (fetchedListings != null && !fetchedListings.isEmpty()) {
+                                    for (JobListingDto dto : fetchedListings) {
+                                        String sourceStr = dto.getSourceApi() != null ? dto.getSourceApi() : jobSearchClient.getProviderName();
+                                        if (sourceStr != null && sourceStr.length() > 45) {
+                                            sourceStr = sourceStr.substring(0, 45);
+                                        }
+                                        JobListing entity = JobListing.builder()
+                                                .scanId(scanId)
+                                                .roleId(role.getId())
+                                                .title(dto.getTitle())
+                                                .company(dto.getCompany())
+                                                .location(dto.getLocation())
+                                                .salaryRange(dto.getSalaryRange())
+                                                .applyUrl(dto.getApplyUrl())
+                                                .sourceApi(sourceStr)
+                                                .build();
+                                        roleEntities.add(entity);
+                                    }
                                 }
-                                JobListing entity = JobListing.builder()
-                                        .scanId(scanId)
-                                        .roleId(role.getId())
-                                        .title(dto.getTitle())
-                                        .company(dto.getCompany())
-                                        .location(dto.getLocation())
-                                        .salaryRange(dto.getSalaryRange())
-                                        .applyUrl(dto.getApplyUrl())
-                                        .sourceApi(sourceStr)
-                                        .build();
-                                allJobListingEntities.add(entity);
+                            } catch (Exception ex) {
+                                log.warn("Job search failed for role '{}' in scanId {}", role.getRoleTitle(), scanId, ex);
                             }
-                        } else {
-                            partialFailureEncountered = true;
-                        }
-                    } catch (Exception ex) {
-                        log.warn("Job search failed for role '{}' in scanId {}", role.getRoleTitle(), scanId, ex);
-                        partialFailureEncountered = true;
-                    }
-                }
+                            return roleEntities;
+                        }))
+                        .toList();
+
+                java.util.concurrent.CompletableFuture.allOf(futures.toArray(new java.util.concurrent.CompletableFuture[0])).join();
+
+                List<JobListing> allJobListingEntities = futures.stream()
+                        .flatMap(f -> f.join().stream())
+                        .toList();
 
                 if (!allJobListingEntities.isEmpty()) {
                     jobListingRepository.saveAll(allJobListingEntities);
                     log.info("Successfully saved {} live enterprise job listings for scan {}",
                             allJobListingEntities.size(), scanId);
+                } else {
+                    partialFailureEncountered = true;
                 }
             }
 
@@ -344,7 +351,6 @@ public class ScanService {
      * Asynchronously process the scan pipeline in a background worker thread.
      */
     @Async("scanTaskExecutor")
-    @Transactional
     public void processScanAsync(UUID scanId) {
         Scan scan = scanRepository.findById(scanId).orElse(null);
         if (scan != null) {

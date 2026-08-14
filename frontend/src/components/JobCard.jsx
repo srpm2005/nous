@@ -27,6 +27,9 @@ function inferJobSkillBadges(title = '', company = '') {
 
   if (t.includes('java') || t.includes('jvm')) badges.push({ name: 'Java', icon: '☕', bg: '#eff6ff', color: '#1d4ed8' });
   if (t.includes('spring') || t.includes('boot')) badges.push({ name: 'Spring Boot', icon: '🍃', bg: '#f0fdf4', color: '#15803d' });
+  if (t.includes('python')) badges.push({ name: 'Python', icon: '🐍', bg: '#f0fdf4', color: '#16a34a' });
+  if (t.includes('react') || t.includes('frontend') || t.includes('front-end') || t.includes('ui') || t.includes('javascript')) badges.push({ name: 'React & Frontend', icon: '⚛️', bg: '#eff6ff', color: '#2563eb' });
+  if (t.includes('ai') || t.includes('data') || t.includes('machine learning') || t.includes('ml') || t.includes('sql')) badges.push({ name: 'AI & Data Science', icon: '🤖', bg: '#f3e8ff', color: '#7e22ce' });
   if (t.includes('azure') || t.includes('aws') || t.includes('cloud') || t.includes('gcp')) badges.push({ name: 'Cloud & Infrastructure', icon: '☁️', bg: '#f0f9ff', color: '#0369a1' });
   if (t.includes('backend') || t.includes('back-end')) badges.push({ name: 'Backend Systems', icon: '⚙️', bg: '#f8fafc', color: '#334155' });
   if (t.includes('microservice') || t.includes('distributed')) badges.push({ name: 'Microservices', icon: '⚡', bg: '#fef3c7', color: '#b45309' });
@@ -49,9 +52,16 @@ export function JobCard({ job, activePlatform = 'ALL', viewMode = 'grid' }) {
   if (!job) return null;
 
   const companyName = job.company || 'Enterprise Partner';
-  let targetUrl = (job.applyUrl && job.applyUrl !== '#') 
-    ? job.applyUrl 
-    : `https://www.google.com/search?q=${encodeURIComponent(companyName + ' ' + job.title + ' official career page apply')}`;
+  let rawApplyUrl = job.applyUrl || '';
+  
+  const isFakeOrBrokenUrl = !rawApplyUrl 
+    || rawApplyUrl === '#' 
+    || rawApplyUrl.includes('invalid_url')
+    || (rawApplyUrl.includes('enterprise') && /\d+/.test(rawApplyUrl));
+
+  let targetUrl = isFakeOrBrokenUrl
+    ? `https://www.google.com/search?q=${encodeURIComponent(companyName + ' ' + job.title + ' official career page apply')}`
+    : rawApplyUrl;
 
   const matchScore = 92 + (Math.abs((job.title || '').length * 7) % 7);
 

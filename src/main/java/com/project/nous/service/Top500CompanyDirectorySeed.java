@@ -226,8 +226,9 @@ public class Top500CompanyDirectorySeed {
         // Additional Fortune 500 Enterprise Portals to reach full 500 total
         for (int i = list.size() + 1; i <= 500; i++) {
             String companyName = "Enterprise Partner #" + i;
-            String companyDomain = "enterprise" + i + ".com";
-            list.add(createCompany(companyName, companyDomain, "https://" + companyDomain + "/careers", "GENERIC_HTML"));
+            String companyDomain = "google.com";
+            String searchUrl = "https://www.google.com/search?q=" + java.net.URLEncoder.encode(companyName + " official careers portal apply", java.nio.charset.StandardCharsets.UTF_8);
+            list.add(createCompany(companyName, companyDomain, searchUrl, "GENERIC_HTML"));
         }
 
         return list;

@@ -76,19 +76,36 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles: initialRo
     return () => { isMounted = false; };
   }, [scanId, resumeId, scanStatus]);
 
+  // Helper to accurately match job against a target role's domain keywords
+  const matchesRoleDomain = (job, matchedRole) => {
+    if (!job || !matchedRole) return true;
+    if (job.roleId && matchedRole.id && job.roleId === matchedRole.id) {
+      return true;
+    }
+
+    const jobTitle = (job.title || '').toLowerCase();
+    const roleTitle = (matchedRole.roleTitle || '').toLowerCase();
+
+    const genericWords = new Set(['software', 'engineer', 'developer', 'senior', 'principal', 'lead', 'staff', 'ii', 'iii', 'iv', 'team', 'openings']);
+    
+    const roleTerms = roleTitle.split(/[\s/-]+/).filter(w => w.length > 1 && !genericWords.has(w));
+    const rawSkills = Array.isArray(matchedRole.keySkills)
+      ? matchedRole.keySkills
+      : (matchedRole.keySkillsCsv ? matchedRole.keySkillsCsv.split(',') : []);
+    const skillTerms = rawSkills.map(s => s.toLowerCase().split(/[\s/-]+/)).flat().filter(w => w.length > 1 && !genericWords.has(w));
+
+    const domainKeywords = [...new Set([...roleTerms, ...skillTerms])];
+
+    if (domainKeywords.length === 0) return true;
+
+    return domainKeywords.some(k => jobTitle.includes(k));
+  };
+
   // Filter jobs based on keyword, location, role selection, and platform selection
   const filteredJobs = jobs.filter((j) => {
     if (selectedRoleId !== 'ALL') {
       const matchedRole = roles.find(r => (r.id && r.id === selectedRoleId) || r.roleTitle === selectedRoleId);
-      const isDirectIdMatch = j.roleId && (j.roleId === selectedRoleId || (matchedRole && j.roleId === matchedRole.id));
-
-      let isTitleMatch = false;
-      if (matchedRole && matchedRole.roleTitle && j.title) {
-        const keywords = matchedRole.roleTitle.toLowerCase().split(' ').filter(w => w.length > 2);
-        isTitleMatch = keywords.some(k => j.title.toLowerCase().includes(k));
-      }
-
-      if (!isDirectIdMatch && !isTitleMatch) {
+      if (matchedRole && !matchesRoleDomain(j, matchedRole)) {
         return false;
       }
     }
@@ -161,27 +178,28 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles: initialRo
     const buckets = [];
     const assignedIds = new Set();
 
-    // 1. First, create buckets from AI suggested roles if available
-    if (roles && roles.length > 0) {
-      roles.forEach((r, idx) => {
-        const titleKeywords = (r.roleTitle || '').toLowerCase().split(' ').filter(w => w.length > 2);
-        const skillKeywords = (r.keySkills || []).map(s => s.toLowerCase());
-        const allKeywords = [...titleKeywords, ...skillKeywords];
+    const activeRoles = selectedRoleId === 'ALL'
+      ? roles
+      : roles.filter(r => (r.id && r.id === selectedRoleId) || r.roleTitle === selectedRoleId);
 
+    // 1. Create buckets from candidate target roles
+    if (activeRoles && activeRoles.length > 0) {
+      activeRoles.forEach((r, idx) => {
         const matching = filteredJobs.filter(j => {
           if (assignedIds.has(j.id)) return false;
-          const jt = (j.title || '').toLowerCase();
-          const matchesRoleId = r.id && j.roleId === r.id;
-          const matchesKeywords = allKeywords.some(k => jt.includes(k));
-          return matchesRoleId || matchesKeywords;
+          return matchesRoleDomain(j, r);
         });
+
+        const rawSkills = Array.isArray(r.keySkills)
+          ? r.keySkills
+          : (r.keySkillsCsv ? r.keySkillsCsv.split(',') : ['Target Skill Set']);
 
         if (matching.length > 0) {
           matching.forEach(j => assignedIds.add(j.id));
           buckets.push({
             id: r.id || `role-${idx}`,
             title: `🎯 Target Role: ${r.roleTitle}`,
-            subtitle: `Matched candidate skills: ${r.keySkills ? r.keySkills.slice(0, 4).join(', ') : 'Target Skill Set'}`,
+            subtitle: `Matched candidate skills: ${rawSkills.slice(0, 5).join(', ')}`,
             badgeBg: '#eff6ff',
             badgeColor: '#2563eb',
             jobs: matching
@@ -190,36 +208,51 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles: initialRo
       });
     }
 
-    // 2. Next, group remaining jobs into core skill clusters
-    skillCategories.forEach(cat => {
-      const matching = filteredJobs.filter(j => {
-        if (assignedIds.has(j.id)) return false;
-        const jt = (j.title || '').toLowerCase();
-        return cat.matchKeywords.some(k => jt.includes(k));
-      });
-
-      if (matching.length > 0) {
-        matching.forEach(j => assignedIds.add(j.id));
-        buckets.push({
-          id: cat.id,
-          title: cat.title,
-          subtitle: cat.subtitle,
-          badgeBg: cat.badgeBg,
-          badgeColor: cat.badgeColor,
-          jobs: matching
+    // 2. Group remaining jobs into core skill clusters (only if ALL selected)
+    if (selectedRoleId === 'ALL') {
+      skillCategories.forEach(cat => {
+        const matching = filteredJobs.filter(j => {
+          if (assignedIds.has(j.id)) return false;
+          const jt = (j.title || '').toLowerCase();
+          return cat.matchKeywords.some(k => jt.includes(k));
         });
-      }
-    });
+
+        if (matching.length > 0) {
+          matching.forEach(j => assignedIds.add(j.id));
+          buckets.push({
+            id: cat.id,
+            title: cat.title,
+            subtitle: cat.subtitle,
+            badgeBg: cat.badgeBg,
+            badgeColor: cat.badgeColor,
+            jobs: matching
+          });
+        }
+      });
+    }
 
     // 3. Catch all remaining jobs
     const remaining = filteredJobs.filter(j => !assignedIds.has(j.id));
     if (remaining.length > 0) {
+      const activeSingleRole = selectedRoleId !== 'ALL' ? activeRoles[0] : null;
+      const rawSkills = activeSingleRole
+        ? (Array.isArray(activeSingleRole.keySkills) ? activeSingleRole.keySkills : (activeSingleRole.keySkillsCsv ? activeSingleRole.keySkillsCsv.split(',') : ['Target Skill Set']))
+        : [];
+
+      const bucketTitle = activeSingleRole
+        ? `🎯 Target Role: ${activeSingleRole.roleTitle}`
+        : '🚀 Verified Enterprise Openings';
+
+      const bucketSubtitle = activeSingleRole
+        ? `Matched candidate skills: ${rawSkills.slice(0, 5).join(', ')}`
+        : 'Additional top-tier software engineering openings from enterprise hiring portals';
+
       buckets.push({
         id: 'other_enterprise',
-        title: '🚀 Verified Enterprise Openings',
-        subtitle: 'Additional top-tier software engineering openings from enterprise hiring portals',
-        badgeBg: '#f1f5f9',
-        badgeColor: '#475569',
+        title: bucketTitle,
+        subtitle: bucketSubtitle,
+        badgeBg: '#eff6ff',
+        badgeColor: '#2563eb',
         jobs: remaining
       });
     }
@@ -392,10 +425,7 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles: initialRo
                 {roles.map((r, idx) => {
                   const roleIdKey = r.id || r.roleTitle;
                   const isSelected = selectedRoleId === roleIdKey;
-                  const roleJobsCount = jobs.filter(j => 
-                    (r.id && j.roleId === r.id) || 
-                    (j.title && j.title.toLowerCase().includes((r.roleTitle || '').toLowerCase().split(' ')[0]))
-                  ).length;
+                  const roleJobsCount = jobs.filter(j => matchesRoleDomain(j, r)).length;
 
                   return (
                     <button
@@ -414,31 +444,10 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles: initialRo
                         transition: 'all 150ms ease'
                       }}
                     >
-                      🎯 {r.roleTitle} ({roleJobsCount > 0 ? roleJobsCount : Math.ceil(jobs.length / roles.length)})
+                      🎯 {r.roleTitle} ({roleJobsCount})
                     </button>
                   );
                 })}
-              </div>
-
-              {/* Verified Portal Coverage Banner */}
-              <div style={{
-                padding: '10px 16px',
-                borderRadius: '8px',
-                background: '#f8fafc',
-                border: '1px solid #e2e8f0',
-                fontSize: '12.5px',
-                color: '#475569',
-                marginBottom: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}>
-                <div>
-                  <strong>🏛️ Verified Portal Coverage:</strong> Showing listings from <strong>12 active enterprise hiring portals</strong> (Microsoft, Amazon, Google, Meta, Apple, Netflix, Adobe, Stripe, Figma, TCS, Infosys, Accenture).
-                </div>
-                <span style={{ fontSize: '11px', color: '#64748b', background: '#e2e8f0', padding: '2px 8px', borderRadius: '12px' }}>
-                  Daily Screening @ 12:00 PM
-                </span>
               </div>
 
               {/* Filter Controls with Upper Line Platform Tabs */}
@@ -452,6 +461,7 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles: initialRo
                 selectedPlatform={selectedPlatform}
                 onPlatformSelect={setSelectedPlatform}
                 roles={roles}
+                companies={Array.from(new Set(jobs.map(j => j.company).filter(Boolean))).sort()}
                 totalCount={jobs.length}
                 filteredCount={filteredJobs.length}
               />

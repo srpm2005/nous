@@ -4,7 +4,6 @@ import HeroSection from './components/HeroSection';
 import UploadZone from './components/UploadZone';
 import PipelineProgressView from './components/PipelineProgressView';
 import ResumeDetailView from './components/ResumeDetailView';
-import RecentUploadsList from './components/RecentUploadsList';
 import UserHistoryView from './components/UserHistoryView';
 import Top500CrawlerView from './components/Top500CrawlerView';
 import SettingsView from './components/SettingsView';
@@ -104,7 +103,7 @@ export default function App() {
 
       {activeTab === 'scanner' ? (
         <div className="main-grid">
-          {/* Left Column: Upload Zone + Pipeline Progress + Recent Resumes History */}
+          {/* Left Column: Upload Zone + Pipeline Progress */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <UploadZone
               onUploadSuccess={handleUploadSuccess}
@@ -118,14 +117,6 @@ export default function App() {
                 onComplete={handleScanComplete}
               />
             )}
-
-            <RecentUploadsList
-              resumes={resumes}
-              activeResumeId={activeResume?.id}
-              onSelectResume={handleSelectResume}
-              onDeleteResume={handleDeleteSuccess}
-              onAddResume={handleAddResumeFromLookup}
-            />
           </div>
 
           {/* Right Column: Active Resume Details */}

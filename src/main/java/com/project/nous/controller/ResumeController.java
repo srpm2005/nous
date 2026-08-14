@@ -64,7 +64,8 @@ public class ResumeController {
 
         UploadResult result = resumeService.upload(file, userId);
 
-        Scan scan = scanService.createAndProcessScan(result.resume());
+        Scan scan = scanService.createInitialScan(result.resume());
+        scanService.processScanAsync(scan.getId());
 
         ResumeResponseDto body = ResumeResponseDto.from(
                 result.resume(),

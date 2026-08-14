@@ -89,7 +89,7 @@ export default function Navbar({ activeTab = 'scanner', setActiveTab }) {
             transition: 'all 150ms ease-in-out'
           }}
         >
-          🏛️ Top 500 Crawls
+          🏢 Enterprise Portals
         </button>
 
         <button

@@ -55,7 +55,7 @@ class ResumeControllerTest {
 
         given(resumeService.upload(any(), anyString()))
                 .willReturn(new UploadResult(fakeResume, false));
-        given(scanService.createAndProcessScan(any()))
+        given(scanService.createInitialScan(any()))
                 .willReturn(fakeScan);
 
         MockMultipartFile file = new MockMultipartFile(
