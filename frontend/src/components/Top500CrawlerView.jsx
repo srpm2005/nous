@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 /**
  * Top500CrawlerView Component - Interactive monitoring and manual execution dashboard
- * for the Top 500 Enterprise Daily Screening Engine per NOUS_REDESIGN_SPEC.md.
+ * for the Top 500 Enterprise Daily Screening Engine.
  */
 export default function Top500CrawlerView({ onShowToast }) {
   const [companies, setCompanies] = useState([]);
@@ -101,15 +101,15 @@ export default function Top500CrawlerView({ onShowToast }) {
   const totalOpeningsCount = postings.length;
 
   return (
-    <div style={{ maxWidth: '960px', margin: '0 auto' }}>
-      {/* Header & 3-State Action Button per Section 5.1 & 5.4 */}
+    <div style={{ maxWidth: '980px', margin: '0 auto', paddingBottom: '32px' }}>
+      {/* Header & 3-State Action Button */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#0f172a', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>
+          <h2 style={{ fontSize: '26px', fontWeight: 800, color: '#0f172a', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>
             Top 500 Enterprise Screening
           </h2>
           <p style={{ fontSize: '14px', color: '#64748b', margin: 0 }}>
-            Daily 12:00 PM IST automated screening of top enterprise career portals
+            Daily automated 12:00 PM IST screening engine scanning top corporate career portals
           </p>
         </div>
 
@@ -118,127 +118,143 @@ export default function Top500CrawlerView({ onShowToast }) {
           onClick={handleTriggerCrawl}
           disabled={triggerState === 'running'}
           style={{
-            padding: '10px 24px',
+            padding: '11px 26px',
             borderRadius: '9999px',
-            background: triggerState === 'done' ? '#059669' : triggerState === 'running' ? '#64748b' : '#2563eb',
+            background: triggerState === 'done' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : triggerState === 'running' ? '#64748b' : 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
             color: '#ffffff',
             fontWeight: 700,
             fontSize: '14px',
             border: 'none',
             cursor: triggerState === 'running' ? 'wait' : 'pointer',
-            boxShadow: '0 2px 4px rgba(37, 99, 235, 0.2)',
+            boxShadow: triggerState === 'done' ? '0 4px 14px rgba(16, 185, 129, 0.3)' : '0 4px 14px rgba(37, 99, 235, 0.3)',
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            transition: 'all 200ms ease'
+            transition: 'all 200ms ease-in-out'
           }}
         >
           {triggerState === 'running' && '⟳ Screening enterprise portals…'}
-          {triggerState === 'done' && `✓ Done — ${lastCrawlResultCount} portals checked`}
+          {triggerState === 'done' && `✓ Complete — ${lastCrawlResultCount} portals checked`}
           {triggerState === 'idle' && '▶ Run screening crawl now'}
         </button>
       </div>
 
-      {/* Single Coherent Summary Header Line per Section 5.1 */}
+      {/* Hero Summary Header Line */}
       <div
         style={{
-          padding: '20px 24px',
-          background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-          borderRadius: '16px',
+          padding: '24px 28px',
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+          borderRadius: '18px',
           color: '#ffffff',
-          marginBottom: '28px',
-          boxShadow: '0 4px 12px rgba(15,23,42,0.12)',
+          marginBottom: '32px',
+          boxShadow: '0 10px 25px -5px rgba(15, 23, 42, 0.25)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '16px'
+          gap: '20px',
+          border: '1px solid #334155'
         }}
       >
         <div>
-          <div style={{ fontSize: '12px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '4px' }}>
-            System Coverage & Screening Status
+          <div style={{ fontSize: '11.5px', fontWeight: 700, color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>
+            System Coverage & Portal Status
           </div>
-          <div style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+          <div style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.01em' }}>
             Last run: <span style={{ color: '#38bdf8' }}>Today, 12:00 PM</span> · <strong style={{ color: '#facc15' }}>{activePortalsCount} of 500</strong> companies connected
           </div>
-          <div style={{ fontSize: '13.5px', color: '#cbd5e1', marginTop: '4px' }}>
-            <strong>{totalOpeningsCount}</strong> verified direct enterprise postings indexed across connected company portals
+          <div style={{ fontSize: '14px', color: '#cbd5e1', marginTop: '6px' }}>
+            <strong style={{ color: '#ffffff' }}>{totalOpeningsCount}</strong> verified direct enterprise postings indexed across connected company portals
           </div>
         </div>
 
-        <div style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', padding: '10px 16px', borderRadius: '12px', textAlign: 'right' }}>
-          <div style={{ fontSize: '11px', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 600 }}>Cron Schedule</div>
-          <div style={{ fontSize: '13px', fontWeight: 700, color: '#4ade80', marginTop: '2px' }}>● Daily @ 12:00 PM IST</div>
+        <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', padding: '12px 20px', borderRadius: '14px', textAlign: 'right', backdropFilter: 'blur(4px)' }}>
+          <div style={{ fontSize: '11px', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>Cron Schedule</div>
+          <div style={{ fontSize: '13.5px', fontWeight: 700, color: '#4ade80', marginTop: '3px', display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'flex-end' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4ade80', display: 'inline-block' }}></span>
+            Daily @ 12:00 PM IST
+          </div>
         </div>
       </div>
 
-      {/* Monitored Portals Grid per Section 5.2 */}
-      <div style={{ marginBottom: '32px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+      {/* Monitored Portals Grid */}
+      <div style={{ marginBottom: '36px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+          <h3 style={{ fontSize: '19px', fontWeight: 800, color: '#0f172a', margin: 0, letterSpacing: '-0.01em' }}>
             Monitored Enterprise Portals ({companies.length})
           </h3>
-          <span style={{ fontSize: '12.5px', color: '#64748b' }}>
-            Showing verified hiring portals
+          <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 500 }}>
+            Verified hiring portals & ATS feeds
           </span>
         </div>
 
         {companies.length === 0 ? (
-          <div style={{ padding: '28px', background: '#f8fafc', borderRadius: '14px', border: '1px dashed #cbd5e1', color: '#64748b', textAlign: 'center' }}>
-            No monitored enterprise portals loaded yet. Trigger a screening crawl to seed portals.
+          <div style={{ padding: '36px', background: '#f8fafc', borderRadius: '16px', border: '1px dashed #cbd5e1', color: '#64748b', textAlign: 'center' }}>
+            No monitored enterprise portals loaded yet. Trigger a screening crawl above to seed portals.
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))', gap: '16px' }}>
             {companies.map((c) => {
               const companyOpenings = postings.filter(p => p.company && (p.company.id === c.id || p.company.name === c.name)).length;
               return (
                 <div
                   key={c.id}
                   style={{
-                    padding: '18px',
+                    padding: '20px',
                     background: '#ffffff',
                     border: '1px solid #e2e8f0',
-                    borderRadius: '14px',
+                    borderRadius: '16px',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    gap: '12px',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
+                    gap: '14px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+                    transition: 'all 200ms ease-in-out'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 8px 20px -4px rgba(0,0,0,0.08)';
+                    e.currentTarget.style.borderColor = '#cbd5e1';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.03)';
+                    e.currentTarget.style.borderColor = '#e2e8f0';
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <div>
-                      <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: '0 0 2px 0' }}>{c.name}</h4>
-                      <span style={{ fontSize: '12px', color: '#64748b' }}>{c.domain}</span>
+                      <h4 style={{ fontSize: '16.5px', fontWeight: 800, color: '#0f172a', margin: '0 0 3px 0' }}>{c.name}</h4>
+                      <span style={{ fontSize: '12px', color: '#64748b', fontFamily: 'var(--font-mono, monospace)' }}>{c.domain}</span>
                     </div>
 
                     <span
                       style={{
                         fontSize: '11px',
-                        fontWeight: 600,
-                        padding: '3px 8px',
+                        fontWeight: 700,
+                        padding: '3px 9px',
                         borderRadius: '9999px',
                         background: '#eff6ff',
                         color: '#2563eb',
                         border: '1px solid #bfdbfe'
                       }}
                     >
-                      Verified Portal
+                      Verified
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px' }}>
-                    <span style={{ color: companyOpenings > 0 ? '#059669' : '#64748b', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      {companyOpenings > 0 ? `● ${companyOpenings} roles found` : '○ Pending next run'}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12.5px', paddingTop: '8px', borderTop: '1px solid #f1f5f9' }}>
+                    <span style={{ color: companyOpenings > 0 ? '#059669' : '#64748b', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: companyOpenings > 0 ? '#10b981' : '#94a3b8' }}></span>
+                      {companyOpenings > 0 ? `${companyOpenings} roles found` : 'Pending next run'}
                     </span>
                     <a
                       href={c.careerPageUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 600 }}
+                      style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '3px' }}
                     >
-                      Visit Portal ↗
+                      Portal ↗
                     </a>
                   </div>
                 </div>
@@ -248,7 +264,7 @@ export default function Top500CrawlerView({ onShowToast }) {
         )}
       </div>
 
-      {/* All Enterprise Openings Section per Section 5.3 */}
+      {/* All Enterprise Openings Section */}
       <div>
         <div style={{
           display: 'flex',
@@ -261,11 +277,11 @@ export default function Top500CrawlerView({ onShowToast }) {
           borderBottom: '1px solid #e2e8f0'
         }}>
           <div>
-            <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: '0 0 4px 0' }}>
+            <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', margin: '0 0 4px 0', letterSpacing: '-0.01em' }}>
               Live Direct Enterprise Openings ({baseFilteredPostings.length})
             </h3>
             <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>
-              Scraped directly from corporate career portals (Microsoft, Amazon, Google, Meta, Apple, Netflix, Adobe, Stripe, Figma, TCS, Infosys, Accenture)
+              Scraped directly from corporate portals (Microsoft, Amazon, Google, Meta, Apple, Netflix, Adobe, Stripe, Figma, TCS, Infosys, Accenture)
             </p>
           </div>
 
@@ -275,101 +291,115 @@ export default function Top500CrawlerView({ onShowToast }) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
-              padding: '8px 16px',
+              padding: '9px 18px',
               borderRadius: '9999px',
               border: '1px solid #cbd5e1',
               fontSize: '13px',
               outline: 'none',
-              width: '260px'
+              width: '270px',
+              background: '#ffffff',
+              boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.02)'
             }}
           />
         </div>
 
-        {/* Real Empty State per Section 5.3 */}
+        {/* Empty State */}
         {baseFilteredPostings.length === 0 ? (
           <div
             style={{
-              padding: '48px 24px',
+              padding: '56px 28px',
               textAlign: 'center',
-              background: '#f8fafc',
-              borderRadius: '16px',
+              background: '#ffffff',
+              borderRadius: '18px',
               border: '1px dashed #cbd5e1',
               color: '#475569'
             }}
           >
-            <div style={{ fontSize: '32px', marginBottom: '10px' }}>🕐</div>
-            <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: '0 0 6px 0' }}>
+            <div style={{ fontSize: '36px', marginBottom: '12px' }}>🕐</div>
+            <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', margin: '0 0 8px 0' }}>
               No enterprise openings indexed yet
             </h4>
-            <p style={{ fontSize: '13.5px', color: '#64748b', maxWidth: '460px', margin: '0 auto 20px auto', lineHeight: 1.5 }}>
-              The daily screening crawl runs automatically today at 12:00 PM IST. You can also execute a manual screening run right now.
+            <p style={{ fontSize: '14px', color: '#64748b', maxWidth: '480px', margin: '0 auto 24px auto', lineHeight: 1.6 }}>
+              The daily screening crawl runs automatically today at 12:00 PM IST. You can also trigger an instant manual screening run right now.
             </p>
             <button
               onClick={handleTriggerCrawl}
               disabled={triggerState === 'running'}
               style={{
-                padding: '9px 24px',
+                padding: '10px 26px',
                 borderRadius: '9999px',
-                background: '#2563eb',
+                background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
                 color: '#ffffff',
-                fontWeight: 600,
-                fontSize: '13.5px',
+                fontWeight: 700,
+                fontSize: '14px',
                 border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 2px 4px rgba(37,99,235,0.2)'
+                boxShadow: '0 4px 14px rgba(37,99,235,0.25)'
               }}
             >
               ▶ Run screening crawl now
             </button>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {baseFilteredPostings.map((p) => (
               <div
                 key={p.id}
                 style={{
-                  padding: '18px 22px',
+                  padding: '20px 24px',
                   background: '#ffffff',
                   border: '1px solid #e2e8f0',
-                  borderRadius: '14px',
+                  borderRadius: '16px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  gap: '16px',
+                  gap: '18px',
                   flexWrap: 'wrap',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
+                  transition: 'all 180ms ease-in-out'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#cbd5e1';
+                  e.currentTarget.style.boxShadow = '0 6px 16px -2px rgba(0,0,0,0.06)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#e2e8f0';
+                  e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.02)';
                 }}
               >
                 <div style={{ minWidth: 0, flex: 1 }}>
-                  <h4 style={{ fontSize: '15.5px', fontWeight: 700, color: '#0f172a', margin: '0 0 4px 0' }}>{p.title}</h4>
-                  <div style={{ fontSize: '13px', color: '#64748b', display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-                    <span style={{ fontWeight: 600, color: '#1e293b' }}>{p.company?.name || 'Enterprise'}</span>
+                  <h4 style={{ fontSize: '16.5px', fontWeight: 800, color: '#0f172a', margin: '0 0 5px 0' }}>{p.title}</h4>
+                  <div style={{ fontSize: '13px', color: '#64748b', display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <span style={{ fontWeight: 700, color: '#1e293b' }}>{p.company?.name || 'Enterprise'}</span>
                     <span>·</span>
                     <span>{p.location || 'Remote'}</span>
                     {p.department && (
                       <>
                         <span>·</span>
-                        <span style={{ color: '#2563eb', fontWeight: 500 }}>{p.department}</span>
+                        <span style={{ color: '#2563eb', fontWeight: 600 }}>{p.department}</span>
                       </>
                     )}
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                  <span style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a' }}>{p.salaryRange || 'Competitive'}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', background: '#f8fafc', padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                    {p.salaryRange || 'Competitive'}
+                  </span>
                   <a
                     href={p.applyUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
-                      padding: '9px 22px',
+                      padding: '9px 24px',
                       borderRadius: '9999px',
-                      background: '#2563eb',
+                      background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
                       color: '#ffffff',
-                      fontWeight: 600,
-                      fontSize: '13px',
+                      fontWeight: 700,
+                      fontSize: '13.5px',
                       textDecoration: 'none',
-                      boxShadow: '0 2px 4px rgba(37,99,235,0.2)'
+                      boxShadow: '0 4px 12px rgba(37,99,235,0.25)',
+                      transition: 'all 180ms ease'
                     }}
                   >
                     Apply Now
@@ -383,4 +413,3 @@ export default function Top500CrawlerView({ onShowToast }) {
     </div>
   );
 }
-

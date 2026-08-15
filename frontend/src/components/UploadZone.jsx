@@ -76,7 +76,6 @@ export default function UploadZone({ onUploadSuccess, onError }) {
         errorMessage: null
       });
 
-
       if (onUploadSuccess) {
         onUploadSuccess(data);
       }
@@ -133,25 +132,24 @@ export default function UploadZone({ onUploadSuccess, onError }) {
   };
 
   return (
-    <div className="asana-card" style={{ padding: '24px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+    <div className="asana-card" style={{ padding: '28px', borderRadius: '18px', border: '1px solid #e2e8f0', boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.03)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <div>
-          <h3 className="asana-heading" style={{ fontSize: '18px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <h3 style={{ fontSize: '20px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '10px', margin: 0, color: '#0f172a', letterSpacing: '-0.01em' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
               <polyline points="17 8 12 3 7 8"/>
               <line x1="12" y1="3" x2="12" y2="15"/>
             </svg>
             Upload Resume
           </h3>
-          <p className="asana-body-muted" style={{ fontSize: '13px', margin: '2px 0 0 0' }}>
-            Select or drag a candidate resume file below
+          <p style={{ fontSize: '13.5px', color: '#64748b', margin: '3px 0 0 0' }}>
+            Select or drag a candidate resume file below to run AI parsing
           </p>
         </div>
       </div>
 
-
-      {/* Drag & Drop Card Container matching Nous UI Spec */}
+      {/* Drag & Drop Card Container */}
       <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -159,14 +157,16 @@ export default function UploadZone({ onUploadSuccess, onError }) {
         style={{
           border: `2px dashed ${isDragging ? '#2563eb' : '#cbd5e1'}`,
           borderRadius: '16px',
-          padding: '48px 24px',
+          padding: '52px 28px',
           textAlign: 'center',
-          background: isDragging ? '#eff6ff' : '#ffffff',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+          background: isDragging ? '#eff6ff' : '#f8fafc',
+          boxShadow: isDragging ? '0 0 0 4px rgba(37, 99, 235, 0.15)' : 'none',
           transition: 'all 200ms ease-in-out',
-          maxWidth: '620px',
-          margin: '0 auto'
+          maxWidth: '640px',
+          margin: '0 auto',
+          cursor: 'pointer'
         }}
+        onClick={() => uploadState.status !== 'uploading' && fileInputRef.current?.click()}
       >
         <input
           type="file"
@@ -177,22 +177,24 @@ export default function UploadZone({ onUploadSuccess, onError }) {
         />
 
         <div style={{
-          width: '56px',
-          height: '56px',
+          width: '64px',
+          height: '64px',
           borderRadius: '50%',
-          background: '#eff6ff',
+          background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
           color: '#2563eb',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: '0 auto 16px auto'
+          margin: '0 auto 18px auto',
+          border: '1px solid #bfdbfe',
+          boxShadow: '0 8px 16px -4px rgba(37, 99, 235, 0.12)'
         }}>
           {uploadState.status === 'uploading' ? (
-            <svg className="spinner" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg className="spinner" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
             </svg>
           ) : (
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
               <polyline points="17 8 12 3 7 8"/>
               <line x1="12" y1="3" x2="12" y2="15"/>
@@ -200,89 +202,97 @@ export default function UploadZone({ onUploadSuccess, onError }) {
           )}
         </div>
 
-        <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: '0 0 6px 0' }}>
+        <h3 style={{ fontSize: '19px', fontWeight: 800, color: '#0f172a', margin: '0 0 6px 0', letterSpacing: '-0.01em' }}>
           Drag your resume here
         </h3>
 
-        <p style={{ fontSize: '14px', color: '#64748b', margin: '0 0 20px 0' }}>
-          or click below to choose a file
+        <p style={{ fontSize: '14px', color: '#64748b', margin: '0 0 22px 0' }}>
+          or click anywhere to choose a file from your computer
         </p>
 
         <button
           type="button"
-          onClick={() => uploadState.status !== 'uploading' && fileInputRef.current?.click()}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (uploadState.status !== 'uploading') fileInputRef.current?.click();
+          }}
           style={{
-            padding: '10px 24px',
+            padding: '11px 26px',
             borderRadius: '9999px',
-            background: '#2563eb',
+            background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
             color: '#ffffff',
-            fontWeight: 600,
+            fontWeight: 700,
             fontSize: '14px',
             border: 'none',
             cursor: uploadState.status === 'uploading' ? 'wait' : 'pointer',
-            boxShadow: '0 2px 4px rgba(37, 99, 235, 0.2)',
-            transition: 'all 150ms ease-in-out'
+            boxShadow: '0 4px 14px rgba(37, 99, 235, 0.25)',
+            transition: 'all 180ms ease-in-out'
           }}
         >
-          {uploadState.status === 'uploading' ? 'Uploading...' : 'Choose file'}
+          {uploadState.status === 'uploading' ? 'Uploading...' : 'Choose File'}
         </button>
 
-        <p style={{ fontSize: '12px', color: '#94a3b8', margin: '16px 0 0 0' }}>
-          Works with PDF and Word files, up to 5MB
+        <p style={{ fontSize: '12.5px', color: '#94a3b8', margin: '18px 0 0 0', fontWeight: 500 }}>
+          Supports PDF (.pdf) and Word (.docx) formats, up to 5MB
         </p>
 
         {uploadState.status === 'uploading' && (
-          <div style={{ marginTop: '20px', maxWidth: '380px', margin: '20px auto 0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#64748b', marginBottom: '6px' }}>
+          <div style={{ marginTop: '22px', maxWidth: '400px', margin: '22px auto 0 auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', color: '#475569', marginBottom: '8px', fontWeight: 600 }}>
               <span>{uploadState.step}</span>
               <span>{uploadState.progress}%</span>
             </div>
-            <div style={{ width: '100%', height: '6px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
+            <div style={{ width: '100%', height: '7px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
               <div style={{
                 width: `${uploadState.progress}%`,
                 height: '100%',
-                background: '#2563eb',
-                transition: 'width 200ms ease-in-out'
+                background: 'linear-gradient(90deg, #2563eb 0%, #3b82f6 100%)',
+                transition: 'width 250ms ease-in-out'
               }}></div>
             </div>
           </div>
         )}
       </div>
 
-      {/* 3 Bottom Feature Badges matching Nous UI Spec */}
+      {/* Feature Badges */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '32px',
+        gap: '36px',
         marginTop: '32px',
         flexWrap: 'wrap'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#475569', fontWeight: 500 }}>
-          <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span> Private & secure
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13.5px', color: '#475569', fontWeight: 600 }}>
+          <span style={{ color: '#16a34a', fontWeight: 800 }}>✓</span> Private & Secure Extraction
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#475569', fontWeight: 500 }}>
-          <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span> Usually done in under 30 seconds
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13.5px', color: '#475569', fontWeight: 600 }}>
+          <span style={{ color: '#16a34a', fontWeight: 800 }}>✓</span> Sub-second Resume Parsing
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#475569', fontWeight: 500 }}>
-          <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span> Delete your data anytime
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13.5px', color: '#475569', fontWeight: 600 }}>
+          <span style={{ color: '#16a34a', fontWeight: 800 }}>✓</span> Instant Data Erasure Control
         </div>
       </div>
 
       {/* Error Banner */}
       {uploadState.status === 'error' && uploadState.errorMessage && (
         <div className="animate-fade-in" style={{
-          marginTop: '20px',
-          padding: '12px 16px',
-          borderRadius: '12px',
+          marginTop: '24px',
+          padding: '14px 18px',
+          borderRadius: '14px',
           background: '#fef2f2',
           border: '1px solid #fecaca',
-          color: '#b91c1c',
+          color: '#dc2626',
           fontSize: '14px',
-          maxWidth: '620px',
-          margin: '20px auto 0 auto'
+          fontWeight: 500,
+          maxWidth: '640px',
+          margin: '24px auto 0 auto',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px'
         }}>
-          ⚠️ {uploadState.errorMessage}
+          <span>⚠️</span>
+          <span>{uploadState.errorMessage}</span>
         </div>
       )}
     </div>
