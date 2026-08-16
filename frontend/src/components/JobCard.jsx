@@ -86,7 +86,16 @@ export function JobCard({ job, activePlatform = 'ALL', viewMode = 'grid' }) {
           justifyContent: 'space-between',
           gap: '16px',
           width: '100%',
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
+          transition: 'all 180ms ease-in-out'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = '#cbd5e1';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = '#e2e8f0';
+          e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.02)';
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0, flex: 1 }}>
@@ -148,7 +157,7 @@ export function JobCard({ job, activePlatform = 'ALL', viewMode = 'grid' }) {
             style={{
               padding: '8px 22px',
               borderRadius: '9999px',
-              background: '#2563eb',
+              background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
               color: '#ffffff',
               fontWeight: 600,
               fontSize: '13.5px',
@@ -157,7 +166,7 @@ export function JobCard({ job, activePlatform = 'ALL', viewMode = 'grid' }) {
               alignItems: 'center',
               justifyContent: 'center',
               whiteSpace: 'nowrap',
-              boxShadow: '0 2px 4px rgba(37, 99, 235, 0.2)',
+              boxShadow: '0 2px 6px rgba(37, 99, 235, 0.25)',
               transition: 'all 150ms ease-in-out'
             }}
           >
@@ -183,8 +192,18 @@ export function JobCard({ job, activePlatform = 'ALL', viewMode = 'grid' }) {
         gap: '16px',
         height: '100%',
         boxSizing: 'border-box',
-        transition: 'transform 150ms ease, box-shadow 150ms ease',
+        transition: 'transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease',
         position: 'relative'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-2px)';
+        e.currentTarget.style.borderColor = '#cbd5e1';
+        e.currentTarget.style.boxShadow = '0 10px 24px -4px rgba(0,0,0,0.07)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.borderColor = '#e2e8f0';
+        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.03)';
       }}
     >
       <div>
@@ -288,7 +307,7 @@ export function JobCard({ job, activePlatform = 'ALL', viewMode = 'grid' }) {
           style={{
             padding: '8px 20px',
             borderRadius: '9999px',
-            background: '#2563eb',
+            background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
             color: '#ffffff',
             fontWeight: 600,
             fontSize: '13px',
@@ -297,7 +316,7 @@ export function JobCard({ job, activePlatform = 'ALL', viewMode = 'grid' }) {
             alignItems: 'center',
             justifyContent: 'center',
             whiteSpace: 'nowrap',
-            boxShadow: '0 2px 4px rgba(37, 99, 235, 0.2)',
+            boxShadow: '0 3px 10px rgba(37, 99, 235, 0.25)',
             transition: 'all 150ms ease-in-out'
           }}
         >
@@ -309,6 +328,3 @@ export function JobCard({ job, activePlatform = 'ALL', viewMode = 'grid' }) {
 }
 
 export default JobCard;
-
-
-
