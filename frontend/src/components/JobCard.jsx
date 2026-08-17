@@ -165,12 +165,21 @@ export function JobCard({ job, activePlatform = 'ALL', viewMode = 'grid' }) {
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
+              gap: '4px',
               whiteSpace: 'nowrap',
               boxShadow: '0 2px 6px rgba(37, 99, 235, 0.25)',
               transition: 'all 150ms ease-in-out'
             }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-1px)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.35)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 2px 6px rgba(37, 99, 235, 0.25)';
+            }}
           >
-            Apply
+            Apply ↗
           </a>
         </div>
       </div>
@@ -315,12 +324,21 @@ export function JobCard({ job, activePlatform = 'ALL', viewMode = 'grid' }) {
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
+            gap: '4px',
             whiteSpace: 'nowrap',
             boxShadow: '0 3px 10px rgba(37, 99, 235, 0.25)',
             transition: 'all 150ms ease-in-out'
           }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.boxShadow = '0 6px 14px rgba(37, 99, 235, 0.35)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 3px 10px rgba(37, 99, 235, 0.25)';
+          }}
         >
-          Apply Now
+          Apply Now ↗
         </a>
       </div>
     </div>
