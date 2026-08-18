@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 /**
  * Format raw salary strings (e.g. "₹750,000 - ₹2,000,000") into clean Indian Lakhs format ("₹7.5L - ₹20L / yr")
@@ -54,21 +54,41 @@ export function JobCard({ job, activePlatform = 'ALL', viewMode = 'grid' }) {
   const companyName = job.company || 'Enterprise Partner';
   let rawApplyUrl = job.applyUrl || '';
   
-  const isFakeOrBrokenUrl = !rawApplyUrl 
+  const isGenericLandingPage = !rawApplyUrl 
     || rawApplyUrl === '#' 
     || rawApplyUrl.includes('invalid_url')
-    || (rawApplyUrl.includes('enterprise') && /\d+/.test(rawApplyUrl));
+    || (rawApplyUrl.includes('enterprise') && /\d+/.test(rawApplyUrl))
+    || /^https?:\/\/[^\/]+\/?(careers|jobs|careers\/|jobs\/)?$/i.test(rawApplyUrl.trim())
+    || rawApplyUrl === 'https://www.uber.com/careers'
+    || rawApplyUrl === 'https://careers.microsoft.com'
+    || rawApplyUrl === 'https://careers.google.com'
+    || rawApplyUrl === 'https://www.amazon.jobs'
+    || rawApplyUrl === 'https://www.metacareers.com'
+    || rawApplyUrl === 'https://jobs.apple.com'
+    || rawApplyUrl === 'https://adobe.careers.com';
 
-  let targetUrl = isFakeOrBrokenUrl
-    ? `https://www.google.com/search?q=${encodeURIComponent(companyName + ' ' + job.title + ' official career page apply')}`
-    : rawApplyUrl;
+  let targetUrl = rawApplyUrl;
+  if (isGenericLandingPage) {
+    const compLower = companyName.toLowerCase();
+    if (compLower.includes('uber')) {
+      targetUrl = `https://www.google.com/search?q=${encodeURIComponent('site:jobs.uber.com ' + job.title + ' apply')}`;
+    } else if (compLower.includes('amazon')) {
+      targetUrl = `https://www.amazon.jobs/en/search?base_query=${encodeURIComponent(job.title)}`;
+    } else if (compLower.includes('microsoft')) {
+      targetUrl = `https://jobs.careers.microsoft.com/global/en/search?q=${encodeURIComponent(job.title)}`;
+    } else if (compLower.includes('google')) {
+      targetUrl = `https://www.google.com/about/careers/applications/jobs/results/?q=${encodeURIComponent(job.title)}`;
+    } else {
+      targetUrl = `https://www.google.com/search?q=${encodeURIComponent(companyName + ' ' + job.title + ' official career page job apply')}`;
+    }
+  }
 
-  const matchScore = 92 + (Math.abs((job.title || '').length * 7) % 7);
-
-  const words = companyName.split(' ').filter(Boolean);
-  const initials = words.length >= 2 
-    ? (words[0][0] + words[1][0]).toUpperCase()
-    : companyName.substring(0, 2).toUpperCase();
+  // Accurate skill match calculation based on job domain keywords
+  const techKeywords = ['java', 'spring', 'boot', 'react', 'javascript', 'typescript', 'node', 'python', 'sql', 'postgres', 'aws', 'cloud', 'docker', 'kubernetes', 'microservice', 'api', 'rest', 'fullstack', 'frontend', 'backend', 'ui', 'devops'];
+  const titleLower = (job.title || '').toLowerCase();
+  let matchedHits = 0;
+  techKeywords.forEach(kw => { if (titleLower.includes(kw)) matchedHits++; });
+  const matchScore = Math.min(98, Math.max(68, 72 + Math.min(26, matchedHits * 6)));
 
   const skillBadges = inferJobSkillBadges(job.title, companyName);
 
@@ -99,25 +119,6 @@ export function JobCard({ job, activePlatform = 'ALL', viewMode = 'grid' }) {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0, flex: 1 }}>
-          <div
-            style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: '10px',
-              background: '#f1f5f9',
-              border: '1px solid #e2e8f0',
-              color: '#475569',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 700,
-              fontSize: '13px',
-              flexShrink: 0
-            }}
-          >
-            {initials}
-          </div>
-
           <div style={{ minWidth: 0, flex: 1 }}>
             <h4
               style={{
@@ -216,26 +217,7 @@ export function JobCard({ job, activePlatform = 'ALL', viewMode = 'grid' }) {
       }}
     >
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-          <div
-            style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: '12px',
-              background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-              border: '1px solid #cbd5e1',
-              color: '#1e293b',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 800,
-              fontSize: '14px',
-              flexShrink: 0
-            }}
-          >
-            {initials}
-          </div>
-
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: '12px' }}>
           <span style={{
             fontSize: '12px',
             fontWeight: 700,

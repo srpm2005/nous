@@ -15,7 +15,7 @@ public class Top500CompanyDirectorySeed {
 
         // Core 12 Baseline Top Portals
         list.add(createCompany("Microsoft", "microsoft.com", "https://careers.microsoft.com", "GENERIC_HTML"));
-        list.add(createCompany("Amazon", "amazon.com", "https://www.amazon.jobs", "WORKDAY"));
+        list.add(createCompany("Amazon", "amazon.com", "https://www.amazon.jobs", "AMAZON"));
         list.add(createCompany("Google", "google.com", "https://careers.google.com", "GENERIC_HTML"));
         list.add(createCompany("Meta", "meta.com", "https://www.metacareers.com", "GENERIC_HTML"));
         list.add(createCompany("Apple", "apple.com", "https://jobs.apple.com", "GENERIC_HTML"));
@@ -74,7 +74,7 @@ public class Top500CompanyDirectorySeed {
         list.add(createCompany("Hasura", "hasura.io", "https://hasura.io/careers", "GREENHOUSE"));
 
         // High Growth Tech, FinTech & Consumer Internet (61 - 120)
-        list.add(createCompany("Uber", "uber.com", "https://www.uber.com/careers", "GENERIC_HTML"));
+        list.add(createCompany("Uber", "uber.com", "https://www.uber.com/careers", "UBER"));
         list.add(createCompany("Airbnb", "airbnb.com", "https://careers.airbnb.com", "GENERIC_HTML"));
         list.add(createCompany("Lyft", "lyft.com", "https://www.lyft.com/careers", "GREENHOUSE"));
         list.add(createCompany("DoorDash", "doordash.com", "https://careers.doordash.com", "GREENHOUSE"));

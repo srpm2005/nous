@@ -36,7 +36,7 @@ export default function ScanStatusBadge({ status = 'PENDING' }) {
   const config = statusConfig[status] || statusConfig.PENDING;
 
   return (
-    <span className={`badge ${config.bgClass}`} style={{ gap: '6px' }}>
+    <span className={`badge ${config.bgClass}`} style={{ gap: '6px', whiteSpace: 'nowrap', flexShrink: 0, display: 'inline-flex', alignItems: 'center' }}>
       <span>{config.icon}</span>
       <span style={{ fontWeight: 600 }}>{config.label}</span>
     </span>

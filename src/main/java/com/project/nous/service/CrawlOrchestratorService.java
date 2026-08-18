@@ -44,30 +44,28 @@ public class CrawlOrchestratorService {
     private boolean isCrawlInProgress = false;
 
     @PostConstruct
-    @Transactional
     public void seedInitialTop500Companies() {
-        long currentCount = companyRepository.count();
-        if (currentCount >= 500) {
-            log.info("Top 500 enterprise companies directory already fully seeded ({} active portals).", currentCount);
-            return;
-        }
-
-        log.info("🌱 Seeding complete Top 500 Enterprise Hiring Companies directory...");
-        List<Company> all500 = Top500CompanyDirectorySeed.getTop500Companies();
-        
-        Set<String> existingNames = companyRepository.findAll().stream()
-                .map(Company::getName)
-                .collect(Collectors.toSet());
-
-        List<Company> newCompanies = all500.stream()
-                .filter(c -> !existingNames.contains(c.getName()))
-                .collect(Collectors.toList());
-
-        if (!newCompanies.isEmpty()) {
-            companyRepository.saveAll(newCompanies);
-        }
-        
-        log.info("✅ Successfully seeded Top 500 Enterprise Companies directory. Total active portals: {}", companyRepository.count());
+        CompletableFuture.runAsync(() -> {
+            try {
+                long count = companyRepository.count();
+                if (count < 500) {
+                    log.info("🌱 Seeding Top 500 Enterprise Hiring Companies directory...");
+                    List<Company> all500 = Top500CompanyDirectorySeed.getTop500Companies();
+                    Set<String> existingNames = companyRepository.findAll().stream()
+                            .map(c -> c.getName().toLowerCase())
+                            .collect(Collectors.toSet());
+                    List<Company> newCompanies = all500.stream()
+                            .filter(c -> !existingNames.contains(c.getName().toLowerCase()))
+                            .collect(Collectors.toList());
+                    if (!newCompanies.isEmpty()) {
+                        companyRepository.saveAll(newCompanies);
+                    }
+                    log.info("✅ Successfully seeded Top 500 Enterprise Companies.");
+                }
+            } catch (Exception e) {
+                log.warn("Directory seeding background notice: {}", e.getMessage());
+            }
+        });
     }
 
     /**

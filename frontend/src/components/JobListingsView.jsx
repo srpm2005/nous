@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getJobListings, getJobListingsByResumeId, getSuggestedRoles, getSuggestedRolesByResumeId } from '../services/api';
+import { getJobListings, getJobListingsByResumeId, getSuggestedRoles, getSuggestedRolesByResumeId, getTop500Companies } from '../services/api';
 import JobCard from './JobCard';
 import JobFilterControls from './JobFilterControls';
 
@@ -10,6 +10,7 @@ import JobFilterControls from './JobFilterControls';
 export function JobListingsView({ scanId, resumeId, scanStatus, roles: initialRoles = [] }) {
   const [jobs, setJobs] = useState([]);
   const [roles, setRoles] = useState(initialRoles);
+  const [allCompanies, setAllCompanies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -17,6 +18,25 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles: initialRo
   const [locationQuery, setLocationQuery] = useState('');
   const [selectedRoleId, setSelectedRoleId] = useState('ALL');
   const [selectedPlatform, setSelectedPlatform] = useState('ALL');
+
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchCompanyDirectory() {
+      try {
+        const data = await getTop500Companies();
+        if (isMounted && data && Array.isArray(data)) {
+          const names = data
+            .map(c => c.name)
+            .filter(name => name && !name.toLowerCase().startsWith('enterprise partner'));
+          setAllCompanies(names);
+        }
+      } catch (e) {
+        console.warn('Could not fetch enterprise company directory', e);
+      }
+    }
+    fetchCompanyDirectory();
+    return () => { isMounted = false; };
+  }, []);
   
   // View mode state: 'categorized' (default skill groups) | 'grid' (2-column cards) | 'list' (single column)
   const [viewMode, setViewMode] = useState('categorized');
@@ -396,61 +416,7 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles: initialRo
             </div>
           ) : (
             <>
-              {/* Role & Skill Filter Pills */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                marginBottom: '16px',
-                flexWrap: 'wrap'
-              }}>
-                <button
-                  onClick={() => setSelectedRoleId('ALL')}
-                  style={{
-                    padding: '8px 16px',
-                    borderRadius: '20px',
-                    border: '1px solid',
-                    borderColor: selectedRoleId === 'ALL' ? '#2563eb' : '#e2e8f0',
-                    background: selectedRoleId === 'ALL' ? '#eff6ff' : '#ffffff',
-                    color: selectedRoleId === 'ALL' ? '#2563eb' : '#64748b',
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    transition: 'all 150ms ease'
-                  }}
-                >
-                  All Skills & Roles ({jobs.length})
-                </button>
-
-                {roles.map((r, idx) => {
-                  const roleIdKey = r.id || r.roleTitle;
-                  const isSelected = selectedRoleId === roleIdKey;
-                  const roleJobsCount = jobs.filter(j => matchesRoleDomain(j, r)).length;
-
-                  return (
-                    <button
-                      key={r.id || idx}
-                      onClick={() => setSelectedRoleId(isSelected ? 'ALL' : roleIdKey)}
-                      style={{
-                        padding: '8px 16px',
-                        borderRadius: '20px',
-                        border: '1px solid',
-                        borderColor: isSelected ? '#2563eb' : '#e2e8f0',
-                        background: isSelected ? '#eff6ff' : '#ffffff',
-                        color: isSelected ? '#2563eb' : '#64748b',
-                        fontSize: '13px',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        transition: 'all 150ms ease'
-                      }}
-                    >
-                      🎯 {r.roleTitle} ({roleJobsCount})
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Filter Controls with Upper Line Platform Tabs */}
+              {/* Unified Job Filter Controls */}
               <JobFilterControls
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
@@ -461,7 +427,7 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles: initialRo
                 selectedPlatform={selectedPlatform}
                 onPlatformSelect={setSelectedPlatform}
                 roles={roles}
-                companies={Array.from(new Set(jobs.map(j => j.company).filter(Boolean))).sort()}
+                companies={Array.from(new Set([...allCompanies, ...jobs.map(j => j.company).filter(Boolean)])).sort()}
                 totalCount={jobs.length}
                 filteredCount={filteredJobs.length}
               />

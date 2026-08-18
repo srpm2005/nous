@@ -7,7 +7,7 @@ import { useScanStatus } from '../hooks/useScanStatus';
  * Shows step-by-step progress while processing, and collapses cleanly when complete.
  */
 export default function PipelineProgressView({ scanId, onComplete }) {
-  const { scanState, loading, error } = useScanStatus(scanId, 1500, onComplete);
+  const { scanState } = useScanStatus(scanId, 1500, onComplete);
 
   if (!scanId) return null;
 
@@ -16,34 +16,53 @@ export default function PipelineProgressView({ scanId, onComplete }) {
   // When complete, render a clean compact status banner instead of a huge list of step checkmarks
   if (currentStatus === 'COMPLETE') {
     return (
-      <div className="asana-card animate-fade-in" style={{
-        padding: '14px 18px',
-        borderRadius: 'var(--radius-md)',
-        background: 'var(--status-emerald-bg)',
-        border: '1px solid var(--status-emerald-border)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '12px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{
-            width: '24px', height: '24px', borderRadius: '50%',
-            background: 'var(--status-emerald-text)', color: '#ffffff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '12px', fontWeight: 700
-          }}>✓</div>
-          <div>
-            <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--status-emerald-text)' }}>
-              Resume Analysis Completed Successfully
+      <div
+        className="asana-card animate-fade-in"
+        style={{
+          padding: '16px 18px',
+          borderRadius: '14px',
+          background: '#f0fdf4',
+          border: '1px solid #bbf7d0',
+          boxShadow: '0 2px 8px rgba(16, 185, 129, 0.05)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+          width: '100%',
+          boxSizing: 'border-box'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+            <div
+              style={{
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                background: '#16a34a',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '13px',
+                fontWeight: 800,
+                flexShrink: 0
+              }}
+            >
+              ✓
             </div>
-            <div style={{ fontSize: '12px', color: '#047857' }}>
-              Extracted text, AI target roles & live job matches ready
-            </div>
+            <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#14532d', lineHeight: 1.3 }}>
+              Resume Analysis Complete
+            </span>
+          </div>
+
+          <div style={{ flexShrink: 0 }}>
+            <ScanStatusBadge status="COMPLETE" />
           </div>
         </div>
 
-        <ScanStatusBadge status="COMPLETE" />
+        <div style={{ fontSize: '12px', color: '#166534', fontWeight: 500, paddingLeft: '32px' }}>
+          Extracted text, AI target roles & live job matches ready
+        </div>
       </div>
     );
   }
@@ -51,34 +70,53 @@ export default function PipelineProgressView({ scanId, onComplete }) {
   // When partial, render an amber warning/info banner
   if (currentStatus === 'PARTIAL') {
     return (
-      <div className="asana-card animate-fade-in" style={{
-        padding: '14px 18px',
-        borderRadius: 'var(--radius-md)',
-        background: 'var(--status-amber-bg)',
-        border: '1px solid var(--status-amber-border)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '12px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{
-            width: '24px', height: '24px', borderRadius: '50%',
-            background: 'var(--status-amber-text)', color: '#ffffff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '12px', fontWeight: 700
-          }}>!</div>
-          <div>
-            <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--status-amber-text)' }}>
-              Pipeline Completed with Partial Results
+      <div
+        className="asana-card animate-fade-in"
+        style={{
+          padding: '16px 18px',
+          borderRadius: '14px',
+          background: '#fffbeb',
+          border: '1px solid #fde68a',
+          boxShadow: '0 2px 8px rgba(245, 158, 11, 0.05)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+          width: '100%',
+          boxSizing: 'border-box'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+            <div
+              style={{
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                background: '#d97706',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '13px',
+                fontWeight: 800,
+                flexShrink: 0
+              }}
+            >
+              !
             </div>
-            <div style={{ fontSize: '12px', color: '#b45309' }}>
-              {scanState?.errorReason || 'AI target roles identified; external job APIs returned partial listings.'}
-            </div>
+            <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#78350f', lineHeight: 1.3 }}>
+              Partial Scan Results
+            </span>
+          </div>
+
+          <div style={{ flexShrink: 0 }}>
+            <ScanStatusBadge status="PARTIAL" />
           </div>
         </div>
 
-        <ScanStatusBadge status="PARTIAL" />
+        <div style={{ fontSize: '12px', color: '#92400e', fontWeight: 500, paddingLeft: '32px' }}>
+          {scanState?.errorReason || 'AI target roles identified; external job APIs returned partial listings.'}
+        </div>
       </div>
     );
   }
@@ -86,34 +124,52 @@ export default function PipelineProgressView({ scanId, onComplete }) {
   // When failed, render a rose error card
   if (currentStatus === 'FAILED') {
     return (
-      <div className="asana-card animate-fade-in" style={{
-        padding: '18px',
-        borderRadius: 'var(--radius-md)',
-        background: 'var(--status-rose-bg)',
-        border: '1px solid var(--status-rose-border)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{
-              width: '26px', height: '26px', borderRadius: '50%',
-              background: 'var(--status-rose-text)', color: '#ffffff',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '13px', fontWeight: 700
-            }}>✕</div>
-            <div>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--status-rose-text)' }}>
-                Async Pipeline Execution Failed
-              </div>
-              <div style={{ fontSize: '12px', color: '#991b1b' }}>
-                {scanState?.errorReason || 'Pipeline encountered an unexpected processing error.'}
-              </div>
+      <div
+        className="asana-card animate-fade-in"
+        style={{
+          padding: '16px 18px',
+          borderRadius: '14px',
+          background: '#fff1f2',
+          border: '1px solid #fecdd3',
+          boxShadow: '0 2px 8px rgba(244, 63, 94, 0.05)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+          width: '100%',
+          boxSizing: 'border-box'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+            <div
+              style={{
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                background: '#e11d48',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '13px',
+                fontWeight: 800,
+                flexShrink: 0
+              }}
+            >
+              ✕
             </div>
+            <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#881337', lineHeight: 1.3 }}>
+              Pipeline Execution Failed
+            </span>
           </div>
 
-          <ScanStatusBadge status="FAILED" />
+          <div style={{ flexShrink: 0 }}>
+            <ScanStatusBadge status="FAILED" />
+          </div>
+        </div>
+
+        <div style={{ fontSize: '12px', color: '#9f1239', fontWeight: 500, paddingLeft: '32px' }}>
+          {scanState?.errorReason || 'Pipeline encountered an unexpected processing error.'}
         </div>
       </div>
     );

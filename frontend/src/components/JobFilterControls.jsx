@@ -1,7 +1,42 @@
 import React from 'react';
 
+const DEFAULT_COMPANIES = [
+  // Core Baseline & Big Tech
+  'Microsoft', 'Amazon', 'Google', 'Meta', 'Apple', 'Netflix', 'Adobe', 'Stripe', 'Figma', 'TCS', 'Infosys', 'Accenture',
+  'NVIDIA', 'Intel', 'AMD', 'Qualcomm', 'Broadcom', 'Cisco', 'IBM', 'Oracle', 'Salesforce', 'ServiceNow', 'Workday',
+  'Palo Alto Networks', 'CrowdStrike', 'Datadog', 'Snowflake', 'Databricks', 'Atlassian', 'MongoDB', 'Twilio', 'Cloudflare',
+  'Zoom', 'Slack', 'Asana', 'Notion', 'Canva', 'Box', 'Dropbox', 'HubSpot', 'Zendesk', 'Okta', 'Splunk', 'Synopsys',
+  'Cadence Design Systems', 'VMware', 'Red Hat', 'Docker', 'HashiCorp', 'Elastic', 'Confluent', 'GitLab', 'GitHub',
+  'Postman', 'Freshworks', 'Hasura',
+  // FinTech & High Growth
+  'Uber', 'Airbnb', 'Lyft', 'DoorDash', 'Instacart', 'Pinterest', 'Snap Inc', 'Reddit', 'Spotify', 'eBay', 'Etsy',
+  'Robinhood', 'Coinbase', 'Plaid', 'Affirm', 'Klarna', 'Brex', 'Ramp', 'Toast', 'Square (Block)', 'PayPal', 'Intuit',
+  'Zomato', 'Swiggy', 'Paytm', 'PhonePe', 'CRED', 'Razorpay', 'Meesho', 'Groww', 'Zerodha', 'InMobi', 'Flipkart',
+  'Ola Cabs', 'MakeMyTrip', 'Nykaa', 'BrowserStack', 'Druva', 'Chargebee',
+  // IT Services & Consulting
+  'Wipro', 'HCLTech', 'Cognizant', 'LTIMindtree', 'Tech Mahindra', 'Genpact', 'Capgemini', 'Deloitte', 'PwC', 'EY',
+  'KPMG', 'McKinsey & Company', 'Boston Consulting Group (BCG)', 'Bain & Company', 'Booz Allen Hamilton', 'Gartner',
+  // Investment Banking & Finance
+  'JPMorgan Chase', 'Goldman Sachs', 'Morgan Stanley', 'Citi', 'Bank of America', 'Wells Fargo', 'Capital One',
+  'Visa', 'Mastercard', 'American Express', 'Fidelity Investments', 'BlackRock', 'Vanguard', 'Bloomberg',
+  'Thomson Reuters', 'S&P Global', "Moody's",
+  // E-Commerce & Retail
+  'Walmart', 'Target', 'Costco', 'Best Buy', 'The Home Depot', "Lowe's", 'Nike', 'Adidas', 'Lululemon', 'Starbucks', "McDonald's",
+  // Automotive & Aerospace
+  'Tesla', 'Rivian', 'Lucid Motors', 'General Motors', 'Ford Motor Company', 'BMW Group', 'Mercedes-Benz', 'Volkswagen Group',
+  'Boeing', 'Airbus', 'Lockheed Martin', 'Northrop Grumman',
+  // Hardware & Semiconductors
+  'ASML', 'Applied Materials', 'Lam Research', 'TSMC', 'Micron Technology', 'SK Hynix', 'Marvell', 'MediaTek',
+  'NXP Semiconductors', 'Texas Instruments', 'Sony Group', 'Samsung Electronics', 'Dell Technologies', 'HP Inc',
+  'Lenovo', 'Siemens', 'Honeywell', 'General Electric', '3M', 'Caterpillar',
+  // Healthcare & BioTech
+  'Johnson & Johnson', 'Pfizer', 'Roche', 'Novartis', 'Merck & Co', 'AbbVie', 'AstraZeneca', 'Sanofi', 'GSK',
+  'Eli Lilly', 'Amgen', 'Gilead Sciences', 'Moderna', 'Regeneron', 'Illumina', 'Thermo Fisher Scientific', 'Danaher',
+  'Medtronic', 'Abbott Laboratories', 'UnitedHealth Group', 'CVS Health'
+];
+
 /**
- * Filter controls component for searching live job listings by keyword, location, and role.
+ * Filter controls component for searching live job listings by keyword, location, company dropdown, and role.
  * Formatted with modern sleek SaaS design system tokens.
  */
 export function JobFilterControls({
@@ -18,25 +53,15 @@ export function JobFilterControls({
   totalCount,
   filteredCount
 }) {
-  const platforms = [
-    { id: 'ALL', label: 'All Top 500 Enterprise Portals', color: '#2563eb', icon: <span style={{ fontSize: '14px' }}>🏛️</span> },
-    ...(companies && companies.length > 0
-      ? companies.map((c) => ({ id: c.toUpperCase(), label: c, color: '#2563eb', icon: <span style={{ fontSize: '14px' }}>🏢</span> }))
-      : [
-          { id: 'MICROSOFT', label: 'Microsoft', color: '#00a4ef', icon: <span style={{ fontSize: '14px' }}>🪟</span> },
-          { id: 'AMAZON', label: 'Amazon', color: '#ff9900', icon: <span style={{ fontSize: '14px' }}>📦</span> },
-          { id: 'GOOGLE', label: 'Google', color: '#ea4335', icon: <span style={{ fontSize: '14px' }}>🔍</span> },
-          { id: 'META', label: 'Meta', color: '#0668e1', icon: <span style={{ fontSize: '14px' }}>♾️</span> },
-          { id: 'APPLE', label: 'Apple', color: '#475569', icon: <span style={{ fontSize: '14px' }}>🍎</span> },
-          { id: 'NETFLIX', label: 'Netflix', color: '#e50914', icon: <span style={{ fontSize: '14px' }}>🎬</span> },
-          { id: 'ADOBE', label: 'Adobe', color: '#fa0f00', icon: <span style={{ fontSize: '14px' }}>🎨</span> },
-          { id: 'STRIPE', label: 'Stripe', color: '#635bfc', icon: <span style={{ fontSize: '14px' }}>💳</span> },
-          { id: 'FIGMA', label: 'Figma', color: '#f24e1e', icon: <span style={{ fontSize: '14px' }}>❖</span> },
-          { id: 'TCS', label: 'TCS', color: '#0284c7', icon: <span style={{ fontSize: '14px' }}>🏢</span> },
-          { id: 'INFOSYS', label: 'Infosys', color: '#007cc3', icon: <span style={{ fontSize: '14px' }}>💻</span> },
-          { id: 'ACCENTURE', label: 'Accenture', color: '#a100ff', icon: <span style={{ fontSize: '14px' }}>⚡</span> }
-        ])
-  ];
+  // Build a unique, clean, alphabetically sorted company list excluding generic placeholders
+  const companyList = Array.from(
+    new Set([
+      ...DEFAULT_COMPANIES,
+      ...(companies || [])
+    ])
+  )
+    .filter((c) => c && !c.toLowerCase().startsWith('enterprise partner'))
+    .sort((a, b) => a.localeCompare(b));
 
   return (
     <div
@@ -53,54 +78,12 @@ export function JobFilterControls({
         transition: 'box-shadow 200ms ease'
       }}
     >
-      {/* Upper Line: Platform Search Selector Tabs */}
-      <div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-          <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Job Search Platform & Company Portals
-          </span>
-          <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 500 }}>
-            {platforms.length - 1} connected portals
-          </span>
-        </div>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {platforms.map((p) => {
-            const isSelected = selectedPlatform === p.id;
-            return (
-              <button
-                key={p.id}
-                onClick={() => onPlatformSelect && onPlatformSelect(p.id)}
-                style={{
-                  padding: '7px 15px',
-                  borderRadius: '10px',
-                  border: isSelected ? `1.5px solid ${p.color}` : '1px solid #e2e8f0',
-                  background: isSelected ? p.color : '#f8fafc',
-                  color: isSelected ? '#ffffff' : '#334155',
-                  fontSize: '12.5px',
-                  fontWeight: isSelected ? 600 : 500,
-                  cursor: 'pointer',
-                  transition: 'all 180ms ease-in-out',
-                  boxShadow: isSelected ? `0 4px 12px ${p.color}33` : '0 1px 2px rgba(0,0,0,0.02)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '7px',
-                  transform: isSelected ? 'translateY(-1px)' : 'none'
-                }}
-              >
-                {p.icon}
-                {p.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
       <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
         {/* Search Keyword Input */}
-        <div style={{ flex: '1 1 220px', minWidth: '190px', position: 'relative' }}>
+        <div style={{ flex: '1 1 220px', minWidth: '190px' }}>
           <input
             type="text"
-            placeholder="🔍 Search title, role or company..."
+            placeholder="🔍 Search title, role or keyword..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             style={{
@@ -161,7 +144,7 @@ export function JobFilterControls({
         </div>
 
         {/* Company Dropdown Selector */}
-        <div style={{ flex: '0 0 auto', minWidth: '170px' }}>
+        <div style={{ flex: '1 1 200px', minWidth: '180px' }}>
           <select
             value={selectedPlatform}
             onChange={(e) => onPlatformSelect && onPlatformSelect(e.target.value)}
@@ -178,9 +161,17 @@ export function JobFilterControls({
               fontWeight: 500,
               transition: 'all 180ms ease-in-out'
             }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#2563eb';
+              e.target.style.background = '#ffffff';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#cbd5e1';
+              e.target.style.background = '#f8fafc';
+            }}
           >
-            <option value="ALL">All Companies ({companies.length > 0 ? companies.length : 'Top 500'})</option>
-            {(companies && companies.length > 0 ? companies : ['Microsoft', 'Amazon', 'Google', 'Meta', 'Apple', 'Netflix', 'Adobe', 'Stripe', 'Figma', 'TCS', 'Infosys', 'Accenture']).map((c, idx) => (
+            <option value="ALL">🏢 All Companies ({companyList.length})</option>
+            {companyList.map((c, idx) => (
               <option key={idx} value={c.toUpperCase()}>
                 🏢 {c}
               </option>
@@ -190,7 +181,7 @@ export function JobFilterControls({
 
         {/* Role Selector Dropdown */}
         {roles && roles.length > 0 && (
-          <div style={{ flex: '0 0 auto', minWidth: '170px' }}>
+          <div style={{ flex: '1 1 200px', minWidth: '180px' }}>
             <select
               value={selectedRoleId}
               onChange={(e) => onRoleSelect(e.target.value)}
@@ -207,8 +198,16 @@ export function JobFilterControls({
                 fontWeight: 500,
                 transition: 'all 180ms ease-in-out'
               }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#2563eb';
+                e.target.style.background = '#ffffff';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#cbd5e1';
+                e.target.style.background = '#f8fafc';
+              }}
             >
-              <option value="ALL">All Target Roles ({roles.length})</option>
+              <option value="ALL">🎯 All Target Roles ({roles.length})</option>
               {roles.map((r, idx) => (
                 <option key={r.id || idx} value={r.id || r.roleTitle}>
                   🎯 {r.roleTitle}
@@ -257,3 +256,4 @@ export function JobFilterControls({
 }
 
 export default JobFilterControls;
+

@@ -387,7 +387,18 @@ export default function Top500CrawlerView({ onShowToast }) {
                     {p.salaryRange || 'Competitive'}
                   </span>
                   <a
-                    href={p.applyUrl}
+                    href={(() => {
+                      const compName = (p.company?.name || p.company || '').toLowerCase();
+                      const raw = (p.applyUrl || '').trim();
+                      const isGeneric = !raw || raw === '#' || /^https?:\/\/[^\/]+\/?(careers|jobs|careers\/|jobs\/)?$/i.test(raw)
+                        || raw === 'https://www.uber.com/careers' || raw === 'https://careers.microsoft.com' || raw === 'https://careers.google.com' || raw === 'https://www.amazon.jobs';
+                      if (!isGeneric) return raw;
+                      if (compName.includes('uber')) return `https://www.google.com/search?q=${encodeURIComponent('site:jobs.uber.com ' + p.title + ' apply')}`;
+                      if (compName.includes('amazon')) return `https://www.amazon.jobs/en/search?base_query=${encodeURIComponent(p.title)}`;
+                      if (compName.includes('microsoft')) return `https://jobs.careers.microsoft.com/global/en/search?q=${encodeURIComponent(p.title)}`;
+                      if (compName.includes('google')) return `https://www.google.com/about/careers/applications/jobs/results/?q=${encodeURIComponent(p.title)}`;
+                      return `https://www.google.com/search?q=${encodeURIComponent((p.company?.name || p.company || 'Enterprise') + ' ' + p.title + ' official apply')}`;
+                    })()}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{

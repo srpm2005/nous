@@ -5,20 +5,29 @@ import React from 'react';
  * featuring match score percentage badge, rank order badge, rationale text, and skill tags.
  */
 export function RoleCard({ role }) {
-  const matchPercentage = Math.round((role.confidenceScore || 0) * 100);
+  let score = role.confidenceScore ?? role.confidence ?? 0;
+  if (score > 0 && score <= 1.0) {
+    score = Math.round(score * 100);
+  } else {
+    score = Math.round(score);
+  }
 
-  const rank = role.rank || 1;
+  const matchPercentage = Math.min(99, Math.max(50, score));
 
-  // Match badge labels matching Nous UI spec
+  // Determine badge label and styling dynamically based on accurate match percentage
   let badgeLabel = 'Best match';
   let badgeBg = '#d1fae5';
   let badgeColor = '#047857';
 
-  if (rank === 2) {
+  if (matchPercentage >= 90) {
+    badgeLabel = 'Best match';
+    badgeBg = '#d1fae5';
+    badgeColor = '#047857';
+  } else if (matchPercentage >= 80) {
     badgeLabel = 'Good match';
     badgeBg = '#dbeafe';
     badgeColor = '#1d4ed8';
-  } else if (rank >= 3) {
+  } else {
     badgeLabel = 'Possible match';
     badgeBg = '#fef3c7';
     badgeColor = '#b45309';

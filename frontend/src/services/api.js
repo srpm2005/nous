@@ -177,6 +177,22 @@ export async function getUserScans(userId = 'anonymous') {
   return handleResponse(response);
 }
 
+/**
+ * Fetch monitored enterprise company directory (500 portals)
+ * @returns {Promise<Array>} List of Company objects
+ */
+export async function getTop500Companies() {
+  const response = await fetch('/api/top500/companies', {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+
+  return handleResponse(response);
+}
+
+
 
 
 
