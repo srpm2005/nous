@@ -11,6 +11,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.project.nous.service.PayEstimationService;
+
 /**
  * Greenhouse ATS Public Board Adapter.
  * Endpoint: https://boards-api.greenhouse.io/v1/boards/{board_token}/jobs
@@ -22,6 +24,7 @@ public class GreenhouseAdapter implements CareerPageAdapter {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final PayEstimationService payEstimationService = new PayEstimationService();
 
     @Override
     public boolean supports(Company company) {
@@ -55,13 +58,15 @@ public class GreenhouseAdapter implements CareerPageAdapter {
                         location = job.get("location").get("name").asText();
                     }
 
+                    String salary = payEstimationService.estimateSalaryRange(title, location, company.getName());
+
                     results.add(RawJobPosting.builder()
                             .externalId(externalId)
                             .title(title)
                             .location(location)
                             .department("Engineering")
                             .applyUrl(applyUrl)
-                            .salaryRange("₹18,000,000 - ₹35,000,000")
+                            .salaryRange(salary)
                             .build());
                 }
             }
@@ -70,13 +75,15 @@ public class GreenhouseAdapter implements CareerPageAdapter {
         }
 
         if (results.isEmpty()) {
+            String salary1 = payEstimationService.estimateSalaryRange(company.getName() + " - Senior Software Engineer", "Remote", company.getName());
+            String salary2 = payEstimationService.estimateSalaryRange(company.getName() + " - Cloud Infrastructure & DevOps Specialist", "Remote", company.getName());
             results.add(RawJobPosting.builder()
                     .externalId(company.getDomain() + "-gh-101")
                     .title(company.getName() + " - Senior Software Engineer")
                     .location("Bangalore, India / Remote")
                     .department("Engineering")
                     .applyUrl(company.getCareerPageUrl())
-                    .salaryRange("₹2,800,000 - ₹5,200,000 / yr")
+                    .salaryRange(salary1)
                     .build());
             results.add(RawJobPosting.builder()
                     .externalId(company.getDomain() + "-gh-102")
@@ -84,7 +91,7 @@ public class GreenhouseAdapter implements CareerPageAdapter {
                     .location("Hyderabad, India / Remote")
                     .department("Cloud Infrastructure")
                     .applyUrl(company.getCareerPageUrl())
-                    .salaryRange("₹3,200,000 - ₹5,800,000 / yr")
+                    .salaryRange(salary2)
                     .build());
         }
 

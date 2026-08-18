@@ -305,71 +305,71 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles: initialRo
         </div>
 
         {/* View Mode Toggle Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#f1f5f9', padding: '3px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '3px', background: '#e2e8f0', padding: '3px', borderRadius: '10px' }}>
           <button
             onClick={() => setViewMode('categorized')}
             title="Categorized Skill View"
             style={{
               padding: '6px 14px',
-              borderRadius: '7px',
+              borderRadius: '8px',
               border: 'none',
               background: viewMode === 'categorized' ? '#ffffff' : 'transparent',
-              color: viewMode === 'categorized' ? '#2563eb' : '#64748b',
+              color: viewMode === 'categorized' ? '#0f172a' : '#64748b',
               fontWeight: viewMode === 'categorized' ? 700 : 500,
               fontSize: '12.5px',
               cursor: 'pointer',
-              boxShadow: viewMode === 'categorized' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+              boxShadow: viewMode === 'categorized' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
               transition: 'all 150ms ease',
               display: 'flex',
               alignItems: 'center',
               gap: '6px'
             }}
           >
-            📂 Categorized Skills
+            Categorized by Role
           </button>
 
           <button
             onClick={() => setViewMode('grid')}
-            title="2-Column Card Grid View"
+            title="All Openings Grid View"
             style={{
               padding: '6px 14px',
-              borderRadius: '7px',
+              borderRadius: '8px',
               border: 'none',
               background: viewMode === 'grid' ? '#ffffff' : 'transparent',
-              color: viewMode === 'grid' ? '#2563eb' : '#64748b',
+              color: viewMode === 'grid' ? '#0f172a' : '#64748b',
               fontWeight: viewMode === 'grid' ? 700 : 500,
               fontSize: '12.5px',
               cursor: 'pointer',
-              boxShadow: viewMode === 'grid' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+              boxShadow: viewMode === 'grid' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
               transition: 'all 150ms ease',
               display: 'flex',
               alignItems: 'center',
               gap: '6px'
             }}
           >
-            🧩 Grid View
+            All Openings (Grid)
           </button>
 
           <button
             onClick={() => setViewMode('list')}
-            title="Single Line List View"
+            title="Compact List View"
             style={{
               padding: '6px 14px',
-              borderRadius: '7px',
+              borderRadius: '8px',
               border: 'none',
               background: viewMode === 'list' ? '#ffffff' : 'transparent',
-              color: viewMode === 'list' ? '#2563eb' : '#64748b',
+              color: viewMode === 'list' ? '#0f172a' : '#64748b',
               fontWeight: viewMode === 'list' ? 700 : 500,
               fontSize: '12.5px',
               cursor: 'pointer',
-              boxShadow: viewMode === 'list' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+              boxShadow: viewMode === 'list' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
               transition: 'all 150ms ease',
               display: 'flex',
               alignItems: 'center',
               gap: '6px'
             }}
           >
-            📋 List View
+            Compact List
           </button>
         </div>
       </div>
@@ -482,8 +482,8 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles: initialRo
                       {/* Multi-Column Responsive Card Grid inside Skill Category */}
                       <div style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                        gap: '16px'
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+                        gap: '18px'
                       }}>
                         {bucket.jobs.map((job, idx) => (
                           <JobCard
@@ -499,12 +499,12 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles: initialRo
                 </div>
               )}
 
-              {/* RENDER MODE 2: 2-COLUMN GRID VIEW */}
+              {/* RENDER MODE 2: MULTI-COLUMN GRID VIEW */}
               {viewMode === 'grid' && (
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-                  gap: '16px'
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+                  gap: '18px'
                 }}>
                   {filteredJobs.map((job, idx) => (
                     <JobCard

@@ -4,7 +4,7 @@ import ScanStatusBadge from './ScanStatusBadge';
 import SuggestedRolesView from './SuggestedRolesView';
 import JobListingsView from './JobListingsView';
 
-export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast }) {
+export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast, onUploadNew }) {
   const [activeTab, setActiveTab] = useState('matches'); // 'matches' | 'text'
   const [searchTerm, setSearchTerm] = useState('');
   const [showFullText, setShowFullText] = useState(false);
@@ -12,48 +12,7 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   if (!resume) {
-    return (
-      <div className="asana-card" style={{
-        padding: '64px 28px',
-        textAlign: 'center',
-        color: '#64748b',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '400px',
-        borderRadius: '16px',
-        border: '1px dashed #cbd5e1',
-        background: '#ffffff'
-      }}>
-        <div style={{
-          width: '72px',
-          height: '72px',
-          borderRadius: '50%',
-          background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: '0 auto 20px auto',
-          border: '1px solid #bfdbfe',
-          color: '#2563eb',
-          boxShadow: '0 8px 16px -4px rgba(37, 99, 235, 0.15)'
-        }}>
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-          </svg>
-        </div>
-        <h4 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', margin: '0 0 8px 0', letterSpacing: '-0.01em' }}>
-          No Resume Selected
-        </h4>
-        <p style={{ fontSize: '14px', maxWidth: '440px', margin: 0, lineHeight: 1.6, color: '#64748b' }}>
-          Upload a PDF or Word resume on the left, or select an existing candidate file from your history list to view AI target job matches and live enterprise openings.
-        </p>
-      </div>
-    );
+    return null;
   }
 
   const handleDelete = async () => {
@@ -93,129 +52,146 @@ export default function ResumeDetailView({ resume, onDeleteSuccess, onCopyToast 
   };
 
   const formattedDate = resume.uploadedAt 
-    ? new Date(resume.uploadedAt).toLocaleString()
+    ? new Date(resume.uploadedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
     : 'Just now';
 
   return (
-    <div className="asana-card animate-fade-in" style={{
-      padding: '28px',
-      position: 'relative',
-      minWidth: 0,
-      overflow: 'hidden',
-      borderRadius: '16px',
-      border: '1px solid #e2e8f0',
-      boxShadow: '0 4px 24px -4px rgba(0, 0, 0, 0.04)'
-    }}>
-      {/* Header Bar & Quick Summary Card */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
-        <div style={{ minWidth: 0, flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            <h3 style={{ fontSize: '22px', fontWeight: 800, margin: 0, color: '#0f172a', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span>📄</span>
-              <span>{resume.originalFilename || 'Uploaded Resume'}</span>
-            </h3>
-
-            {resume.isDuplicate && (
-              <span className="badge badge-emerald" style={{ padding: '4px 10px', fontSize: '11.5px', fontWeight: 700, borderRadius: '9999px', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0' }}>
-                ⚡ Instant Verified Match
-              </span>
-            )}
-
-            <ScanStatusBadge status={resume.scanStatus || 'COMPLETE'} />
-          </div>
-
-          <p style={{ fontSize: '13px', color: '#64748b', margin: '6px 0 0 0', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span>Uploaded: <strong style={{ color: '#334155' }}>{formattedDate}</strong></span>
-            <span>•</span>
-            <span>User ID: <strong style={{ color: '#334155' }}>{resume.userId || 'anonymous'}</strong></span>
-          </p>
-        </div>
-
-        <button
-          onClick={() => setShowDeleteConfirm(true)}
-          style={{
-            fontSize: '13px',
-            padding: '8px 16px',
-            borderRadius: '10px',
-            background: '#fef2f2',
-            border: '1px solid #fecaca',
-            color: '#dc2626',
-            fontWeight: 600,
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            transition: 'all 150ms ease-in-out'
-          }}
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-            <polyline points="3 6 5 6 21 6"/>
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-          </svg>
-          Delete Resume
-        </button>
-      </div>
-
-
-      {/* Modern Navigation Tabs */}
+    <div style={{ width: '100%' }}>
+      {/* Sleek Top Candidate Bar: File Info + Center Segmented Tabs + Right Actions */}
       <div style={{
         display: 'flex',
-        gap: '6px',
-        background: '#f1f5f9',
-        padding: '5px',
-        borderRadius: '12px',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '14px',
+        padding: '12px 20px',
+        background: '#ffffff',
+        borderRadius: '14px',
         border: '1px solid #e2e8f0',
-        marginBottom: '24px'
+        marginBottom: '16px',
+        boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)'
       }}>
-        <button
-          onClick={() => setActiveTab('matches')}
-          style={{
-            flex: '1 1 0px',
-            minWidth: 0,
-            padding: '10px 18px',
-            borderRadius: '8px',
-            border: 'none',
-            background: activeTab === 'matches' ? '#ffffff' : 'transparent',
-            color: activeTab === 'matches' ? '#0f172a' : '#64748b',
-            fontWeight: activeTab === 'matches' ? 700 : 500,
-            fontSize: '13.5px',
-            cursor: 'pointer',
-            boxShadow: activeTab === 'matches' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
-            transition: 'all 180ms ease-in-out',
+        {/* Left: File Badge & Title */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+          <div style={{
+            width: '36px',
+            height: '36px',
+            borderRadius: '9px',
+            background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+            color: '#2563eb',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px',
-            whiteSpace: 'nowrap'
-          }}
-        >
-          🎯 Target Jobs & AI Matches
-        </button>
+            fontSize: '18px'
+          }}>
+            📄
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 style={{ fontSize: '15px', fontWeight: 700, margin: 0, color: '#0f172a', letterSpacing: '-0.01em' }}>
+                {resume.originalFilename || 'Uploaded Resume'}
+              </h3>
+              <ScanStatusBadge status={resume.scanStatus || 'COMPLETE'} />
+            </div>
+            <div style={{ fontSize: '11.5px', color: '#64748b', marginTop: '1px' }}>
+              Uploaded {formattedDate} · ID: {resume.id?.substring(0, 8)}
+            </div>
+          </div>
+        </div>
 
-        <button
-          onClick={() => setActiveTab('text')}
-          style={{
-            flex: '1 1 0px',
-            minWidth: 0,
-            padding: '10px 18px',
-            borderRadius: '8px',
-            border: 'none',
-            background: activeTab === 'text' ? '#ffffff' : 'transparent',
-            color: activeTab === 'text' ? '#0f172a' : '#64748b',
-            fontWeight: activeTab === 'text' ? 700 : 500,
-            fontSize: '13.5px',
-            cursor: 'pointer',
-            boxShadow: activeTab === 'text' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
-            transition: 'all 180ms ease-in-out',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            whiteSpace: 'nowrap'
-          }}
-        >
-          📝 Parsed Resume Text
-        </button>
+        {/* Center: Segmented Tabs */}
+        <div style={{
+          display: 'flex',
+          gap: '3px',
+          background: '#f1f5f9',
+          padding: '3px',
+          borderRadius: '9px',
+          border: '1px solid #e2e8f0'
+        }}>
+          <button
+            onClick={() => setActiveTab('matches')}
+            style={{
+              padding: '6px 16px',
+              borderRadius: '7px',
+              border: 'none',
+              background: activeTab === 'matches' ? '#ffffff' : 'transparent',
+              color: activeTab === 'matches' ? '#0f172a' : '#64748b',
+              fontWeight: activeTab === 'matches' ? 700 : 500,
+              fontSize: '13px',
+              cursor: 'pointer',
+              boxShadow: activeTab === 'matches' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+              transition: 'all 150ms ease'
+            }}
+          >
+            🎯 Roles & Enterprise Openings
+          </button>
+          <button
+            onClick={() => setActiveTab('text')}
+            style={{
+              padding: '6px 16px',
+              borderRadius: '7px',
+              border: 'none',
+              background: activeTab === 'text' ? '#ffffff' : 'transparent',
+              color: activeTab === 'text' ? '#0f172a' : '#64748b',
+              fontWeight: activeTab === 'text' ? 700 : 500,
+              fontSize: '13px',
+              cursor: 'pointer',
+              boxShadow: activeTab === 'text' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+              transition: 'all 150ms ease'
+            }}
+          >
+            📝 Extracted Resume Text
+          </button>
+        </div>
+
+        {/* Right: Actions */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {onUploadNew && (
+            <button
+              onClick={onUploadNew}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '8px',
+                border: '1px solid #cbd5e1',
+                background: '#ffffff',
+                color: '#334155',
+                fontSize: '12.5px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 150ms ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#2563eb';
+                e.currentTarget.style.color = '#2563eb';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#cbd5e1';
+                e.currentTarget.style.color = '#334155';
+              }}
+            >
+              ➕ Upload Different
+            </button>
+          )}
+
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            style={{
+              fontSize: '12px',
+              padding: '6px 12px',
+              borderRadius: '8px',
+              background: '#fef2f2',
+              border: '1px solid #fecaca',
+              color: '#dc2626',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}
+          >
+            🗑️ Delete
+          </button>
+        </div>
       </div>
 
       {/* TAB 1: TARGET JOBS & AI MATCHES */}

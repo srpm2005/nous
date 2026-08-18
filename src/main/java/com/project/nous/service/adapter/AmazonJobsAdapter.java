@@ -27,6 +27,7 @@ public class AmazonJobsAdapter implements CareerPageAdapter {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final com.project.nous.service.PayEstimationService payEstimationService = new com.project.nous.service.PayEstimationService();
 
     @Override
     public boolean supports(Company company) {
@@ -65,13 +66,15 @@ public class AmazonJobsAdapter implements CareerPageAdapter {
                                 ? "https://www.amazon.jobs" + jobPath
                                 : "https://www.amazon.jobs/en/jobs/" + id;
 
+                        String salary = payEstimationService.estimateSalaryRange(title, location, "Amazon");
+
                         results.add(RawJobPosting.builder()
                                 .externalId("amz-" + id)
                                 .title(title)
                                 .location(location)
                                 .department("Software Development")
                                 .applyUrl(applyUrl)
-                                .salaryRange("₹3,500,000 - ₹6,500,000 / yr")
+                                .salaryRange(salary)
                                 .build());
                     }
                 }

@@ -39,6 +39,8 @@ public class CrawlOrchestratorService {
     private final CrawlRunRepository crawlRunRepository;
     private final CrawlResultRepository crawlResultRepository;
     private final List<CareerPageAdapter> adapters;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+    private final PayEstimationService payEstimationService = new PayEstimationService();
 
     private final ExecutorService executor = Executors.newFixedThreadPool(50);
     private boolean isCrawlInProgress = false;
@@ -47,25 +49,70 @@ public class CrawlOrchestratorService {
     public void seedInitialTop500Companies() {
         CompletableFuture.runAsync(() -> {
             try {
-                long count = companyRepository.count();
-                if (count < 500) {
-                    log.info("🌱 Seeding Top 500 Enterprise Hiring Companies directory...");
-                    List<Company> all500 = Top500CompanyDirectorySeed.getTop500Companies();
-                    Set<String> existingNames = companyRepository.findAll().stream()
-                            .map(c -> c.getName().toLowerCase())
-                            .collect(Collectors.toSet());
-                    List<Company> newCompanies = all500.stream()
-                            .filter(c -> !existingNames.contains(c.getName().toLowerCase()))
-                            .collect(Collectors.toList());
-                    if (!newCompanies.isEmpty()) {
-                        companyRepository.saveAll(newCompanies);
-                    }
-                    log.info("✅ Successfully seeded Top 500 Enterprise Companies.");
-                }
+                syncVerifiedCompanies();
+                log.info("🚀 Triggering initial live crawl batch across verified enterprise portals...");
+                runFullCrawlBatch();
             } catch (Exception e) {
-                log.warn("Directory seeding background notice: {}", e.getMessage());
+                log.warn("Directory synchronization notice: {}", e.getMessage());
             }
         });
+    }
+
+    @Transactional
+    public void syncVerifiedCompanies() {
+        log.info("🌱 Synchronizing verified live enterprise companies directory...");
+
+        List<Company> verifiedCompanies = Top500CompanyDirectorySeed.getTop500Companies();
+        Set<String> verifiedNames = verifiedCompanies.stream()
+                .map(c -> c.getName().toLowerCase())
+                .collect(Collectors.toSet());
+
+        // 1. Delete all unverified postings, results, and companies in cascade
+        try {
+            jobPostingRepository.deleteUnverifiedPostings(verifiedNames);
+            crawlResultRepository.deleteUnverifiedCrawlResults(verifiedNames);
+            companyRepository.deleteUnverifiedCompanies(verifiedNames);
+            log.info("🧹 Cleaned up all unverified companies and stale records.");
+        } catch (Exception e) {
+            log.warn("Database cleanup notice: {}", e.getMessage());
+        }
+
+        // 2. Save/Update the 19 verified live companies
+        for (Company v : verifiedCompanies) {
+            Optional<Company> opt = companyRepository.findByNameIgnoreCase(v.getName());
+            if (opt.isPresent()) {
+                Company existing = opt.get();
+                existing.setAdapterType(v.getAdapterType());
+                existing.setAdapterConfig(v.getAdapterConfig());
+                existing.setCareerPageUrl(v.getCareerPageUrl());
+                existing.setIsActive(true);
+                companyRepository.save(existing);
+            } else {
+                companyRepository.save(v);
+            }
+        }
+
+        // 3. Dynamically re-estimate pay for any existing postings with stale or placeholder ranges
+        try {
+            List<JobPosting> allPostings = jobPostingRepository.findAllWithCompanies();
+            for (JobPosting jp : allPostings) {
+                String curPay = jp.getSalaryRange();
+                if (curPay == null || curPay.isBlank() || curPay.contains("18,000,000") || "Competitive Salary".equalsIgnoreCase(curPay)) {
+                    String dynamicPay = payEstimationService.estimateSalaryRange(
+                            jp.getTitle(),
+                            jp.getLocation(),
+                            jp.getCompany() != null ? jp.getCompany().getName() : "Enterprise"
+                    );
+                    jp.setSalaryRange(dynamicPay);
+                }
+            }
+            jobPostingRepository.saveAll(allPostings);
+            log.info("💰 Dynamically estimated realistic compensation bands for {} live job postings.", allPostings.size());
+        } catch (Exception ex) {
+            log.warn("Notice during dynamic pay recalculation: {}", ex.getMessage());
+        }
+
+        log.info("✅ Verified live companies directory ready ({} active portals).", companyRepository.count());
     }
 
     /**
@@ -165,11 +212,17 @@ public class CrawlOrchestratorService {
                 String hash = computeSha256(company.getId() + ":" + raw.getTitle() + ":" + raw.getApplyUrl());
                 seenHashesInRun.add(hash);
 
+                String salary = raw.getSalaryRange();
+                if (salary == null || salary.isBlank() || "Competitive Salary".equalsIgnoreCase(salary)) {
+                    salary = payEstimationService.estimateSalaryRange(raw.getTitle(), raw.getLocation(), company.getName());
+                }
+
                 Optional<JobPosting> existingOpt = jobPostingRepository.findByPostingHash(hash);
                 if (existingOpt.isPresent()) {
                     JobPosting jp = existingOpt.get();
                     jp.setLastSeenAt(LocalDateTime.now());
                     jp.setIsCurrentlyOpen(true);
+                    jp.setSalaryRange(salary);
                     jobPostingRepository.save(jp);
                 } else {
                     JobPosting newJp = JobPosting.builder()
@@ -183,7 +236,7 @@ public class CrawlOrchestratorService {
                             .firstSeenAt(LocalDateTime.now())
                             .lastSeenAt(LocalDateTime.now())
                             .isCurrentlyOpen(true)
-                            .salaryRange(raw.getSalaryRange() != null ? raw.getSalaryRange() : "Competitive Salary")
+                            .salaryRange(salary)
                             .build();
                     jobPostingRepository.save(newJp);
                 }

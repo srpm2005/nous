@@ -24,4 +24,16 @@ public interface JobPostingRepository extends JpaRepository<JobPosting, UUID> {
 
     @Query("SELECT j FROM JobPosting j JOIN FETCH j.company c WHERE j.isCurrentlyOpen = true")
     List<JobPosting> findAllOpenWithCompanies();
+
+    @Query("SELECT j FROM JobPosting j JOIN FETCH j.company c")
+    List<JobPosting> findAllWithCompanies();
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.transaction.annotation.Transactional
+    void deleteByCompanyId(UUID companyId);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.transaction.annotation.Transactional
+    @Query("DELETE FROM JobPosting j WHERE LOWER(j.company.name) NOT IN :verifiedNames")
+    void deleteUnverifiedPostings(@Param("verifiedNames") java.util.Collection<String> verifiedNames);
 }

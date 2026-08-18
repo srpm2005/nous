@@ -94,39 +94,51 @@ export default function App() {
   return (
     <div className="app-container">
       {/* Top Navbar */}
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Navbar onNewScan={() => {
+        setActiveResume(null);
+        setActiveScanId(null);
+      }} />
 
-      {/* Hero Header Banner */}
-      <HeroSection />
+      {/* Hero Header Banner (Only shown on empty upload state) */}
+      {!activeResume && activeTab === 'scanner' && <HeroSection />}
 
       {/* Main Tab Content */}
-
       {activeTab === 'scanner' ? (
         <div className="main-grid">
-          {/* Left Column: Upload Zone + Pipeline Progress */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <UploadZone
-              onUploadSuccess={handleUploadSuccess}
-              onError={(err) => showToast(`⚠️ Upload Error: ${err}`)}
-            />
-
-            {activeScanId && (
-              <PipelineProgressView
-                key={activeScanId}
-                scanId={activeScanId}
-                onComplete={handleScanComplete}
+          {!activeResume ? (
+            /* Empty state: Centered clean upload experience */
+            <div className="upload-grid-empty">
+              <UploadZone
+                onUploadSuccess={handleUploadSuccess}
+                onError={(err) => showToast(`⚠️ Upload Error: ${err}`)}
               />
-            )}
-          </div>
-
-          {/* Right Column: Active Resume Details */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <ResumeDetailView
-              resume={activeResume}
-              onDeleteSuccess={handleDeleteSuccess}
-              onCopyToast={showToast}
-            />
-          </div>
+            </div>
+          ) : (
+            /* Active scan state: Full-width expansive dashboard */
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+              {/* Background Pipeline Status while running */}
+              {activeScanId && activeResume.scanStatus !== 'COMPLETE' ? (
+                <div style={{ maxWidth: '580px', margin: '30px auto 0 auto', width: '100%' }}>
+                  <PipelineProgressView
+                    key={activeScanId}
+                    scanId={activeScanId}
+                    onComplete={handleScanComplete}
+                  />
+                </div>
+              ) : (
+                /* Full Width Resume Analysis & Job Openings Dashboard when complete */
+                <ResumeDetailView
+                  resume={activeResume}
+                  onDeleteSuccess={handleDeleteSuccess}
+                  onCopyToast={showToast}
+                  onUploadNew={() => {
+                    setActiveResume(null);
+                    setActiveScanId(null);
+                  }}
+                />
+              )}
+            </div>
+          )}
         </div>
       ) : activeTab === 'crawls' ? (
         <Top500CrawlerView onShowToast={showToast} />

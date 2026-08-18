@@ -37,10 +37,13 @@ public class JobPosting {
     @Column(nullable = false, length = 500)
     private String title;
 
+    @Column(name = "location", columnDefinition = "TEXT")
     private String location;
+
+    @Column(name = "department", columnDefinition = "TEXT")
     private String department;
 
-    @Column(name = "apply_url", nullable = false, length = 1000)
+    @Column(name = "apply_url", nullable = false, columnDefinition = "TEXT")
     private String applyUrl;
 
     @Column(name = "posting_hash", nullable = false, length = 64, unique = true)
@@ -56,8 +59,9 @@ public class JobPosting {
     @Column(name = "is_currently_open", nullable = false)
     private Boolean isCurrentlyOpen = true;
 
-    @Column(length = 4000)
+    @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "salary_range", length = 250)
     private String salaryRange;
 }

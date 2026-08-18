@@ -132,23 +132,19 @@ export default function UploadZone({ onUploadSuccess, onError }) {
   };
 
   return (
-    <div className="asana-card" style={{ padding: '28px', borderRadius: '18px', border: '1px solid #e2e8f0', boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.03)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <div>
-          <h3 style={{ fontSize: '20px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '10px', margin: 0, color: '#0f172a', letterSpacing: '-0.01em' }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="17 8 12 3 7 8"/>
-              <line x1="12" y1="3" x2="12" y2="15"/>
-            </svg>
-            Upload Resume
-          </h3>
-          <p style={{ fontSize: '13.5px', color: '#64748b', margin: '3px 0 0 0' }}>
-            Select or drag a candidate resume file below to run AI parsing
-          </p>
-        </div>
-      </div>
-
+    <div
+      className="asana-card"
+      style={{
+        padding: '36px 32px',
+        borderRadius: '20px',
+        border: '1px solid #e2e8f0',
+        background: '#ffffff',
+        boxShadow: '0 8px 30px -4px rgba(15, 23, 42, 0.05)',
+        width: '100%',
+        maxWidth: '720px',
+        margin: '0 auto'
+      }}
+    >
       {/* Drag & Drop Card Container */}
       <div
         onDragOver={handleDragOver}
@@ -157,13 +153,11 @@ export default function UploadZone({ onUploadSuccess, onError }) {
         style={{
           border: `2px dashed ${isDragging ? '#2563eb' : '#cbd5e1'}`,
           borderRadius: '16px',
-          padding: '52px 28px',
+          padding: '48px 24px',
           textAlign: 'center',
           background: isDragging ? '#eff6ff' : '#f8fafc',
           boxShadow: isDragging ? '0 0 0 4px rgba(37, 99, 235, 0.15)' : 'none',
           transition: 'all 200ms ease-in-out',
-          maxWidth: '640px',
-          margin: '0 auto',
           cursor: 'pointer'
         }}
         onClick={() => uploadState.status !== 'uploading' && fileInputRef.current?.click()}
@@ -177,24 +171,24 @@ export default function UploadZone({ onUploadSuccess, onError }) {
         />
 
         <div style={{
-          width: '64px',
-          height: '64px',
+          width: '60px',
+          height: '60px',
           borderRadius: '50%',
           background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
           color: '#2563eb',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: '0 auto 18px auto',
+          margin: '0 auto 16px auto',
           border: '1px solid #bfdbfe',
-          boxShadow: '0 8px 16px -4px rgba(37, 99, 235, 0.12)'
+          boxShadow: '0 6px 16px -2px rgba(37, 99, 235, 0.15)'
         }}>
           {uploadState.status === 'uploading' ? (
-            <svg className="spinner" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg className="spinner" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
             </svg>
           ) : (
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
               <polyline points="17 8 12 3 7 8"/>
               <line x1="12" y1="3" x2="12" y2="15"/>
@@ -202,11 +196,11 @@ export default function UploadZone({ onUploadSuccess, onError }) {
           )}
         </div>
 
-        <h3 style={{ fontSize: '19px', fontWeight: 800, color: '#0f172a', margin: '0 0 6px 0', letterSpacing: '-0.01em' }}>
+        <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', margin: '0 0 6px 0', letterSpacing: '-0.02em' }}>
           Drag your resume here
         </h3>
 
-        <p style={{ fontSize: '14px', color: '#64748b', margin: '0 0 22px 0' }}>
+        <p style={{ fontSize: '14px', color: '#64748b', margin: '0 0 20px 0' }}>
           or click anywhere to choose a file from your computer
         </p>
 
@@ -217,12 +211,12 @@ export default function UploadZone({ onUploadSuccess, onError }) {
             if (uploadState.status !== 'uploading') fileInputRef.current?.click();
           }}
           style={{
-            padding: '11px 26px',
+            padding: '10px 24px',
             borderRadius: '9999px',
             background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
             color: '#ffffff',
             fontWeight: 700,
-            fontSize: '14px',
+            fontSize: '13.5px',
             border: 'none',
             cursor: uploadState.status === 'uploading' ? 'wait' : 'pointer',
             boxShadow: '0 4px 14px rgba(37, 99, 235, 0.25)',
@@ -232,17 +226,17 @@ export default function UploadZone({ onUploadSuccess, onError }) {
           {uploadState.status === 'uploading' ? 'Uploading...' : 'Choose File'}
         </button>
 
-        <p style={{ fontSize: '12.5px', color: '#94a3b8', margin: '18px 0 0 0', fontWeight: 500 }}>
+        <p style={{ fontSize: '12px', color: '#94a3b8', margin: '16px 0 0 0', fontWeight: 500 }}>
           Supports PDF (.pdf) and Word (.docx) formats, up to 5MB
         </p>
 
         {uploadState.status === 'uploading' && (
-          <div style={{ marginTop: '22px', maxWidth: '400px', margin: '22px auto 0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', color: '#475569', marginBottom: '8px', fontWeight: 600 }}>
+          <div style={{ marginTop: '20px', maxWidth: '380px', margin: '20px auto 0 auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#475569', marginBottom: '6px', fontWeight: 600 }}>
               <span>{uploadState.step}</span>
               <span>{uploadState.progress}%</span>
             </div>
-            <div style={{ width: '100%', height: '7px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+            <div style={{ width: '100%', height: '6px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
               <div style={{
                 width: `${uploadState.progress}%`,
                 height: '100%',
@@ -259,17 +253,17 @@ export default function UploadZone({ onUploadSuccess, onError }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '36px',
-        marginTop: '32px',
+        gap: '24px',
+        marginTop: '24px',
         flexWrap: 'wrap'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13.5px', color: '#475569', fontWeight: 600 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#475569', fontWeight: 600 }}>
           <span style={{ color: '#16a34a', fontWeight: 800 }}>✓</span> Private & Secure Extraction
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13.5px', color: '#475569', fontWeight: 600 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#475569', fontWeight: 600 }}>
           <span style={{ color: '#16a34a', fontWeight: 800 }}>✓</span> Sub-second Resume Parsing
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13.5px', color: '#475569', fontWeight: 600 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#475569', fontWeight: 600 }}>
           <span style={{ color: '#16a34a', fontWeight: 800 }}>✓</span> Instant Data Erasure Control
         </div>
       </div>

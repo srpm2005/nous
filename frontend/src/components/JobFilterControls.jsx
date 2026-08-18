@@ -1,38 +1,8 @@
 import React from 'react';
 
 const DEFAULT_COMPANIES = [
-  // Core Baseline & Big Tech
-  'Microsoft', 'Amazon', 'Google', 'Meta', 'Apple', 'Netflix', 'Adobe', 'Stripe', 'Figma', 'TCS', 'Infosys', 'Accenture',
-  'NVIDIA', 'Intel', 'AMD', 'Qualcomm', 'Broadcom', 'Cisco', 'IBM', 'Oracle', 'Salesforce', 'ServiceNow', 'Workday',
-  'Palo Alto Networks', 'CrowdStrike', 'Datadog', 'Snowflake', 'Databricks', 'Atlassian', 'MongoDB', 'Twilio', 'Cloudflare',
-  'Zoom', 'Slack', 'Asana', 'Notion', 'Canva', 'Box', 'Dropbox', 'HubSpot', 'Zendesk', 'Okta', 'Splunk', 'Synopsys',
-  'Cadence Design Systems', 'VMware', 'Red Hat', 'Docker', 'HashiCorp', 'Elastic', 'Confluent', 'GitLab', 'GitHub',
-  'Postman', 'Freshworks', 'Hasura',
-  // FinTech & High Growth
-  'Uber', 'Airbnb', 'Lyft', 'DoorDash', 'Instacart', 'Pinterest', 'Snap Inc', 'Reddit', 'Spotify', 'eBay', 'Etsy',
-  'Robinhood', 'Coinbase', 'Plaid', 'Affirm', 'Klarna', 'Brex', 'Ramp', 'Toast', 'Square (Block)', 'PayPal', 'Intuit',
-  'Zomato', 'Swiggy', 'Paytm', 'PhonePe', 'CRED', 'Razorpay', 'Meesho', 'Groww', 'Zerodha', 'InMobi', 'Flipkart',
-  'Ola Cabs', 'MakeMyTrip', 'Nykaa', 'BrowserStack', 'Druva', 'Chargebee',
-  // IT Services & Consulting
-  'Wipro', 'HCLTech', 'Cognizant', 'LTIMindtree', 'Tech Mahindra', 'Genpact', 'Capgemini', 'Deloitte', 'PwC', 'EY',
-  'KPMG', 'McKinsey & Company', 'Boston Consulting Group (BCG)', 'Bain & Company', 'Booz Allen Hamilton', 'Gartner',
-  // Investment Banking & Finance
-  'JPMorgan Chase', 'Goldman Sachs', 'Morgan Stanley', 'Citi', 'Bank of America', 'Wells Fargo', 'Capital One',
-  'Visa', 'Mastercard', 'American Express', 'Fidelity Investments', 'BlackRock', 'Vanguard', 'Bloomberg',
-  'Thomson Reuters', 'S&P Global', "Moody's",
-  // E-Commerce & Retail
-  'Walmart', 'Target', 'Costco', 'Best Buy', 'The Home Depot', "Lowe's", 'Nike', 'Adidas', 'Lululemon', 'Starbucks', "McDonald's",
-  // Automotive & Aerospace
-  'Tesla', 'Rivian', 'Lucid Motors', 'General Motors', 'Ford Motor Company', 'BMW Group', 'Mercedes-Benz', 'Volkswagen Group',
-  'Boeing', 'Airbus', 'Lockheed Martin', 'Northrop Grumman',
-  // Hardware & Semiconductors
-  'ASML', 'Applied Materials', 'Lam Research', 'TSMC', 'Micron Technology', 'SK Hynix', 'Marvell', 'MediaTek',
-  'NXP Semiconductors', 'Texas Instruments', 'Sony Group', 'Samsung Electronics', 'Dell Technologies', 'HP Inc',
-  'Lenovo', 'Siemens', 'Honeywell', 'General Electric', '3M', 'Caterpillar',
-  // Healthcare & BioTech
-  'Johnson & Johnson', 'Pfizer', 'Roche', 'Novartis', 'Merck & Co', 'AbbVie', 'AstraZeneca', 'Sanofi', 'GSK',
-  'Eli Lilly', 'Amgen', 'Gilead Sciences', 'Moderna', 'Regeneron', 'Illumina', 'Thermo Fisher Scientific', 'Danaher',
-  'Medtronic', 'Abbott Laboratories', 'UnitedHealth Group', 'CVS Health'
+  'Stripe', 'Datadog', 'MongoDB', 'Cloudflare', 'Okta', 'Brex', 'Elastic', 'Affirm', 'GitLab',
+  'Coinbase', 'Lyft', 'Twilio', 'Reddit', 'Asana', 'Robinhood', 'Instacart', 'Postman', 'Dropbox', 'Amazon'
 ];
 
 /**

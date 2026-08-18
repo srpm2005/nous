@@ -22,6 +22,7 @@ import java.util.List;
 public class Top500JobClient implements JobSearchClient {
 
     private final JobPostingRepository jobPostingRepository;
+    private final PayEstimationService payEstimationService = new PayEstimationService();
 
     @Override
     public String getProviderName() {
@@ -44,27 +45,44 @@ public class Top500JobClient implements JobSearchClient {
         List<JobListingDto> results = matches.stream()
                 .filter(jp -> matchesRoleKeyword(jp.getTitle(), roleTitle))
                 .sorted(java.util.Comparator.comparingInt((JobPosting jp) -> scoreSkillOverlap(jp, roleTitle)).reversed())
-                .map(jp -> JobListingDto.builder()
-                        .title(jp.getTitle())
-                        .company(jp.getCompany() != null ? jp.getCompany().getName() : "Enterprise Partner")
-                        .location(jp.getLocation() != null ? jp.getLocation() : "Remote")
-                        .salaryRange(jp.getSalaryRange() != null ? jp.getSalaryRange() : "Competitive Salary")
-                        .applyUrl(jp.getApplyUrl())
-                        .sourceApi("Top 500 Enterprise")
-                        .build())
+                .map(jp -> {
+                    String comp = jp.getCompany() != null ? jp.getCompany().getName() : "Enterprise Partner";
+                    String loc = jp.getLocation() != null ? jp.getLocation() : "Remote";
+                    String sal = jp.getSalaryRange();
+                    if (sal == null || sal.isBlank() || "Competitive Salary".equalsIgnoreCase(sal)) {
+                        sal = payEstimationService.estimateSalaryRange(jp.getTitle(), loc, comp);
+                    }
+                    return JobListingDto.builder()
+                            .title(jp.getTitle())
+                            .company(comp)
+                            .location(loc)
+                            .salaryRange(sal)
+                            .applyUrl(jp.getApplyUrl())
+                            .sourceApi("Top 500 Enterprise")
+                            .build();
+                })
                 .limit(50)
                 .toList();
 
         if (results.isEmpty() && !matches.isEmpty()) {
             return matches.stream()
-                    .map(jp -> JobListingDto.builder()
-                            .title((jp.getCompany() != null ? jp.getCompany().getName() : "Enterprise") + " - " + (roleTitle != null ? roleTitle : "Software Engineer"))
-                            .company(jp.getCompany() != null ? jp.getCompany().getName() : "Enterprise Partner")
-                            .location(jp.getLocation() != null ? jp.getLocation() : "Remote")
-                            .salaryRange(jp.getSalaryRange() != null ? jp.getSalaryRange() : "Competitive Salary")
-                            .applyUrl(jp.getApplyUrl())
-                            .sourceApi("Top 500 Enterprise")
-                            .build())
+                    .map(jp -> {
+                        String comp = jp.getCompany() != null ? jp.getCompany().getName() : "Enterprise Partner";
+                        String loc = jp.getLocation() != null ? jp.getLocation() : "Remote";
+                        String title = comp + " - " + (roleTitle != null ? roleTitle : "Software Engineer");
+                        String sal = jp.getSalaryRange();
+                        if (sal == null || sal.isBlank() || "Competitive Salary".equalsIgnoreCase(sal)) {
+                            sal = payEstimationService.estimateSalaryRange(title, loc, comp);
+                        }
+                        return JobListingDto.builder()
+                                .title(title)
+                                .company(comp)
+                                .location(loc)
+                                .salaryRange(sal)
+                                .applyUrl(jp.getApplyUrl())
+                                .sourceApi("Top 500 Enterprise")
+                                .build();
+                    })
                     .limit(50)
                     .toList();
         }

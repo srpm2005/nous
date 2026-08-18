@@ -14,4 +14,9 @@ public interface CompanyRepository extends JpaRepository<Company, UUID> {
     List<Company> findByIsActiveTrue();
     Optional<Company> findByDomain(String domain);
     Optional<Company> findByNameIgnoreCase(String name);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.transaction.annotation.Transactional
+    @org.springframework.data.jpa.repository.Query("DELETE FROM Company c WHERE LOWER(c.name) NOT IN :verifiedNames")
+    void deleteUnverifiedCompanies(@org.springframework.data.repository.query.Param("verifiedNames") java.util.Collection<String> verifiedNames);
 }

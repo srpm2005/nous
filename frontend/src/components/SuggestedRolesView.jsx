@@ -79,34 +79,26 @@ export function SuggestedRolesView({ scanId, resumeId, scanStatus }) {
         overflow: 'hidden'
       }}
     >
-      <div style={{ marginBottom: '24px' }}>
-        {/* Top Main Results Heading */}
-        <div style={{ marginBottom: '24px' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#0f172a', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>
-            Here’s what we found
-          </h2>
-          <p style={{ fontSize: '14px', color: '#64748b', margin: 0 }}>
-            Based on your uploaded resume · finished a moment ago
+      <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+        <div>
+          <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', margin: '0 0 2px 0', letterSpacing: '-0.02em' }}>
+            🎯 Target Job Roles You’re a Strong Fit For
+          </h3>
+          <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>
+            Ranked by AI match confidence based on your verified skills and experience
           </p>
         </div>
 
-        {/* Roles Section Header */}
-        <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-            Roles you’re a strong fit for
-          </h3>
-
-          {scanStatus === 'PARTIAL' && (
-            <span style={{ fontSize: '12px', background: 'var(--status-amber-bg)', border: '1px solid var(--status-amber-border)', color: 'var(--status-amber-text)', padding: '4px 10px', borderRadius: '12px', fontWeight: 600 }}>
-              ⚠️ Partial Scan Coverage
-            </span>
-          )}
-          {scanStatus === 'FAILED' && (
-            <span style={{ fontSize: '12px', background: 'var(--status-rose-bg)', border: '1px solid var(--status-rose-border)', color: 'var(--status-rose-text)', padding: '4px 10px', borderRadius: '12px', fontWeight: 600 }}>
-              ❌ Scan Execution Error
-            </span>
-          )}
-        </div>
+        {scanStatus === 'PARTIAL' && (
+          <span style={{ fontSize: '12px', background: 'var(--status-amber-bg)', border: '1px solid var(--status-amber-border)', color: 'var(--status-amber-text)', padding: '4px 10px', borderRadius: '12px', fontWeight: 600 }}>
+            ⚠️ Partial Scan Coverage
+          </span>
+        )}
+        {scanStatus === 'FAILED' && (
+          <span style={{ fontSize: '12px', background: 'var(--status-rose-bg)', border: '1px solid var(--status-rose-border)', color: 'var(--status-rose-text)', padding: '4px 10px', borderRadius: '12px', fontWeight: 600 }}>
+            ❌ Scan Execution Error
+          </span>
+        )}
       </div>
 
       {/* Loading state */}
@@ -164,8 +156,9 @@ export function SuggestedRolesView({ scanId, resumeId, scanStatus }) {
               {/* Roles grid */}
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
-                gap: '16px'
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '20px',
+                alignItems: 'stretch'
               }}>
                 {filteredRoles.map((role, idx) => (
                   <RoleCard key={idx} role={role} />

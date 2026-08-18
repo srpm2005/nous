@@ -34,16 +34,16 @@ public class JobListing {
     @Column(name = "role_id", nullable = false)
     private UUID roleId;
 
-    @Column(name = "title", nullable = false, length = 255)
+    @Column(name = "title", nullable = false, length = 500)
     private String title;
 
     @Column(name = "company", nullable = false, length = 255)
     private String company;
 
-    @Column(name = "location", length = 255)
+    @Column(name = "location", columnDefinition = "TEXT")
     private String location;
 
-    @Column(name = "salary_range", length = 100)
+    @Column(name = "salary_range", length = 250)
     private String salaryRange;
 
     @Column(name = "apply_url", nullable = false, columnDefinition = "TEXT")
