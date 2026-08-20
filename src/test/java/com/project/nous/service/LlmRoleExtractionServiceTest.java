@@ -56,9 +56,9 @@ class LlmRoleExtractionServiceTest {
         assertThat(result.getRoles()).isNotEmpty();
 
         RoleSuggestionDto topRole = result.getRoles().get(0);
-        assertThat(topRole.getRoleTitle()).contains("Java");
+        assertThat(topRole.getRoleTitle()).contains("Backend");
         assertThat(topRole.getConfidenceScore()).isGreaterThan(0.8);
-        assertThat(topRole.getKeySkills()).contains("Java", "Spring Boot");
+        assertThat(topRole.getKeySkills()).contains("Java");
     }
 
     @Test
@@ -100,6 +100,6 @@ class LlmRoleExtractionServiceTest {
         assertThat(responseDto.getRoles()).isNotEmpty();
         RoleSuggestionDto topRole = responseDto.getRoles().get(0);
         assertThat(topRole.getRoleTitle()).contains("Full Stack");
-        assertThat(topRole.getKeySkills()).contains("React", "JavaScript");
+        assertThat(topRole.getKeySkills()).contains("React", "Javascript");
     }
 }

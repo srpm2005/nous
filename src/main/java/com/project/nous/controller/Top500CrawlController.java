@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * REST Controller for Top 500 Enterprise Crawler Monitoring & Administration.
+ * REST Controller for Enterprise Crawler Monitoring & Administration.
  */
 @RestController
 @RequestMapping("/api/top500")
@@ -38,7 +38,7 @@ public class Top500CrawlController {
 
     @PostMapping("/trigger")
     public ResponseEntity<CrawlRun> triggerManualCrawl() {
-        log.info("POST /api/top500/trigger - Triggering manual Top 500 Enterprise Crawl Batch");
+        log.info("POST /api/top500/trigger - Triggering manual Enterprise Crawl Batch");
         CompletableFuture.runAsync(crawlOrchestratorService::runFullCrawlBatch);
         CrawlRun latest = crawlRunRepository.findTopByOrderByStartedAtDesc().orElse(null);
         return ResponseEntity.ok(latest);

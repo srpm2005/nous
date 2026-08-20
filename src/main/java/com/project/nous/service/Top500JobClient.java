@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Top 500 Enterprise Direct Scraped Job Search Client Strategy.
+ * Enterprise Direct Scraped Job Search Client Strategy.
  * Implements JobSearchClient to supply verified direct company portal openings
  * during candidate resume scan processing.
  */
@@ -26,12 +26,12 @@ public class Top500JobClient implements JobSearchClient {
 
     @Override
     public String getProviderName() {
-        return "Top 500 Enterprise (Direct Crawl)";
+        return "Enterprise (Direct Crawl)";
     }
 
     @Override
     public List<JobListingDto> searchJobs(String roleTitle, String location) {
-        log.info("Querying Top-500 Enterprise direct scraped database for candidate recommended role: '{}', location: '{}'", roleTitle, location);
+        log.info("Querying Enterprise direct scraped database for candidate recommended role: '{}', location: '{}'", roleTitle, location);
 
         String searchKeyword = extractPrimaryKeyword(roleTitle);
         List<JobPosting> matches = jobPostingRepository.searchOpeningsByRole(searchKeyword);
@@ -58,7 +58,7 @@ public class Top500JobClient implements JobSearchClient {
                             .location(loc)
                             .salaryRange(sal)
                             .applyUrl(jp.getApplyUrl())
-                            .sourceApi("Top 500 Enterprise")
+                            .sourceApi("Enterprise Direct")
                             .build();
                 })
                 .limit(50)
@@ -80,7 +80,7 @@ public class Top500JobClient implements JobSearchClient {
                                 .location(loc)
                                 .salaryRange(sal)
                                 .applyUrl(jp.getApplyUrl())
-                                .sourceApi("Top 500 Enterprise")
+                                .sourceApi("Enterprise Direct")
                                 .build();
                     })
                     .limit(50)

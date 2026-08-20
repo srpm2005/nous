@@ -12,7 +12,7 @@
 
 <p align="center">
   <strong>An enterprise-grade AI resume intelligence platform and automated direct job discovery engine.</strong><br>
-  Parses resumes, extracts practical project skills, infers target career roles, computes realistic compensation bands, and matches candidates against verified live job postings directly crawled from Top 500 Enterprise career portals.
+  Parses resumes, extracts practical project skills, infers target career roles, computes realistic compensation bands, and matches candidates against verified live job postings directly crawled from enterprise career portals.
 </p>
 
 </div>
@@ -68,7 +68,7 @@ Nous AI addresses these challenges through a unified, privacy-focused 4-stage pi
 ### 🎯 Core Use Cases & Target Audience
 - **Software Engineers & Job Seekers:** Upload a resume to instantly discover calibrated target job titles (e.g. *Backend Engineer*, *Full Stack Architect*, *Cloud/DevOps*), view match percentages, and deep-link directly into verified enterprise career portals with one click.
 - **Tech Recruiters & Talent Acquisition Teams:** Perform automated candidate resume screening, extract verified technical skill sets, and benchmark market compensation expectations.
-- **Career Centers & Engineering Bootcamps:** Evaluate student portfolios and resumes against real-time live market demands across Top 500 tech companies.
+- **Career Centers & Engineering Bootcamps:** Evaluate student portfolios and resumes against real-time live market demands across leading enterprise tech companies.
 
 ---
 
@@ -89,7 +89,7 @@ Nous AI addresses these challenges through a unified, privacy-focused 4-stage pi
 - **OpenAI / Groq / OpenRouter Fallback:** Integrated REST client with strict JSON schema response enforcement.
 - **Dynamic Semantic Resume Parser:** Zero-static fallback evaluating 6 domain clusters with **3x multiplier** for technologies verified in actual projects, generating calibrated confidence curves.
 
-### 🏢 3. Top 500 Enterprise Career Portal Crawler
+### 🏢 3. Enterprise Career Portal Crawler
 - **Direct ATS Integration:** Live API and CXS scrapers for:
   - **Greenhouse ATS:** Direct public board JSON feeds.
   - **Lever ATS:** Public postings JSON API.
@@ -275,7 +275,7 @@ nous/
 - `GET /api/scans/{scanId}/roles`: Fetch AI recommended target roles, match scores, and parsed skill sets.
 - `GET /api/scans/{scanId}/jobs`: Fetch matched live enterprise openings with deep apply links.
 
-### 3. Top 500 Enterprise Management (`/api/top500`)
+### 3. Enterprise Portal Crawler Management (`/api/top500`)
 - `GET /api/top500/companies`: List monitored enterprise companies and portal statuses.
 - `POST /api/top500/trigger`: Trigger manual asynchronous batch crawl across all connected portals.
 - `GET /api/top500/runs`: View recent batch crawl execution metrics and logs.

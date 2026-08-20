@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Entity representing a monitored Top 500 Enterprise company career portal.
+ * Entity representing a monitored Enterprise company career portal.
  */
 @Entity
 @Table(name = "companies")

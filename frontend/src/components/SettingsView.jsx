@@ -50,7 +50,7 @@ export default function SettingsView({ onShowToast }) {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
             {[
-              { id: 'top500', name: 'Top 500 Enterprise Portals', desc: 'Verified openings scraped directly from top enterprise hiring portals' }
+              { id: 'top500', name: 'Verified Enterprise Portals', desc: 'Verified openings scraped directly from enterprise hiring portals' }
             ].map((item) => (
               <label
                 key={item.id}
@@ -158,7 +158,7 @@ export default function SettingsView({ onShowToast }) {
         {/* 3. Automated Daily Crawl Schedule */}
         <div className="asana-card" style={{ padding: '24px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px' }}>
           <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#0f172a', margin: '0 0 4px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            ⏰ Top 500 Enterprise Cron Schedule
+            ⏰ Enterprise Daily Cron Schedule
           </h3>
           <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 18px 0' }}>
             Automated screening schedule for top enterprise hiring portals

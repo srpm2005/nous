@@ -7,7 +7,7 @@
 
 ## 1. System Overview & Core Purpose
 
-**Nous AI** is an enterprise-grade AI resume intelligence platform and automated job discovery engine. The system takes a candidate's unstructured resume document (PDF or DOCX), performs security validation and text extraction, executes multi-model LLM role classification (with dynamic semantic fallback), computes realistic market compensation bands, and matches the candidate against live job postings directly crawled from Top 500 Enterprise career portals (such as Microsoft, Amazon, Google, Meta, Stripe, Datadog, Uber, etc.).
+**Nous AI** is an enterprise-grade AI resume intelligence platform and automated job discovery engine. The system takes a candidate's unstructured resume document (PDF or DOCX), performs security validation and text extraction, executes multi-model LLM role classification (with dynamic semantic fallback), computes realistic market compensation bands, and matches the candidate against live job postings directly crawled from Enterprise career portals (such as Microsoft, Amazon, Google, Meta, Stripe, Datadog, Uber, etc.).
 
 ### Technology Stack Summary
 
@@ -205,7 +205,7 @@ flowchart TB
 - **`Top500JobClient.java`**:
   - Primary job provider strategy. Searches the direct crawled `job_postings` database for target roles, calculates skill keyword overlap scores, dynamically estimates pay bands, and returns top 50 ranked openings.
 - **`CrawlOrchestratorService.java`**:
-  - Manages the Top 500 company directory synchronization and parallel multi-threaded crawling using a 6-thread pool.
+  - Manages the enterprise company directory synchronization and parallel multi-threaded crawling using a 6-thread pool.
   - Deduplicates jobs using SHA-256 hashes (`company_id:title:apply_url`), updates `last_seen_at`, and soft-expires postings not seen in the latest run (`is_currentlyOpen = false`).
 - **`DailyEnterpriseScreeningService.java`**:
   - Automated `@Scheduled(cron = "0 0 12 * * *")` service running daily at 12:00 PM (Noon) to trigger batch screening across enterprise hiring portals.
@@ -502,7 +502,7 @@ data: {"scanId":"3b12a819-21b9-4a41-b0e2-892bc931f822","resumeId":"7c9e6679-7425
     "location": "Bangalore, Karnataka, India",
     "salaryRange": "₹38L - ₹65L / yr",
     "applyUrl": "https://jobs.careers.microsoft.com/global/en/job/1784920/Principal-Software-Engineer",
-    "sourceApi": "Top 500 Enterprise"
+    "sourceApi": "Enterprise Direct"
   },
   {
     "id": "d2e3f4a5-6789-01bc-def1-234567890abc",
@@ -513,14 +513,14 @@ data: {"scanId":"3b12a819-21b9-4a41-b0e2-892bc931f822","resumeId":"7c9e6679-7425
     "location": "Bangalore, Karnataka, India",
     "salaryRange": "₹36L - ₹62L / yr",
     "applyUrl": "https://www.amazon.jobs/en/jobs/2849102/",
-    "sourceApi": "Top 500 Enterprise"
+    "sourceApi": "Enterprise Direct"
   }
 ]
 ```
 
 ---
 
-### 3. Top 500 Crawler & Administration
+### 3. Enterprise Crawler & Administration
 
 #### `GET /api/top500/companies`
 - **Response (200 OK):** Returns array of monitored company entities (`Stripe`, `Datadog`, `MongoDB`, `Cloudflare`, `Okta`, `Amazon`, `Uber`, etc.).

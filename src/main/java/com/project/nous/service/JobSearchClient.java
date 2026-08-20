@@ -19,7 +19,7 @@ public interface JobSearchClient {
     List<JobListingDto> searchJobs(String roleTitle, String location);
 
     /**
-     * Returns the name of the underlying job provider strategy (e.g., "Top 500 Enterprise", "MockJobEngine").
+     * Returns the name of the underlying job provider strategy (e.g., "Enterprise", "MockJobEngine").
      */
     String getProviderName();
 }

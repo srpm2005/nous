@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Entity representing an individual job posting scraped from a Top 500 company portal.
+ * Entity representing an individual job posting scraped from an enterprise company portal.
  * Uses SHA-256 posting_hash for deduplication and soft expiration via isCurrentlyOpen.
  */
 @Entity

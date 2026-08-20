@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Entity tracking daily automated Top 500 batch crawl executions.
+ * Entity tracking daily automated enterprise batch crawl executions.
  */
 @Entity
 @Table(name = "crawl_runs")

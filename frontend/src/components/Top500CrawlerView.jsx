@@ -3,7 +3,7 @@ import { API_BASE } from '../services/api';
 
 /**
  * Top500CrawlerView Component - Interactive monitoring and manual execution dashboard
- * for the Top 500 Enterprise Daily Screening Engine.
+ * for the Enterprise Daily Screening Engine.
  */
 export default function Top500CrawlerView({ onShowToast }) {
   const [companies, setCompanies] = useState([]);
@@ -31,7 +31,7 @@ export default function Top500CrawlerView({ onShowToast }) {
       setRuns(runsRes || []);
       setPostings(postRes || []);
     } catch (err) {
-      console.error('Failed to fetch Top 500 crawler data:', err);
+      console.error('Failed to fetch enterprise crawler data:', err);
     } finally {
       setLoading(false);
     }
@@ -98,16 +98,13 @@ export default function Top500CrawlerView({ onShowToast }) {
     );
   });
 
-  const activePortalsCount = companies.length;
-  const totalOpeningsCount = postings.length;
-
   return (
     <div style={{ maxWidth: '980px', margin: '0 auto', paddingBottom: '32px' }}>
       {/* Header & 3-State Action Button */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <h2 style={{ fontSize: '26px', fontWeight: 800, color: '#0f172a', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>
-            Top 500 Enterprise Screening
+            Enterprise Hiring Portal Screening
           </h2>
           <p style={{ fontSize: '14px', color: '#64748b', margin: 0 }}>
             Daily automated 12:00 PM IST screening engine scanning top corporate career portals
@@ -162,7 +159,7 @@ export default function Top500CrawlerView({ onShowToast }) {
             System Coverage & Portal Status
           </div>
           <div style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.01em' }}>
-            Last run: <span style={{ color: '#38bdf8' }}>Today, 12:00 PM</span> · <strong style={{ color: '#facc15' }}>{activePortalsCount} of 500</strong> companies connected
+            Last run: <span style={{ color: '#38bdf8' }}>Today, 12:00 PM</span> · <strong style={{ color: '#facc15' }}>{activePortalsCount} verified portals</strong> connected
           </div>
           <div style={{ fontSize: '14px', color: '#cbd5e1', marginTop: '6px' }}>
             <strong style={{ color: '#ffffff' }}>{totalOpeningsCount}</strong> verified direct enterprise postings indexed across connected company portals

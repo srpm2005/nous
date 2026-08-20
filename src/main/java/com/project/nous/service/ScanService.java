@@ -262,7 +262,7 @@ public class ScanService {
                 }
             }
 
-            // Step 2: Top 500 Enterprise Job Search per target role (Parallelized for sub-second execution)
+            // Step 2: Enterprise Job Search per target role (Parallelized for sub-second execution)
             if (!savedRoles.isEmpty()) {
                 jobListingRepository.deleteByScanId(scanId);
 
