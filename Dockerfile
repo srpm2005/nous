@@ -26,4 +26,4 @@ ENV PORT=8080
 ENV UPLOAD_DIR=/app/uploads
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-Dserver.port=${PORT}", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT:-8080} -jar app.jar"]
