@@ -68,17 +68,20 @@ export default function Navbar({ activeTab = 'scanner', setActiveTab, onNewScan 
       {/* Right: Live AI Indicator & Action */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div
+          onClick={() => setActiveTab && setActiveTab(activeTab === 'crawls' ? 'scanner' : 'crawls')}
           style={{
             display: 'inline-flex',
             alignItems: 'center',
             gap: '6px',
             padding: '5px 12px',
             borderRadius: '9999px',
-            background: '#f0fdf4',
-            border: '1px solid #bbf7d0',
+            background: activeTab === 'crawls' ? '#dcfce7' : '#f0fdf4',
+            border: activeTab === 'crawls' ? '1px solid #86efac' : '1px solid #bbf7d0',
             color: '#15803d',
             fontSize: '12px',
-            fontWeight: 600
+            fontWeight: 600,
+            cursor: 'pointer',
+            transition: 'all 150ms ease-in-out'
           }}
         >
           <span style={{ fontSize: '9px', color: '#16a34a' }}>●</span>

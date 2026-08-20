@@ -20,7 +20,7 @@
 ---
 
 <div align="center">
-  <img src="./docs/images/nous_banner_preview.jpg" alt="Nous AI Dashboard Preview" width="100%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);" />
+  <img src="./docs/images/nous_dashboard_real.png" alt="Nous AI Real Dashboard Preview" width="100%" style="border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 8px 30px rgba(0,0,0,0.08);" />
 </div>
 
 ---
@@ -91,10 +91,19 @@ Simultaneously, the platform's **Automated Daily Enterprise Screening Engine** c
 
 ---
 
-## 🔄 Processing Pipeline
+## 📸 Real UI Showcase & Live Dashboard
 
 <div align="center">
-  <img src="./docs/images/nous_pipeline_workflow.jpg" alt="Nous AI Automated Pipeline Workflow" width="100%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);" />
+
+### 1. AI Target Role Extraction & Match Scores
+<img src="./docs/images/nous_dashboard_real.png" alt="Nous AI Target Roles & Match Confidence" width="100%" style="border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 20px;" />
+
+### 2. Verified Live Enterprise Openings & Pay Calibration
+<img src="./docs/images/nous_jobs_real.png" alt="Nous AI Live Enterprise Job Openings" width="100%" style="border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 20px;" />
+
+### 3. Clean Drag-and-Drop Ingestion Zone
+<img src="./docs/images/nous_home_screen.png" alt="Nous AI Ingestion Upload Zone" width="100%" style="border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0,0,0,0.06);" />
+
 </div>
 
 ---

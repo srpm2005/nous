@@ -94,10 +94,15 @@ export default function App() {
   return (
     <div className="app-container">
       {/* Top Navbar */}
-      <Navbar onNewScan={() => {
-        setActiveResume(null);
-        setActiveScanId(null);
-      }} />
+      <Navbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onNewScan={() => {
+          setActiveResume(null);
+          setActiveScanId(null);
+          setActiveTab('scanner');
+        }}
+      />
 
       {/* Hero Header Banner (Only shown on empty upload state) */}
       {!activeResume && activeTab === 'scanner' && <HeroSection />}
