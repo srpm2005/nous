@@ -91,11 +91,11 @@ class LlmRoleExtractionServiceTest {
     }
 
     @Test
-    @DisplayName("Heuristic engine categorizes React & JavaScript resume text as Full Stack / Frontend Role")
-    void generateHeuristicFallback_reactResume_returnsFullStackRole() {
+    @DisplayName("Dynamic semantic engine categorizes React & JavaScript resume text as Full Stack / Frontend Role")
+    void generateDynamicSemanticRoles_reactResume_returnsFullStackRole() {
         String reactResumeText = "Frontend engineer with React, JavaScript, Vite, HTML, CSS, and web development experience.";
 
-        LlmResponseDto responseDto = service.generateHeuristicFallback(reactResumeText);
+        LlmResponseDto responseDto = service.generateDynamicSemanticRoles(reactResumeText);
 
         assertThat(responseDto.getRoles()).isNotEmpty();
         RoleSuggestionDto topRole = responseDto.getRoles().get(0);

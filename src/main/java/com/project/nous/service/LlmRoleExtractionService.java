@@ -1,5 +1,6 @@
 package com.project.nous.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.nous.dto.LlmResponseDto;
