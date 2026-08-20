@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE } from '../services/api';
 
 /**
  * Top500CrawlerView Component - Interactive monitoring and manual execution dashboard
@@ -21,9 +22,9 @@ export default function Top500CrawlerView({ onShowToast }) {
     setLoading(true);
     try {
       const [compRes, runsRes, postRes] = await Promise.all([
-        fetch('http://localhost:8080/api/top500/companies').then((res) => res.json()).catch(() => []),
-        fetch('http://localhost:8080/api/top500/runs').then((res) => res.json()).catch(() => []),
-        fetch('http://localhost:8080/api/top500/postings').then((res) => res.json()).catch(() => [])
+        fetch(`${API_BASE}/api/top500/companies`).then((res) => res.json()).catch(() => []),
+        fetch(`${API_BASE}/api/top500/runs`).then((res) => res.json()).catch(() => []),
+        fetch(`${API_BASE}/api/top500/postings`).then((res) => res.json()).catch(() => [])
       ]);
 
       setCompanies(compRes || []);
@@ -39,7 +40,7 @@ export default function Top500CrawlerView({ onShowToast }) {
   const handleTriggerCrawl = async () => {
     setTriggerState('running');
     try {
-      const res = await fetch('http://localhost:8080/api/top500/trigger', {
+      const res = await fetch(`${API_BASE}/api/top500/trigger`, {
         method: 'POST'
       });
       const data = await res.json();

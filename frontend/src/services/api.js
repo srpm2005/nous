@@ -2,7 +2,8 @@
  * API service for communicating with the Spring Boot backend (/api/resumes).
  */
 
-const BASE_URL = '/api/resumes';
+export const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+const BASE_URL = `${API_BASE}/api/resumes`;
 
 /**
  * Helper to parse backend RFC 7807 ProblemDetail or error responses
@@ -87,7 +88,7 @@ export async function deleteResume(id) {
  * @returns {Promise<Object>} ScanResponseDto
  */
 export async function getScanStatus(scanId) {
-  const response = await fetch(`/api/scans/${scanId}`, {
+  const response = await fetch(`${API_BASE}/api/scans/${scanId}`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json'
@@ -103,7 +104,7 @@ export async function getScanStatus(scanId) {
  * @returns {Promise<Array>} List of RoleSuggestionDto
  */
 export async function getSuggestedRoles(scanId) {
-  const response = await fetch(`/api/scans/${scanId}/roles`, {
+  const response = await fetch(`${API_BASE}/api/scans/${scanId}/roles`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json'
@@ -119,7 +120,7 @@ export async function getSuggestedRoles(scanId) {
  * @returns {Promise<Array>} List of RoleSuggestionDto
  */
 export async function getSuggestedRolesByResumeId(resumeId) {
-  const response = await fetch(`/api/scans/resume/${resumeId}/roles`, {
+  const response = await fetch(`${API_BASE}/api/scans/resume/${resumeId}/roles`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json'
@@ -135,7 +136,7 @@ export async function getSuggestedRolesByResumeId(resumeId) {
  * @returns {Promise<Array>} List of JobListingDto
  */
 export async function getJobListings(scanId) {
-  const response = await fetch(`/api/scans/${scanId}/jobs`, {
+  const response = await fetch(`${API_BASE}/api/scans/${scanId}/jobs`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json'
@@ -151,7 +152,7 @@ export async function getJobListings(scanId) {
  * @returns {Promise<Array>} List of JobListingDto
  */
 export async function getJobListingsByResumeId(resumeId) {
-  const response = await fetch(`/api/scans/resume/${resumeId}/jobs`, {
+  const response = await fetch(`${API_BASE}/api/scans/resume/${resumeId}/jobs`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json'
@@ -167,7 +168,7 @@ export async function getJobListingsByResumeId(resumeId) {
  * @returns {Promise<Array>} List of ScanResponseDto
  */
 export async function getUserScans(userId = 'anonymous') {
-  const response = await fetch(`/api/users/${userId}/scans`, {
+  const response = await fetch(`${API_BASE}/api/users/${userId}/scans`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json'
@@ -182,7 +183,7 @@ export async function getUserScans(userId = 'anonymous') {
  * @returns {Promise<Array>} List of Company objects
  */
 export async function getTop500Companies() {
-  const response = await fetch('/api/top500/companies', {
+  const response = await fetch(`${API_BASE}/api/top500/companies`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json'
@@ -191,8 +192,3 @@ export async function getTop500Companies() {
 
   return handleResponse(response);
 }
-
-
-
-
-

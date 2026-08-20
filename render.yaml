@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: nous-backend
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    region: singapore
+    envVars:
+      - key: NEON_DB_URL
+        sync: false
+      - key: NEON_DB_USER
+        sync: false
+      - key: NEON_DB_PASSWORD
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: JOB_API_ENABLED
+        value: "true"
+      - key: JOB_API_PROVIDER
+        value: "top500"
+      - key: JOB_API_COUNTRY
+        value: "in"

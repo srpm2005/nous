@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { getScanStatus } from '../services/api';
+import { getScanStatus, API_BASE } from '../services/api';
 
 /**
  * Custom React Hook to poll scan status asynchronously until a terminal state is reached.
@@ -68,7 +68,7 @@ export function useScanStatus(scanId, intervalMs = 1500, onComplete = null) {
     // Try EventSource (SSE) first for instant streaming updates
     if (typeof window !== 'undefined' && 'EventSource' in window) {
       try {
-        const es = new EventSource(`/api/scans/${scanId}/events`);
+        const es = new EventSource(`${API_BASE}/api/scans/${scanId}/events`);
         eventSourceRef.current = es;
 
         es.addEventListener('status', (evt) => {
