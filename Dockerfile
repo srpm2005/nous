@@ -22,8 +22,7 @@ USER spring:spring
 
 COPY --from=build /app/target/*.jar app.jar
 
-ENV PORT=8080
 ENV UPLOAD_DIR=/app/uploads
-EXPOSE 8080
 
-ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT:-8080} -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT:-8080} -Dserver.address=0.0.0.0 -jar app.jar"]
+
