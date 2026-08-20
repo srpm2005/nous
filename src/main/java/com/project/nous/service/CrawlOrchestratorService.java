@@ -163,8 +163,8 @@ public class CrawlOrchestratorService {
 
         for (Future<CompanyCrawlTaskResult> future : futures) {
             try {
-                CompanyCrawlTaskResult res = future.get(5, TimeUnit.SECONDS);
-                if ("SUCCESS".equals(res.status)) {
+                CompanyCrawlTaskResult res = future.get(12, TimeUnit.SECONDS);
+                if (res != null && "SUCCESS".equals(res.status)) {
                     succeededCount++;
                     totalFound += res.postingsFound;
                 } else {
@@ -172,7 +172,7 @@ public class CrawlOrchestratorService {
                 }
             } catch (Exception e) {
                 failedCount++;
-                log.error("Company crawl task execution failed or timed out: {}", e.getMessage());
+                log.debug("Notice during parallel portal screening: {}", e.getClass().getSimpleName());
             }
         }
 
