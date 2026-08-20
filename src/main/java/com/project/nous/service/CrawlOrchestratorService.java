@@ -42,7 +42,7 @@ public class CrawlOrchestratorService {
     private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
     private final PayEstimationService payEstimationService = new PayEstimationService();
 
-    private final ExecutorService executor = Executors.newFixedThreadPool(50);
+    private final ExecutorService executor = Executors.newFixedThreadPool(6);
     private boolean isCrawlInProgress = false;
 
     @PostConstruct
