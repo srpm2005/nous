@@ -27,10 +27,13 @@
 
 ## 📌 Table of Contents
 
-- [Overview](#-overview)
+- [Project Description](#-project-description)
+  - [The Problem with Traditional Job Portals](#the-problem-with-traditional-job-portals)
+  - [The Nous AI Solution](#the-nous-ai-solution)
+  - [Core Use Cases & Target Audience](#core-use-cases--target-audience)
 - [Key Features](#-key-features)
+- [Real UI Showcase](#-real-ui-showcase--live-dashboard)
 - [System Architecture](#-system-architecture)
-- [Processing Pipeline](#-processing-pipeline)
 - [Technology Stack](#-technology-stack)
 - [Project Directory Structure](#-project-directory-structure)
 - [REST & Streaming API Reference](#-rest--streaming-api-reference)
@@ -44,11 +47,28 @@
 
 ---
 
-## 🌟 Overview
+## 🌟 Project Description
 
-**Nous AI** solves the mismatch between candidate qualifications and open tech positions. Rather than matching on raw keyword frequency, Nous AI evaluates **system architecture and practical implementations** from candidates' project and experience sections.
+**Nous AI** is an advanced, enterprise-grade AI resume intelligence platform and automated career matching engine designed to modernize how candidates discover career opportunities and how software engineers are evaluated.
 
-Simultaneously, the platform's **Automated Daily Enterprise Screening Engine** crawls direct career portals of top technology companies (such as Microsoft, Amazon, Google, Meta, Stripe, Datadog, Uber, etc.) at 12:00 PM daily, eliminating stale third-party aggregator listings and providing direct requisition deep links.
+### 🛑 The Problem with Traditional Job Portals
+1. **Keyword Stuffing over True Competence:** Conventional Applicant Tracking Systems (ATS) rely on simple keyword frequency matches, rewarding resumes packed with buzzwords rather than authentic engineering accomplishments.
+2. **Stale Aggregator Listings:** Most job boards display third-party listings that have already closed, were reposted by recruiting agencies, or lead to broken referral redirect chains.
+3. **Lack of Compensation Transparency:** Candidates rarely receive realistic compensation estimates calibrated to their actual seniority, domain expertise, and geographic market.
+4. **Slow, Opaque Feedback Loops:** Traditional job sites offer zero instant insights into which target roles best match a candidate's actual project experience.
+
+### 💡 The Nous AI Solution
+Nous AI addresses these challenges through a unified, privacy-focused 4-stage pipeline:
+- **Intelligent Contextual Ingestion:** Securely ingests PDF and DOCX files, verifies MIME authenticity using Apache Tika magic-byte inspection, extracts clean plaintext with Apache PDFBox and POI, and prevents duplicate processing with SHA-256 deduplication.
+- **Recruiter-Grade AI Role Intelligence:** Leverages Google Gemini Live API (with dynamic heuristic semantic parsing as fallback) applying a **45% weight to project implementations** and system architectures built, identifying true candidate proficiency beyond superficial skill lists.
+- **Direct Enterprise Career Portal Crawler:** Scrapes open requisitions directly from verified corporate career portals (including Microsoft, Amazon, Google, Meta, Stripe, Datadog, Uber, Okta, etc.) via dedicated ATS adapters (Greenhouse, Lever, Workday CXS, and Schema.org JSON-LD microdata) on an automated 12:00 PM daily schedule.
+- **Localized Compensation Calibration:** Accurately computes realistic salary bands across 7 global currency markets (e.g. `₹35L - ₹65L / yr` for India, `$160k - $240k` for US), 7 seniority tiers, and 8 domain multipliers.
+- **Reactive Real-Time Streaming:** Streams processing status updates directly to a responsive React 19 single-page dashboard via Server-Sent Events (`SseEmitter`), backed by automatic REST polling fallback.
+
+### 🎯 Core Use Cases & Target Audience
+- **Software Engineers & Job Seekers:** Upload a resume to instantly discover calibrated target job titles (e.g. *Backend Engineer*, *Full Stack Architect*, *Cloud/DevOps*), view match percentages, and deep-link directly into verified enterprise career portals with one click.
+- **Tech Recruiters & Talent Acquisition Teams:** Perform automated candidate resume screening, extract verified technical skill sets, and benchmark market compensation expectations.
+- **Career Centers & Engineering Bootcamps:** Evaluate student portfolios and resumes against real-time live market demands across Top 500 tech companies.
 
 ---
 
