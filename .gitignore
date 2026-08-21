@@ -45,5 +45,12 @@ frontend/dist/
 *.txt
 *.log
 
+### Interview & Study Material ###
+Nous_AI_Complete_Project_Documentation_and_Viva_Guide.pdf
+*.pdf
+PROJECT_ARCHITECTURE_AND_DATA_FLOW.md
+generate_project_pdf.py
+
+
 
 
