@@ -5,8 +5,9 @@ import UploadZone from './components/UploadZone';
 import PipelineProgressView from './components/PipelineProgressView';
 import ResumeDetailView from './components/ResumeDetailView';
 import UserHistoryView from './components/UserHistoryView';
-import Top500CrawlerView from './components/Top500CrawlerView';
+import EnterpriseCrawlerView from './components/EnterpriseCrawlerView';
 import SettingsView from './components/SettingsView';
+import { getEnterpriseCompanies } from './services/api';
 
 
 export default function App() {
@@ -16,6 +17,11 @@ export default function App() {
   const [activeScanId, setActiveScanId] = useState(null);
   const [refreshHistorySignal, setRefreshHistorySignal] = useState(0);
   const [toastMessage, setToastMessage] = useState(null);
+
+  // Pre-warm backend container on page load to eliminate Render free-tier cold start latency
+  React.useEffect(() => {
+    getEnterpriseCompanies().catch(() => {});
+  }, []);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -146,7 +152,7 @@ export default function App() {
           )}
         </div>
       ) : activeTab === 'crawls' ? (
-        <Top500CrawlerView onShowToast={showToast} />
+        <EnterpriseCrawlerView onShowToast={showToast} />
       ) : activeTab === 'settings' ? (
         <SettingsView onShowToast={showToast} />
       ) : (

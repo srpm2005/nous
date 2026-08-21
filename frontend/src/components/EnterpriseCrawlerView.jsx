@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { API_BASE } from '../services/api';
 
 /**
- * Top500CrawlerView Component - Interactive monitoring and manual execution dashboard
+ * EnterpriseCrawlerView Component - Interactive monitoring and manual execution dashboard
  * for the Enterprise Daily Screening Engine.
  */
-export default function Top500CrawlerView({ onShowToast }) {
+export default function EnterpriseCrawlerView({ onShowToast }) {
   const [companies, setCompanies] = useState([]);
   const [runs, setRuns] = useState([]);
   const [postings, setPostings] = useState([]);
@@ -22,9 +22,9 @@ export default function Top500CrawlerView({ onShowToast }) {
     setLoading(true);
     try {
       const [compRes, runsRes, postRes] = await Promise.all([
-        fetch(`${API_BASE}/api/top500/companies`).then((res) => res.json()).catch(() => []),
-        fetch(`${API_BASE}/api/top500/runs`).then((res) => res.json()).catch(() => []),
-        fetch(`${API_BASE}/api/top500/postings`).then((res) => res.json()).catch(() => [])
+        fetch(`${API_BASE}/api/crawler/companies`).then((res) => res.json()).catch(() => []),
+        fetch(`${API_BASE}/api/crawler/runs`).then((res) => res.json()).catch(() => []),
+        fetch(`${API_BASE}/api/crawler/postings`).then((res) => res.json()).catch(() => [])
       ]);
 
       setCompanies(compRes || []);
@@ -40,7 +40,7 @@ export default function Top500CrawlerView({ onShowToast }) {
   const handleTriggerCrawl = async () => {
     setTriggerState('running');
     try {
-      const res = await fetch(`${API_BASE}/api/top500/trigger`, {
+      const res = await fetch(`${API_BASE}/api/crawler/trigger`, {
         method: 'POST'
       });
       const data = await res.json();
@@ -97,6 +97,9 @@ export default function Top500CrawlerView({ onShowToast }) {
       skillsStr.includes(q)
     );
   });
+
+  const activePortalsCount = companies.filter(c => c.isActive).length;
+  const totalOpeningsCount = postings.length;
 
   return (
     <div style={{ maxWidth: '980px', margin: '0 auto', paddingBottom: '32px' }}>
@@ -250,9 +253,9 @@ export default function Top500CrawlerView({ onShowToast }) {
                       href={c.careerPageUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '3px' }}
+                      style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 600 }}
                     >
-                      Portal ↗
+                      Career Page ↗
                     </a>
                   </div>
                 </div>
@@ -262,162 +265,107 @@ export default function Top500CrawlerView({ onShowToast }) {
         )}
       </div>
 
-      {/* All Enterprise Openings Section */}
-      <div>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '20px',
-          flexWrap: 'wrap',
-          gap: '16px',
-          paddingBottom: '16px',
-          borderBottom: '1px solid #e2e8f0'
-        }}>
-          <div>
-            <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', margin: '0 0 4px 0', letterSpacing: '-0.01em' }}>
-              Live Direct Enterprise Openings ({baseFilteredPostings.length})
-            </h3>
-            <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>
-              Scraped directly from corporate portals (Microsoft, Amazon, Google, Meta, Apple, Netflix, Adobe, Stripe, Figma, TCS, Infosys, Accenture)
-            </p>
-          </div>
-
-          <input
-            type="text"
-            placeholder="Search enterprise openings..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              padding: '9px 18px',
-              borderRadius: '9999px',
-              border: '1px solid #cbd5e1',
-              fontSize: '13px',
-              outline: 'none',
-              width: '270px',
-              background: '#ffffff',
-              boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.02)'
-            }}
-          />
-        </div>
-
-        {/* Empty State */}
-        {baseFilteredPostings.length === 0 ? (
-          <div
-            style={{
-              padding: '56px 28px',
-              textAlign: 'center',
-              background: '#ffffff',
-              borderRadius: '18px',
-              border: '1px dashed #cbd5e1',
-              color: '#475569'
-            }}
-          >
-            <div style={{ fontSize: '36px', marginBottom: '12px' }}>🕐</div>
-            <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', margin: '0 0 8px 0' }}>
-              No enterprise openings indexed yet
-            </h4>
-            <p style={{ fontSize: '14px', color: '#64748b', maxWidth: '480px', margin: '0 auto 24px auto', lineHeight: 1.6 }}>
-              The daily screening crawl runs automatically today at 12:00 PM IST. You can also trigger an instant manual screening run right now.
-            </p>
-            <button
-              onClick={handleTriggerCrawl}
-              disabled={triggerState === 'running'}
-              style={{
-                padding: '10px 26px',
-                borderRadius: '9999px',
-                background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                color: '#ffffff',
-                fontWeight: 700,
-                fontSize: '14px',
-                border: 'none',
-                cursor: 'pointer',
-                boxShadow: '0 4px 14px rgba(37,99,235,0.25)'
-              }}
-            >
-              ▶ Run screening crawl now
-            </button>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            {baseFilteredPostings.map((p) => (
+      {/* Crawl Run History Section */}
+      {runs.length > 0 && (
+        <div style={{ marginBottom: '36px' }}>
+          <h3 style={{ fontSize: '19px', fontWeight: 800, color: '#0f172a', marginBottom: '16px' }}>
+            Recent Screening Batch Runs
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {runs.map((r) => (
               <div
-                key={p.id}
+                key={r.id}
                 style={{
-                  padding: '20px 24px',
+                  padding: '16px 20px',
                   background: '#ffffff',
                   border: '1px solid #e2e8f0',
-                  borderRadius: '16px',
+                  borderRadius: '12px',
                   display: 'flex',
-                  alignItems: 'center',
                   justifyContent: 'space-between',
-                  gap: '18px',
+                  alignItems: 'center',
                   flexWrap: 'wrap',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
-                  transition: 'all 180ms ease-in-out'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = '#cbd5e1';
-                  e.currentTarget.style.boxShadow = '0 6px 16px -2px rgba(0,0,0,0.06)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = '#e2e8f0';
-                  e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.02)';
+                  gap: '12px'
                 }}
               >
-                <div style={{ minWidth: 0, flex: 1 }}>
-                  <h4 style={{ fontSize: '16.5px', fontWeight: 800, color: '#0f172a', margin: '0 0 5px 0' }}>{p.title}</h4>
-                  <div style={{ fontSize: '13px', color: '#64748b', display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-                    <span style={{ fontWeight: 700, color: '#1e293b' }}>{p.company?.name || 'Enterprise'}</span>
-                    <span>·</span>
-                    <span>{p.location || 'Remote'}</span>
-                    {p.department && (
-                      <>
-                        <span>·</span>
-                        <span style={{ color: '#2563eb', fontWeight: 600 }}>{p.department}</span>
-                      </>
-                    )}
+                <div>
+                  <span style={{ fontWeight: 700, color: '#0f172a' }}>
+                    Batch Run ({new Date(r.startedAt).toLocaleString()})
+                  </span>
+                  <div style={{ fontSize: '12.5px', color: '#64748b', marginTop: '2px' }}>
+                    Attempted: {r.companiesAttempted} portals · Succeeded: {r.companiesSucceeded} · Openings Found: {r.totalPostingsFound}
                   </div>
                 </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
-                  <span style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', background: '#f8fafc', padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                    {p.salaryRange || 'Competitive'}
-                  </span>
-                  <a
-                    href={(() => {
-                      const compName = (p.company?.name || p.company || '').toLowerCase();
-                      const raw = (p.applyUrl || '').trim();
-                      const isGeneric = !raw || raw === '#' || /^https?:\/\/[^\/]+\/?(careers|jobs|careers\/|jobs\/)?$/i.test(raw)
-                        || raw === 'https://www.uber.com/careers' || raw === 'https://careers.microsoft.com' || raw === 'https://careers.google.com' || raw === 'https://www.amazon.jobs';
-                      if (!isGeneric) return raw;
-                      if (compName.includes('uber')) return `https://www.google.com/search?q=${encodeURIComponent('site:jobs.uber.com ' + p.title + ' apply')}`;
-                      if (compName.includes('amazon')) return `https://www.amazon.jobs/en/search?base_query=${encodeURIComponent(p.title)}`;
-                      if (compName.includes('microsoft')) return `https://jobs.careers.microsoft.com/global/en/search?q=${encodeURIComponent(p.title)}`;
-                      if (compName.includes('google')) return `https://www.google.com/about/careers/applications/jobs/results/?q=${encodeURIComponent(p.title)}`;
-                      return `https://www.google.com/search?q=${encodeURIComponent((p.company?.name || p.company || 'Enterprise') + ' ' + p.title + ' official apply')}`;
-                    })()}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      padding: '9px 24px',
-                      borderRadius: '9999px',
-                      background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                      color: '#ffffff',
-                      fontWeight: 700,
-                      fontSize: '13.5px',
-                      textDecoration: 'none',
-                      boxShadow: '0 4px 12px rgba(37,99,235,0.25)',
-                      transition: 'all 180ms ease'
-                    }}
-                  >
-                    Apply Now
-                  </a>
-                </div>
+                <span style={{ fontSize: '12px', fontWeight: 700, padding: '4px 10px', borderRadius: '9999px', background: '#ecfdf5', color: '#059669' }}>
+                  ✓ Completed
+                </span>
               </div>
             ))}
           </div>
-        )}
+        </div>
+      )}
+
+      {/* Live Search & Filter Bar */}
+      <div style={{ marginTop: '24px' }}>
+        <h3 style={{ fontSize: '19px', fontWeight: 800, color: '#0f172a', marginBottom: '14px' }}>
+          Search Live Indexed Postings ({baseFilteredPostings.length})
+        </h3>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Filter by role title, skill (e.g. Java, Python), company, or location..."
+          style={{
+            width: '100%',
+            padding: '12px 18px',
+            borderRadius: '12px',
+            border: '1.5px solid #cbd5e1',
+            fontSize: '14px',
+            outline: 'none',
+            marginBottom: '20px'
+          }}
+        />
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {baseFilteredPostings.slice(0, 30).map((p) => (
+            <div
+              key={p.id}
+              style={{
+                padding: '18px 22px',
+                background: '#ffffff',
+                border: '1px solid #e2e8f0',
+                borderRadius: '14px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '12px'
+              }}
+            >
+              <div>
+                <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', margin: '0 0 4px 0' }}>{p.title}</h4>
+                <div style={{ fontSize: '13px', color: '#64748b' }}>
+                  <strong style={{ color: '#1e293b' }}>{p.company?.name || 'Enterprise'}</strong> · {p.location || 'Remote'} · <span style={{ color: '#059669', fontWeight: 600 }}>{p.salaryRange || 'Competitive'}</span>
+                </div>
+              </div>
+              <a
+                href={p.applyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  padding: '8px 18px',
+                  borderRadius: '9999px',
+                  background: '#2563eb',
+                  color: '#ffffff',
+                  textDecoration: 'none',
+                  fontSize: '13px',
+                  fontWeight: 600
+                }}
+              >
+                Apply Direct ↗
+              </a>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

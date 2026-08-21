@@ -18,8 +18,8 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "app.jobapi.provider", havingValue = "top500", matchIfMissing = true)
-public class Top500JobClient implements JobSearchClient {
+@ConditionalOnProperty(name = "app.jobapi.provider", havingValue = "enterprise", matchIfMissing = true)
+public class EnterpriseJobClient implements JobSearchClient {
 
     private final JobPostingRepository jobPostingRepository;
     private final PayEstimationService payEstimationService = new PayEstimationService();

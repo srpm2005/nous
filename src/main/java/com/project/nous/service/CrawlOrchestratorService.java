@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import java.util.concurrent.*;
 
 /**
- * Core Orchestrator Service for Top-500 Enterprise Daily Screening.
+ * Core Orchestrator Service for Enterprise Daily Screening.
  * Handles seeding, multi-threaded parallel crawling, SHA-256 deduplication,
  * soft expiration of closed postings, and scheduled execution at 12:00 PM daily.
  */
@@ -46,7 +46,7 @@ public class CrawlOrchestratorService {
     private boolean isCrawlInProgress = false;
 
     @PostConstruct
-    public void seedInitialTop500Companies() {
+    public void seedInitialEnterpriseCompanies() {
         CompletableFuture.runAsync(() -> {
             try {
                 syncVerifiedCompanies();
@@ -62,7 +62,7 @@ public class CrawlOrchestratorService {
     public void syncVerifiedCompanies() {
         log.info("🌱 Synchronizing verified live enterprise companies directory...");
 
-        List<Company> verifiedCompanies = Top500CompanyDirectorySeed.getTop500Companies();
+        List<Company> verifiedCompanies = EnterpriseCompanyDirectorySeed.getEnterpriseCompanies();
         Set<String> verifiedNames = verifiedCompanies.stream()
                 .map(c -> c.getName().toLowerCase())
                 .collect(Collectors.toSet());
@@ -121,7 +121,7 @@ public class CrawlOrchestratorService {
      */
     @Scheduled(cron = "0 0 12 * * *")
     public void runDailyScheduledCrawl() {
-        log.info("⏰ [12:00 PM DAILY TRIGGER] Starting automated Top-500 Company Screening...");
+        log.info("⏰ [12:00 PM DAILY TRIGGER] Starting automated Enterprise Company Screening...");
         runFullCrawlBatch();
     }
 

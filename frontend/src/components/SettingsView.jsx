@@ -4,7 +4,7 @@ import React, { useState } from 'react';
  * SettingsView Component - Preferences and system configuration dashboard.
  */
 export default function SettingsView({ onShowToast }) {
-  const [provider, setProvider] = useState('top500');
+  const [provider, setProvider] = useState('enterprise');
   const [llmMode, setLlmMode] = useState('auto');
   const [cronEnabled, setCronEnabled] = useState(true);
   const [defaultLocation, setDefaultLocation] = useState('Remote');
@@ -50,7 +50,7 @@ export default function SettingsView({ onShowToast }) {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
             {[
-              { id: 'top500', name: 'Verified Enterprise Portals', desc: 'Verified openings scraped directly from enterprise hiring portals' }
+              { id: 'enterprise', name: 'Verified Enterprise Portals', desc: 'Verified openings scraped directly from enterprise hiring portals' }
             ].map((item) => (
               <label
                 key={item.id}

@@ -16,14 +16,14 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * REST Controller for Enterprise Crawler Monitoring & Administration.
+ * REST Controller for Enterprise Portal Crawler Monitoring & Administration.
  */
 @RestController
-@RequestMapping("/api/top500")
+@RequestMapping({"/api/crawler", "/api/enterprise"})
 @CrossOrigin(origins = "*")
 @Slf4j
 @RequiredArgsConstructor
-public class Top500CrawlController {
+public class EnterpriseCrawlController {
 
     private final CrawlOrchestratorService crawlOrchestratorService;
     private final CompanyRepository companyRepository;
@@ -32,13 +32,13 @@ public class Top500CrawlController {
 
     @GetMapping("/companies")
     public ResponseEntity<List<Company>> getMonitoredCompanies() {
-        log.info("GET /api/top500/companies");
+        log.info("GET /api/crawler/companies");
         return ResponseEntity.ok(companyRepository.findAll());
     }
 
     @PostMapping("/trigger")
     public ResponseEntity<CrawlRun> triggerManualCrawl() {
-        log.info("POST /api/top500/trigger - Triggering manual Enterprise Crawl Batch");
+        log.info("POST /api/crawler/trigger - Triggering manual Enterprise Crawl Batch");
         CompletableFuture.runAsync(crawlOrchestratorService::runFullCrawlBatch);
         CrawlRun latest = crawlRunRepository.findTopByOrderByStartedAtDesc().orElse(null);
         return ResponseEntity.ok(latest);
@@ -46,13 +46,13 @@ public class Top500CrawlController {
 
     @GetMapping("/runs")
     public ResponseEntity<List<CrawlRun>> getCrawlRuns() {
-        log.info("GET /api/top500/runs");
+        log.info("GET /api/crawler/runs");
         return ResponseEntity.ok(crawlRunRepository.findTop10ByOrderByStartedAtDesc());
     }
 
     @GetMapping("/postings")
     public ResponseEntity<List<JobPosting>> getOpenPostings(@RequestParam(value = "query", required = false) String query) {
-        log.info("GET /api/top500/postings query='{}'", query);
+        log.info("GET /api/crawler/postings query='{}'", query);
         if (query != null && !query.isBlank()) {
             return ResponseEntity.ok(jobPostingRepository.searchOpeningsByRole(query));
         }

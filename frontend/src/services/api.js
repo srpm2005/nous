@@ -179,11 +179,11 @@ export async function getUserScans(userId = 'anonymous') {
 }
 
 /**
- * Fetch monitored enterprise company directory (500 portals)
+ * Fetch monitored enterprise company directory
  * @returns {Promise<Array>} List of Company objects
  */
-export async function getTop500Companies() {
-  const response = await fetch(`${API_BASE}/api/top500/companies`, {
+export async function getEnterpriseCompanies() {
+  const response = await fetch(`${API_BASE}/api/crawler/companies`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json'

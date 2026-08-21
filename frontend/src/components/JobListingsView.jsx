@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getJobListings, getJobListingsByResumeId, getSuggestedRoles, getSuggestedRolesByResumeId, getTop500Companies } from '../services/api';
+import { getJobListings, getJobListingsByResumeId, getSuggestedRoles, getSuggestedRolesByResumeId, getEnterpriseCompanies } from '../services/api';
 import JobCard from './JobCard';
 import JobFilterControls from './JobFilterControls';
 
@@ -23,7 +23,7 @@ export function JobListingsView({ scanId, resumeId, scanStatus, roles: initialRo
     let isMounted = true;
     async function fetchCompanyDirectory() {
       try {
-        const data = await getTop500Companies();
+        const data = await getEnterpriseCompanies();
         if (isMounted && data && Array.isArray(data)) {
           const names = data
             .map(c => c.name)

@@ -17,6 +17,6 @@ services:
       - key: JOB_API_ENABLED
         value: "true"
       - key: JOB_API_PROVIDER
-        value: "top500"
+        value: "enterprise"
       - key: JOB_API_COUNTRY
         value: "in"

@@ -138,13 +138,13 @@ flowchart TB
         SSE[useScanStatus Hook]
         SRV[SuggestedRolesView]
         JLV[JobListingsView]
-        TCV[Top500CrawlerView]
+        TCV[EnterpriseCrawlerView]
     end
 
     subgraph Controllers["Spring Boot REST Layer"]
         RC[ResumeController\n/api/resumes]
         SC[ScanController\n/api/scans]
-        CC[Top500CrawlController\n/api/top500]
+        CC[EnterpriseCrawlController\n/api/crawler]
         UC[UserController\n/api/users]
     end
 
@@ -156,7 +156,7 @@ flowchart TB
         SS[ScanService]
         LRE[LlmRoleExtractionService]
         PES[PayEstimationService]
-        T500JC[Top500JobClient]
+        T500JC[EnterpriseJobClient]
         COS[CrawlOrchestratorService]
     end
 
@@ -178,7 +178,7 @@ flowchart TB
     SSE -->|GET /api/scans/:id/events| SC
     SRV -->|GET /api/scans/:id/roles| SC
     JLV -->|GET /api/scans/:id/jobs| SC
-    TCV -->|POST /api/top500/trigger| CC
+    TCV -->|POST /api/crawler/trigger| CC
 
     RC --> RS
     RS --> FVS
@@ -275,11 +275,11 @@ nous/
 - `GET /api/scans/{scanId}/roles`: Fetch AI recommended target roles, match scores, and parsed skill sets.
 - `GET /api/scans/{scanId}/jobs`: Fetch matched live enterprise openings with deep apply links.
 
-### 3. Enterprise Portal Crawler Management (`/api/top500`)
-- `GET /api/top500/companies`: List monitored enterprise companies and portal statuses.
-- `POST /api/top500/trigger`: Trigger manual asynchronous batch crawl across all connected portals.
-- `GET /api/top500/runs`: View recent batch crawl execution metrics and logs.
-- `GET /api/top500/postings?query=...`: Search active enterprise openings by title, company, or keyword.
+### 3. Enterprise Portal Crawler Management (`/api/crawler`)
+- `GET /api/crawler/companies`: List monitored enterprise companies and portal statuses.
+- `POST /api/crawler/trigger`: Trigger manual asynchronous batch crawl across all connected portals.
+- `GET /api/crawler/runs`: View recent batch crawl execution metrics and logs.
+- `GET /api/crawler/postings?query=...`: Search active enterprise openings by title, company, or keyword.
 
 ### 4. User History (`/api/users`)
 - `GET /api/users/{userId}/scans`: Fetch scan evaluation history across all resumes submitted by a user.
@@ -350,7 +350,7 @@ npm run dev
 | `GEMINI_API_KEY` | `mock-key` | Google Gemini API Key for Live LLM role analysis |
 | `GEMINI_MODEL` | `gemini-flash-latest` | Preferred Gemini model name |
 | `LLM_API_KEY` | `mock-key` | OpenAI / Groq / OpenRouter API Key fallback |
-| `JOB_API_PROVIDER` | `top500` | Job client strategy (`top500` or `mock`) |
+| `JOB_API_PROVIDER` | `enterprise` | Job client strategy (`enterprise` or `mock`) |
 | `app.clamav.enabled` | `false` | Enable ClamAV TCP daemon malware scanning |
 
 ---

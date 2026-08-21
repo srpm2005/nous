@@ -45,7 +45,7 @@ public class DailyEnterpriseScreeningService {
         log.info("✅ [DAILY 12:00 PM AUTOMATED SCREENING] Successfully completed screening for {} Enterprise companies.", totalScreened);
     }
 
-    public List<JobListingDto> getTop500Openings(String roleTitle) {
+    public List<JobListingDto> getEnterpriseOpenings(String roleTitle) {
         log.info("Fetching Enterprise Daily Screened Openings for role: '{}'", roleTitle);
 
         String title = (roleTitle != null && !roleTitle.isBlank()) ? roleTitle : "Software Engineer";

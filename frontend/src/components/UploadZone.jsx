@@ -50,28 +50,56 @@ export default function UploadZone({ onUploadSuccess, onError }) {
       errorMessage: null
     });
 
+    const timers = [];
+
     try {
-      setTimeout(() => {
+      timers.push(setTimeout(() => {
         setUploadState(prev => prev.status === 'uploading' ? {
           ...prev,
-          step: 'Scanning for security & malware...',
-          progress: 65
+          step: 'Scanning file for security & magic bytes...',
+          progress: 55
         } : prev);
-      }, 400);
+      }, 400));
 
-      setTimeout(() => {
+      timers.push(setTimeout(() => {
         setUploadState(prev => prev.status === 'uploading' ? {
           ...prev,
           step: 'Extracting text content...',
+          progress: 75
+        } : prev);
+      }, 900));
+
+      timers.push(setTimeout(() => {
+        setUploadState(prev => prev.status === 'uploading' ? {
+          ...prev,
+          step: 'Connecting to cloud server...',
           progress: 88
         } : prev);
-      }, 800);
+      }, 2500));
+
+      timers.push(setTimeout(() => {
+        setUploadState(prev => prev.status === 'uploading' ? {
+          ...prev,
+          step: 'Waking up cloud backend container (~20-30s on first request)...',
+          progress: 92
+        } : prev);
+      }, 6000));
+
+      timers.push(setTimeout(() => {
+        setUploadState(prev => prev.status === 'uploading' ? {
+          ...prev,
+          step: 'Initializing server instance & AI pipelines... almost ready!',
+          progress: 96
+        } : prev);
+      }, 15000));
 
       const data = await uploadResume(file, userId || 'anonymous');
 
+      timers.forEach(clearTimeout);
+
       setUploadState({
         status: 'success',
-        step: 'Extraction Complete!',
+        step: 'Upload Complete! Launching AI Analysis...',
         progress: 100,
         errorMessage: null
       });
@@ -91,14 +119,15 @@ export default function UploadZone({ onUploadSuccess, onError }) {
           progress: 0,
           errorMessage: null
         });
-      }, 1500);
+      }, 1200);
 
     } catch (err) {
+      timers.forEach(clearTimeout);
       setUploadState({
         status: 'error',
         step: '',
         progress: 0,
-        errorMessage: err.message || 'Upload failed'
+        errorMessage: err.message || 'Upload failed. Please check backend connection.'
       });
       if (onError) onError(err.message);
     }

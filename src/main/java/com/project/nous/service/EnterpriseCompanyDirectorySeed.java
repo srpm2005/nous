@@ -10,9 +10,9 @@ import java.util.List;
  * Contains exclusively companies with verified, 100% active, live public API integrations
  * providing authentic real-time job openings and direct application URLs.
  */
-public class Top500CompanyDirectorySeed {
+public class EnterpriseCompanyDirectorySeed {
 
-    public static List<Company> getTop500Companies() {
+    public static List<Company> getEnterpriseCompanies() {
         List<Company> list = new ArrayList<>(25);
 
         // 19 Verified Live Enterprise Companies with Active Public API Feeds
@@ -39,11 +39,11 @@ public class Top500CompanyDirectorySeed {
         return list;
     }
 
-    private static Company createCompany(String name, String domain, String careerUrl, String adapterType, String config) {
+    private static Company createCompany(String name, String domain, String url, String adapterType, String config) {
         return Company.builder()
                 .name(name)
                 .domain(domain)
-                .careerPageUrl(careerUrl)
+                .careerPageUrl(url)
                 .adapterType(adapterType)
                 .adapterConfig(config)
                 .isActive(true)
