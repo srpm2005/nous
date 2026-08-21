@@ -2,6 +2,7 @@
 
 <div align="center">
 
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-nous--bay.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://nous-bay.vercel.app)
 ![Java 17](https://img.shields.io/badge/Java-17-orange.svg?style=for-the-badge&logo=openjdk)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.3.4-6DB33F.svg?style=for-the-badge&logo=springboot)
 ![React 19](https://img.shields.io/badge/React-19-61DAFB.svg?style=for-the-badge&logo=react)
@@ -15,12 +16,18 @@
   Parses resumes, extracts practical project skills, infers target career roles, computes realistic compensation bands, and matches candidates against verified live job postings directly crawled from enterprise career portals.
 </p>
 
+<p align="center">
+  🌐 <strong>Live Application URL:</strong> <a href="https://nous-bay.vercel.app" target="_blank"><strong>https://nous-bay.vercel.app</strong></a>
+</p>
+
 </div>
 
 ---
 
 <div align="center">
-  <img src="./docs/images/nous_dashboard_real.png" alt="Nous AI Real Dashboard Preview" width="100%" style="border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 8px 30px rgba(0,0,0,0.08);" />
+  <a href="https://nous-bay.vercel.app" target="_blank">
+    <img src="./docs/images/nous_dashboard_real.png" alt="Nous AI Real Dashboard Preview" width="100%" style="border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 8px 30px rgba(0,0,0,0.08);" />
+  </a>
 </div>
 
 ---
