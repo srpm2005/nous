@@ -5,7 +5,7 @@ import com.project.nous.dto.JobListingDto;
 import com.project.nous.repository.JobPostingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +16,9 @@ import java.util.List;
  * during candidate resume scan processing.
  */
 @Service
+@Primary
 @Slf4j
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "app.jobapi.provider", havingValue = "enterprise", matchIfMissing = true)
 public class EnterpriseJobClient implements JobSearchClient {
 
     private final JobPostingRepository jobPostingRepository;

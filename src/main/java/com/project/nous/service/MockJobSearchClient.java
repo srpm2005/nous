@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-@ConditionalOnProperty(name = "app.jobapi.enabled", havingValue = "false", matchIfMissing = true)
+@ConditionalOnProperty(name = "app.jobapi.provider", havingValue = "mock")
 public class MockJobSearchClient implements JobSearchClient {
 
     @Override
